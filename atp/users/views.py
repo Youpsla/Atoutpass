@@ -33,6 +33,8 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
                        kwargs={"username": self.request.user.username})
 
 
+
+
 class UserUpdateView(LoginRequiredMixin, UpdateView):
 
     form_class = UserForm
