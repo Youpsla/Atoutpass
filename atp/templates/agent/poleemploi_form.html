@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}User: {{ user.username }}{% endblock %}
+
+{% block content %}
+<p> pole emploi agent_form template </p>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1>{% block header %}User: {{ user.username }}{% endblock %}</h1>
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+  <li><a href="#home" role="tab" data-toggle="tab">Etat</a></li>
+  <li><a href="{% url 'agent:update' %}" role="tab" >Etat civil</a></li>
+  <li class='active' ><a href="#poleemploi" role="tab" data-toggle="tab">Pole Emploi</a></li>
+  <li><a href="#qualifications" role="tab" data-toggle="tab">Qualifications</a></li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+  <div class="tab-pane" id="home"></div>ccueil du profile client. indiquera les étapes à accomplir
+  <div class="tab-pane" id="etatcivil">ffff
+        </div>
+  <div class="tab-pane active" id="poleemploi">
+            <form class="form-horizontal" method="post" action="{% url 'agent:update_poleemploi' %}">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="control-group">
+                  <div class="controls">
+                    <button type="submit" class="btn">Valider</button>
+                  </div>
+                </div>
+            </form>
+        </div>
+  <div class="tab-pane" id="qualifications">...</div>
+</div>
+
+
+
+        </div>
+    </div>
+</div>
+{% endblock %}

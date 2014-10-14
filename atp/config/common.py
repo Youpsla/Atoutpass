@@ -46,7 +46,10 @@ class Common(Configuration):
 
     # Apps specific for this project go here.
     LOCAL_APPS = (
-        'users',  # custom users app
+        'users',
+        'agent',
+        'datetimewidget',
+        # custom users app
         # Your stuff: custom apps go here
     )
 
@@ -98,6 +101,11 @@ class Common(Configuration):
 
     # EMAIL CONFIGURATION
     EMAIL_BACKEND = values.Value('django.core.mail.backends.smtp.EmailBackend')
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_PASSWORD = 'ab372010'
+    EMAIL_HOST_USER = 'webmaster.atoutpass@gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
     # END EMAIL CONFIGURATION
 
     # MANAGER CONFIGURATION
@@ -128,10 +136,10 @@ class Common(Configuration):
 
     # GENERAL CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#time-zone
-    TIME_ZONE = 'America/Los_Angeles'
+    TIME_ZONE = 'Europe/Paris'
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-    LANGUAGE_CODE = 'en-us'
+    LANGUAGE_CODE = 'fr-fr'
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
     SITE_ID = 1
@@ -143,7 +151,7 @@ class Common(Configuration):
     USE_L10N = True
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
-    USE_TZ = True
+    USE_TZ =False
     # END GENERAL CONFIGURATION
 
     # TEMPLATE CONFIGURATION
@@ -160,6 +168,7 @@ class Common(Configuration):
         'django.contrib.messages.context_processors.messages',
         'django.core.context_processors.request',
         # Your stuff: custom template context processers go here
+        'agent.processor.AddAgentContextProcessor',
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
@@ -217,7 +226,7 @@ class Common(Configuration):
     )
 
     # Some really nice defaults
-    ACCOUNT_AUTHENTICATION_METHOD = "username"
+    ACCOUNT_AUTHENTICATION_METHOD = "username_email"
     ACCOUNT_EMAIL_REQUIRED = True
     ACCOUNT_EMAIL_VERIFICATION = "mandatory"
     # END AUTHENTICATION CONFIGURATION
@@ -253,16 +262,64 @@ class Common(Configuration):
                 'level': 'ERROR',
                 'filters': ['require_debug_false'],
                 'class': 'django.utils.log.AdminEmailHandler'
-            }
+            },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            },
         },
         'loggers': {
             'django.request': {
-                'handlers': ['mail_admins'],
+                'handlers': ['console'],
                 'level': 'ERROR',
                 'propagate': True,
             },
         }
     }
-    # END LOGGING CONFIGURATION
 
-    # Your common stuff: Below this line define 3rd party libary settings
+
+#import sys
+
+#LOGGING = {
+    #'version': 1,
+    #'disable_existing_loggers': False,
+    #'formatters': {
+        #'verbose': {
+            #'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        #},
+        #'simple': {
+            #'format': '%(levelname)s %(message)s'
+        #},
+    #},
+    #'handlers': {
+        #'console': {
+            #'level': 'DEBUG',
+            #'class': 'logging.StreamHandler',
+            #'formatter': 'verbose',
+            #},
+        #'file':{
+            #'level':'DEBUG',
+            #'formatter': 'verbose',
+            #'class':'logging.handlers.RotatingFileHandler',
+            ## 'filename': os.path.join(BASE_DIR, 'agent.log'),
+            #'filename': '/tmp/agent.log',
+            #'maxBytes': 1024*1024*15, # 15MB
+            #'backupCount': 10,
+        #},
+    #},
+    #'loggers': {
+        #'agent': {
+            #'handlers': ['console'],
+            #'level': 'DEBUG',
+            #'propagate': True,
+            #},
+            #},
+        #}
+
+#DEBUG = True
+
+#if DEBUG:
+    ## make all loggers use the console.
+    #for logger in LOGGING['loggers']:
+        #LOGGING['loggers'][logger]['handlers'] = ['console']
+
