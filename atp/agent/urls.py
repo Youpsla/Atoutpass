@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
-
 import views
-
 
 urlpatterns = patterns('',
     # URL pattern for the AgentDetailView
-    url(
-        regex=r'^(?P<username>[\w.@+-]+)/$',
-        view=views.AgentDetailView.as_view(),
-        name='details'
-    ),
+    #url(
+        #regex=r'^(?P<username>[\w.@+-]+)/$',
+        #view=views.AgentDetailView.as_view(),
+        #name='details'
+    #),
     # URL pattern for the AgentCreateView
     url(
         regex=r'^~create/$',
