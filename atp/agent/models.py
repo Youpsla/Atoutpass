@@ -15,24 +15,14 @@ class Certification(models.Model):
 class Agent(models.Model):
     user = models.OneToOneField(Common.AUTH_USER_MODEL, related_name='agent')
     birthdate = models.DateField('Date de naisance', blank=True, null=True)
-    address1 = models.CharField(_('Adresse 1'), max_length=120, blank=True)
-    address2 = models.CharField(_('Adresse 2'), max_length=120, blank=True)
-    zipcode = models.CharField(_('Code Postal'), max_length=5, blank=True)
-    city = models.CharField(_('Ville'), max_length=120, blank=True)
     phonenumber = models.IntegerField(
         _('Telephone'), max_length=10, blank=True, null=True)
     birthplace = models.CharField(
         _('Lieu de naissance'), max_length=120, blank=True, null=True)
     nationality = models.CharField(
         _('Nationalite'), max_length=120, blank=True, null=True)
-    id_card_type = models.CharField(
-        _('Type de papier'), max_length=120, blank=True, null=True)
-    id_card_validity_start_date = models.DateTimeField(blank=True, null=True)
-    id_card_validity_end_date = models.DateTimeField(blank=True, null=True)
     vital_card_validity_start_date = models.DateTimeField(blank=True, null=True)
     vital_card_validity_end_date = models.DateTimeField(blank=True, null=True)
-    # id_card_front = models.ImageField(blank=True, null=True, upload_to='.')
-    # id_card_back = models.ImageField(blank=True, null=True, upload_to='.')
     pole_emploi_start_date = models.DateTimeField(blank=True, null=True)
     pole_emploi_end_date = models.DateTimeField(blank=True, null=True)
     driver_license_type = models.CharField(max_length=120, blank=True,
@@ -53,6 +43,34 @@ class Agent(models.Model):
 
     def __unicode__(self):
         return self.user.username
+
+
+class AgentIdCard(models.Model):
+    agent = models.ForeignKey(Agent)
+    id_card_type = models.CharField(
+        _('Type de papier'), max_length=120, blank=True, null=True)
+    id_card_validity_start_date = models.DateTimeField(blank=True, null=True)
+    id_card_validity_end_date = models.DateTimeField(blank=True, null=True)
+    id_card_front = models.ImageField(blank=True, null=True, upload_to='.')
+    id_card_back = models.ImageField(blank=True, null=True, upload_to='.')
+
+    last_modified = models.DateTimeField(auto_now_add=True, blank=True)
+
+    def __unicode__(self):
+        return self.id_card_type
+
+
+class AgentAddress(models.Model):
+    agent = models.ForeignKey(Agent)
+    address1 = models.CharField(_('Adresse 1'), max_length=120, blank=True)
+    address2 = models.CharField(_('Adresse 2'), max_length=120, blank=True)
+    zipcode = models.CharField(_('Code Postal'), max_length=5, blank=True)
+    city = models.CharField(_('Ville'), max_length=120, blank=True)
+
+    last_modified = models.DateTimeField(auto_now_add=True, blank=True)
+
+    def __unicode__(self):
+        return self.address1
 
 
 class PoleEmploi(models.Model):
