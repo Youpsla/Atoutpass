@@ -1,27 +1,41 @@
 # -*- coding: utf-8 -*-
 from django import forms
-
 from .models import Agent
 from .models import AgentCertification
-from .models import Certification
-
 from datetimewidget.widgets import DateWidget
-from datetimewidget.widgets import DateTimeWidget
-
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
 from crispy_forms.layout import Submit
 from crispy_forms.layout import MultiField
 from crispy_forms.layout import Field
-from crispy_forms.layout import Div
-from crispy_forms.bootstrap import Tab
 from crispy_forms.bootstrap import Accordion
 from crispy_forms.bootstrap import AccordionGroup
 from django.core.urlresolvers import reverse
-
+from django.utils.safestring import mark_safe
+from config.common import Common
+from ajax_upload.widgets import AjaxClearableFileInput
 
 
 class AgentForm(forms.ModelForm):
+
+    class Meta:
+        # Set this form to use the User model.
+        model = Agent
+
+        # exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date', 'certifications')
+        exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date','certifications')
+        widgets = {
+            #Use localization and bootstrap 3
+            'birthdate': DateWidget(usel10n = True, bootstrap_version=3),
+            'id_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
+            'id_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
+            'vital_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
+            'vital_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
+            'pro_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
+            'pro_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
+            # 'picture' : AjaxClearableFileInput
+            'picture' : AjaxClearableFileInput
+        }
 
     def __init__(self, *args, **kwargs):
         super(AgentForm, self).__init__(*args, **kwargs)
@@ -31,6 +45,7 @@ class AgentForm(forms.ModelForm):
         self.fields['zipcode'].required = True
         self.fields['city'].required = True
         self.fields['phonenumber'].required = True
+        # self.fields['picture'].type = 'hidden'
         # self.fields['pro_card'].label = 'turlu'
         # self.fields['pro_card'].choices = ((1, "Oui"), (0, "Non"))
         # self.fields['pro_card'].label = 'turlu'
@@ -44,6 +59,7 @@ class AgentForm(forms.ModelForm):
         self.helper.action = reverse('agent:update')
         self.helper.form_tag = False
         self.helper.layout = Layout(
+            # Field('last_modified', type="hidden"),
             Accordion(
                 AccordionGroup(
                     '1) Coordonnees',
@@ -70,26 +86,12 @@ class AgentForm(forms.ModelForm):
                     'pro_card_validity_start_date',
                     'pro_card_validity_end_date',
                     ),
-            )
+                AccordionGroup('5) Photo identite',
+                    'picture',
+                    ),
+            ),
         )
         self.helper.layout.append(Submit('save', 'Valider'))
-
-    class Meta:
-        # Set this form to use the User model.
-        model = Agent
-
-        # exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date', 'certifications')
-        exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date','certifications')
-        widgets = {
-            #Use localization and bootstrap 3
-            'birthdate': DateWidget(usel10n = True, bootstrap_version=3),
-            'id_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'id_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'vital_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'vital_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'pro_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'pro_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
-        }
 
 
 class PoleEmploiForm(forms.ModelForm):
@@ -125,9 +127,9 @@ class CertificationsFormHelper(FormHelper):
 class AgentCertificationsForm(forms.ModelForm):
     model = AgentCertification
 
-    #def __init__(self, *args, **kwargs):
-        #super(AgentCertificationsForm, self).__init__(*args, **kwargs)
-        #self.fields['start_date'].widget = DateWidget(usel10n = True, bootstrap_version=3)
+    # def __init__(self, *args, **kwargs):
+        # super(AgentCertificationsForm, self).__init__(*args, **kwargs)
+        # self.fields['start_date'].widget = DateWidget(usel10n = True, bootstrap_version=3)
     class Meta:
         model = AgentCertification
         # Set this form to use the User model.
