@@ -18,12 +18,14 @@ from .forms import AgentAddressForm
 from .forms import PoleEmploiForm
 from .forms import CertificationsFormHelper
 from .forms import AgentCertificationsForm
+from .forms import AgentProCardForm
 
 # Import the customized User model
 from .models import Agent
 from .models import AgentCertification
 from .models import AgentIdCard
 from .models import AgentAddress
+from .models import AgentProCard
 
 # Various imports
 from django.http import HttpResponseRedirect
@@ -52,7 +54,7 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 class AgentCertificationsCreateView(LoginRequiredMixin, ModelFormSetView):
     template_name = 'agent/agent_certification_form.html'
     model = AgentCertification
-    fields = ('certification', 'start_date', )
+    fields = ('certification', 'start_date', 'end_date', 'picture')
     can_delete = True
     extra = 3
     max_num = 3
@@ -161,3 +163,17 @@ class AgentAddressView(LoginRequiredMixin, UpdateView):
     # send the user back to their own page after a successful update
     def get_success_url(self):
         return reverse("agent:~update_agent_id_card",)
+
+
+class AgentProCardView(LoginRequiredMixin, UpdateView):
+
+    form_class = AgentProCardForm
+    model = AgentProCard
+
+    def get_object(self, queryset=None):
+        obj, created = AgentProCard.objects.get_or_create(agent=self.request.user.agent)
+        return obj
+
+    # send the user back to their own page after a successful update
+    def get_success_url(self):
+        return reverse("agent:~agent_pro_card",)

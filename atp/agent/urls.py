@@ -45,4 +45,10 @@ urlpatterns = patterns('',
         view=views.AgentAddressView.as_view(),
         name='~agent_address'
     ),
+    # URL pattern for the AgentIdCard
+    url(
+        regex=r'^~agent_procard/$',
+        view=views.AgentProCardView.as_view(),
+        name='~agent_pro_card'
+    ),
 )

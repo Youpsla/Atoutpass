@@ -28,12 +28,6 @@ class Agent(models.Model):
     pole_emploi_end_date = models.DateTimeField(blank=True, null=True)
     driver_license_type = models.CharField(max_length=120, blank=True,
                                            null=True)
-    pro_card = models.BooleanField('Carte professionnelle', blank=True,
-                                   default=0)
-    pro_card_validity_start_date = models.DateTimeField(
-        'Date de debut de validite', blank=True, null=True)
-    pro_card_validity_end_date = models.DateTimeField('Date de fin de validite',
-                                                      blank=True, null=True)
     certifications = models.ManyToManyField(Certification, blank=True,
                                             null=True,
                                             through='AgentCertification',)
@@ -48,6 +42,30 @@ class Agent(models.Model):
     def save(self, *args, **kwargs):
         self.last_modified = datetime.datetime.today()
         return super(Agent, self).save(*args, **kwargs)
+
+
+PROCARD_CHOICES = ((True, 'Titulaire'), (False, 'Pas titulaire'))
+class AgentProCard(models.Model):
+    agent = models.ForeignKey(Agent)
+    pro_card = models.BooleanField(
+        _(u'Etes-vous titulaire de la carte professionnelle ?'),
+        choices = PROCARD_CHOICES,
+        blank=True,default=False)
+    pro_card_validity_start_date = models.DateTimeField(
+        _(u'Date de début de validité'), blank=True, null=True)
+    pro_card_validity_end_date = models.DateTimeField(
+        _(u'Date de fin de validité'), blank=True, null=True)
+    pro_card_front = models.ImageField(
+        _(u'Recto de votre carte professionnelle'), blank=True, null=True, upload_to='.')
+
+    last_modified = models.DateTimeField(auto_now_add=True, blank=True)
+
+    def __unicode__(self):
+        return unicode(self.id_card_type)
+
+    def save(self, *args, **kwargs):
+        self.last_modified = datetime.datetime.today()
+        return super(AgentProCard, self).save(*args, **kwargs)
 
 
 class AgentIdCard(models.Model):
@@ -110,8 +128,9 @@ class PoleEmploi(models.Model):
 
 class AgentCertification(models.Model):
     agent = models.ForeignKey(Agent, related_name="agent_certifications")
-    certification = models.ForeignKey(Certification)
-    start_date = models.DateField(blank=False, null=False)
+    certification = models.ForeignKey(Certification, blank=True, null=True, default=None)
+    start_date = models.DateField(_(u'Date de début'), blank=True, null=True)
+    end_date = models.DateField(_(u'Date de fin'), blank=True, null=True)
     picture = models.ImageField("Document officiel", blank=True, null=True)
 
     def __unicode__(self):

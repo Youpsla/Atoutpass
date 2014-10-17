@@ -4,6 +4,7 @@ from .models import Agent
 from .models import AgentCertification
 from .models import AgentIdCard
 from .models import AgentAddress
+from .models import AgentProCard
 from datetimewidget.widgets import DateWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
@@ -112,11 +113,6 @@ class AgentForm(forms.ModelForm):
                     'vital_card_validity_start_date',
                     'vital_card_validity_end_date',
                     ),
-                AccordionGroup('4) Carte professionnelle',
-                    'pro_card',
-                    'pro_card_validity_start_date',
-                    'pro_card_validity_end_date',
-                    ),
                 AccordionGroup('5) Photo identite',
                     'picture',
                     ),
@@ -153,6 +149,38 @@ class AgentAddressForm(forms.ModelForm):
         self.helper.layout.append(Submit('save', 'Valider'))
 
 
+class AgentProCardForm(forms.ModelForm):
+
+    class Meta:
+        model = AgentProCard
+        exclude = ('agent',)
+        widgets = {
+            'pro_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
+            'pro_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
+            'pro_card_front' : AjaxClearableFileInput,
+            'pro_card' : forms.RadioSelect
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(AgentProCardForm, self).__init__(*args, **kwargs)
+        self.fields['pro_card'].required = True
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-3'
+        self.helper.field_class = 'col-lg-3'
+        self.helper.form_method = 'post'
+        self.helper.form_action = reverse('agent:~agent_pro_card')
+        self.helper.layout = Layout(
+            Fieldset(u'Precisez si vous etes titulaire de la carte professionnelle',
+                'pro_card',
+                'pro_card_validity_start_date',
+                'pro_card_validity_end_date',
+                'pro_card_front',
+            ),
+        )
+        self.helper.layout.append(Submit('save', 'Valider'))
+
+
 class PoleEmploiForm(forms.ModelForm):
 
     class Meta:
@@ -169,26 +197,20 @@ class PoleEmploiForm(forms.ModelForm):
                 required =True,
             )
 
+
+
 class CertificationsFormHelper(FormHelper):
 
     def __init__(self, *args, **kwargs):
         super(CertificationsFormHelper, self).__init__(*args, **kwargs)
-        self.form_class = 'form-horizontal'
-        self.label_class = 'col-lg-5'
-        self.field_class = 'col-lg-5'
-        self.form_method = 'post'
-        self.template = 'bootstrap/table_inline_formset.html'
-        self.action = reverse('agent:update')
+        # self.template = 'bootstrap3/table_inline_formset.html'
+        self.template = 'agent/crispy/table_inline_formset.html'
         self.add_input(Submit('save', 'Valider'))
-
 
 
 class AgentCertificationsForm(forms.ModelForm):
     model = AgentCertification
 
-    # def __init__(self, *args, **kwargs):
-        # super(AgentCertificationsForm, self).__init__(*args, **kwargs)
-        # self.fields['start_date'].widget = DateWidget(usel10n = True, bootstrap_version=3)
     class Meta:
         model = AgentCertification
         # Set this form to use the User model.
@@ -196,5 +218,9 @@ class AgentCertificationsForm(forms.ModelForm):
 
         # exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date', 'certifications')
         widgets = {
+            'certification' : forms.Select(attrs={'data-width':'auto'}),
+            # 'certification' : forms.Select(attrs={'class':'selectpicker'}),
             'start_date': DateWidget(usel10n = True, bootstrap_version=3),
+            'end_date': DateWidget(usel10n = True, bootstrap_version=3),
+            'picture' : AjaxClearableFileInput
         }
