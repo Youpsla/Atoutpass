@@ -2,9 +2,13 @@
 from django import forms
 from .models import Agent
 from .models import AgentCertification
+from .models import AgentIdCard
+from .models import AgentAddress
 from datetimewidget.widgets import DateWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
+from crispy_forms.layout import Div
+from crispy_forms.layout import Fieldset
 from crispy_forms.layout import Submit
 from crispy_forms.layout import MultiField
 from crispy_forms.layout import Field
@@ -16,6 +20,47 @@ from config.common import Common
 from ajax_upload.widgets import AjaxClearableFileInput
 
 
+
+class AgentIdCardForm(forms.ModelForm):
+
+    class Meta:
+        model = AgentIdCard
+        # exclude = ('agent', 'last_modified')
+        exclude = ('agent',)
+        widgets = {
+            'id_card_front' : AjaxClearableFileInput,
+            'id_card_back' : AjaxClearableFileInput,
+            'id_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
+            'id_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(AgentIdCardForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.fields['id_card_validity_end_date'].required = True
+        self.fields['id_card_validity_start_date'].required = True
+        self.fields['id_card_type'].required = True
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-3'
+        self.helper.field_class = 'col-lg-7'
+        self.helper.form_method = 'post'
+        self.helper.form_action = reverse('agent:~update_agent_id_card')
+        self.helper.layout = Layout(
+            Fieldset(
+                u'1) Sélectionnez le type de papier et renseignez les dates de début et de fin de validité',
+                'id_card_type',
+                'id_card_validity_start_date',
+                'id_card_validity_end_date',
+            ),
+            Fieldset(
+                u'2) Télécharger le verso et le recto de votre document.',
+                'id_card_front',
+                'id_card_back'
+            ),
+        )
+        self.helper.layout.append(Submit('save', 'Valider'))
+
+
 class AgentForm(forms.ModelForm):
 
     class Meta:
@@ -23,7 +68,7 @@ class AgentForm(forms.ModelForm):
         model = Agent
 
         # exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date', 'certifications')
-        exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date','certifications')
+        exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date', 'certifications')
         widgets = {
             #Use localization and bootstrap 3
             'birthdate': DateWidget(usel10n = True, bootstrap_version=3),
@@ -33,17 +78,13 @@ class AgentForm(forms.ModelForm):
             'vital_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
             'pro_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
             'pro_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
-            # 'picture' : AjaxClearableFileInput
             'picture' : AjaxClearableFileInput
         }
 
     def __init__(self, *args, **kwargs):
         super(AgentForm, self).__init__(*args, **kwargs)
         self.fields['birthdate'].required = True
-        self.fields['address1'].required = True
         self.fields['birthplace'].required = True
-        self.fields['zipcode'].required = True
-        self.fields['city'].required = True
         self.fields['phonenumber'].required = True
         # self.fields['picture'].type = 'hidden'
         # self.fields['pro_card'].label = 'turlu'
@@ -59,24 +100,14 @@ class AgentForm(forms.ModelForm):
         self.helper.action = reverse('agent:update')
         self.helper.form_tag = False
         self.helper.layout = Layout(
-            # Field('last_modified', type="hidden"),
             Accordion(
                 AccordionGroup(
-                    '1) Coordonnees',
-                    'address1',
-                    'address2',
-                    'zipcode',
-                    'city',
+                    u'1) Téléphone',
                     'phonenumber',
                 ),
                 AccordionGroup('2) Naissance',
                     'birthdate',
                     'birthplace'),
-                AccordionGroup('3) Papiers identite',
-                    'id_card_type',
-                    'id_card_validity_start_date',
-                    'id_card_validity_end_date',
-                    ),
                 AccordionGroup('4) Carte vitale',
                     'vital_card_validity_start_date',
                     'vital_card_validity_end_date',
@@ -89,6 +120,34 @@ class AgentForm(forms.ModelForm):
                 AccordionGroup('5) Photo identite',
                     'picture',
                     ),
+            ),
+        )
+        self.helper.layout.append(Submit('save', 'Valider'))
+
+
+class AgentAddressForm(forms.ModelForm):
+
+    class Meta:
+        model = AgentAddress
+        exclude = ('agent',)
+
+    def __init__(self, *args, **kwargs):
+        super(AgentAddressForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.fields['address1'].required = True
+        self.fields['zipcode'].required = True
+        self.fields['city'].required = True
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-3'
+        self.helper.field_class = 'col-lg-7'
+        self.helper.form_method = 'post'
+        self.helper.form_action = reverse('agent:~agent_address')
+        self.helper.layout = Layout(
+            Field(
+                'address1',
+                'address2',
+                'zipcode',
+                'city',
             ),
         )
         self.helper.layout.append(Submit('save', 'Valider'))

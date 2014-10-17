@@ -2,6 +2,7 @@
 from django.db import models
 from config.common import Common
 from django.utils.translation import ugettext_lazy as _
+import datetime
 
 
 class Certification(models.Model):
@@ -44,20 +45,39 @@ class Agent(models.Model):
     def __unicode__(self):
         return self.user.username
 
+    def save(self, *args, **kwargs):
+        self.last_modified = datetime.datetime.today()
+        return super(Agent, self).save(*args, **kwargs)
+
 
 class AgentIdCard(models.Model):
+
+    ID_CARD_TYPES = (
+            ('CNI', 'Carte identite'),
+            ('PP', 'Passeport'),
+            ('CJ', 'Carte de sejour'),
+        )
+
     agent = models.ForeignKey(Agent)
     id_card_type = models.CharField(
-        _('Type de papier'), max_length=120, blank=True, null=True)
-    id_card_validity_start_date = models.DateTimeField(blank=True, null=True)
-    id_card_validity_end_date = models.DateTimeField(blank=True, null=True)
-    id_card_front = models.ImageField(blank=True, null=True, upload_to='.')
-    id_card_back = models.ImageField(blank=True, null=True, upload_to='.')
+        _('Type de papier'), max_length=120, choices=ID_CARD_TYPES,default=1, blank=True, null=True)
+    id_card_validity_start_date = models.DateTimeField(
+        _(u'Date de début de validité'), blank=True, null=True)
+    id_card_validity_end_date = models.DateTimeField(
+        _(u'Date de fin de validité'), blank=True, null=True)
+    id_card_front = models.ImageField(
+        _(u'Recto de votre pièce'), blank=True, null=True, upload_to='.')
+    id_card_back = models.ImageField(
+        _(u'Verso de votre pièce'), blank=True, null=True, upload_to='.')
 
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
 
     def __unicode__(self):
-        return self.id_card_type
+        return unicode(self.id_card_type)
+
+    def save(self, *args, **kwargs):
+        self.last_modified = datetime.datetime.today()
+        return super(AgentIdCard, self).save(*args, **kwargs)
 
 
 class AgentAddress(models.Model):
@@ -71,6 +91,11 @@ class AgentAddress(models.Model):
 
     def __unicode__(self):
         return self.address1
+
+
+    def save(self, *args, **kwargs):
+        self.last_modified = datetime.datetime.today()
+        return super(AgentAddress, self).save(*args, **kwargs)
 
 
 class PoleEmploi(models.Model):

@@ -33,4 +33,16 @@ urlpatterns = patterns('',
         view=views.AgentCertificationsCreateView.as_view(),
         name='create_agentcertifications'
     ),
+    # URL pattern for the AgentIdCard
+    url(
+        regex=r'^~agent_id_card/$',
+        view=views.AgentIdCardUpdateView.as_view(),
+        name='~update_agent_id_card'
+    ),
+    # URL pattern for the AgentIdCard
+    url(
+        regex=r'^~agent_address/$',
+        view=views.AgentAddressView.as_view(),
+        name='~agent_address'
+    ),
 )
