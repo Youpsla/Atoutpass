@@ -20,10 +20,8 @@
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
-            <form class="form-horizontal" method="post" action="{% url 'agent:~agent_certification' %}">
-                {% csrf_token %}
-                {% crispy formset helper %}
-            </form>
+                        {% csrf_token %}
+                        {% crispy form %}
             </div>
         </div>
     </div>

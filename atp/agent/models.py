@@ -16,8 +16,6 @@ class Certification(models.Model):
 class Agent(models.Model):
     user = models.OneToOneField(Common.AUTH_USER_MODEL, related_name='agent')
     birthdate = models.DateField('Date de naisance', blank=True, null=True)
-    phonenumber = models.IntegerField(
-        _('Telephone'), max_length=10, blank=True, null=True)
     birthplace = models.CharField(
         _('Lieu de naissance'), max_length=120, blank=True, null=True)
     nationality = models.CharField(
@@ -104,6 +102,10 @@ class AgentAddress(models.Model):
     address2 = models.CharField(_('Adresse 2'), max_length=120, blank=True)
     zipcode = models.CharField(_('Code Postal'), max_length=5, blank=True)
     city = models.CharField(_('Ville'), max_length=120, blank=True)
+    mobilephonenumber = models.IntegerField(
+        _('Mobile'), max_length=10, blank=True, null=True)
+    fixephonenumber = models.IntegerField(
+        _('Fixe'), max_length=10, blank=True, null=True)
 
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
 
@@ -135,3 +137,10 @@ class AgentCertification(models.Model):
 
     def __unicode__(self):
         return self.certification
+
+
+class Countries(models.Model):
+    alpha2 = models.CharField('Code 2 lettre', max_length=2)
+    alpha3 = models.CharField('Code 3 lettres', max_length=3)
+    name = models.CharField('Nom Pays', max_length=128)
+

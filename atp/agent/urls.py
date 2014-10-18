@@ -18,7 +18,7 @@ urlpatterns = patterns('',
     # URL pattern for the AgentCreateView
     url(
         regex=r'^~agent/$',
-        view=views.AgentUpdateView.as_view(),
+        view=views.AgentView.as_view(),
         name='~agent'
     ),
     # URL pattern for the PoleEmploiCreateView
@@ -29,15 +29,15 @@ urlpatterns = patterns('',
     ),
     # URL pattern for the AgentCertificationsCreateView
     url(
-        regex=r'^~create_agentcertifications/$',
+        regex=r'^~agent_certification/$',
         view=views.AgentCertificationsCreateView.as_view(),
-        name='create_agentcertifications'
+        name='~agent_certification'
     ),
     # URL pattern for the AgentIdCard
     url(
         regex=r'^~agent_id_card/$',
-        view=views.AgentIdCardUpdateView.as_view(),
-        name='~update_agent_id_card'
+        view=views.AgentIdCardView.as_view(),
+        name='~agent_id_card'
     ),
     # URL pattern for the AgentIdCard
     url(

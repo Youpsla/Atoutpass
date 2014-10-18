@@ -26,7 +26,6 @@ class AgentIdCardForm(forms.ModelForm):
 
     class Meta:
         model = AgentIdCard
-        # exclude = ('agent', 'last_modified')
         exclude = ('agent',)
         widgets = {
             'id_card_front' : AjaxClearableFileInput,
@@ -45,7 +44,7 @@ class AgentIdCardForm(forms.ModelForm):
         self.helper.label_class = 'col-lg-3'
         self.helper.field_class = 'col-lg-7'
         self.helper.form_method = 'post'
-        self.helper.form_action = reverse('agent:~update_agent_id_card')
+        self.helper.form_action = reverse('agent:~agent_id_card')
         self.helper.layout = Layout(
             Fieldset(
                 u'1) Sélectionnez le type de papier et renseignez les dates de début et de fin de validité',
@@ -86,7 +85,6 @@ class AgentForm(forms.ModelForm):
         super(AgentForm, self).__init__(*args, **kwargs)
         self.fields['birthdate'].required = True
         self.fields['birthplace'].required = True
-        self.fields['phonenumber'].required = True
         # self.fields['picture'].type = 'hidden'
         # self.fields['pro_card'].label = 'turlu'
         # self.fields['pro_card'].choices = ((1, "Oui"), (0, "Non"))
@@ -102,18 +100,14 @@ class AgentForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Accordion(
-                AccordionGroup(
-                    u'1) Téléphone',
-                    'phonenumber',
-                ),
-                AccordionGroup('2) Naissance',
+                AccordionGroup('1) Naissance',
                     'birthdate',
                     'birthplace'),
-                AccordionGroup('4) Carte vitale',
+                AccordionGroup('2) Carte vitale',
                     'vital_card_validity_start_date',
                     'vital_card_validity_end_date',
                     ),
-                AccordionGroup('5) Photo identite',
+                AccordionGroup('3) Photo identite',
                     'picture',
                     ),
             ),
@@ -139,11 +133,16 @@ class AgentAddressForm(forms.ModelForm):
         self.helper.form_method = 'post'
         self.helper.form_action = reverse('agent:~agent_address')
         self.helper.layout = Layout(
-            Field(
-                'address1',
-                'address2',
-                'zipcode',
-                'city',
+            Accordion(
+                AccordionGroup('1) Adresse',
+                    'address1',
+                    'address2',
+                    'zipcode',
+                    'city',),
+                AccordionGroup(u'2) Téléphone',
+                    'mobilephonenumber',
+                    'fixephonenumber',
+                    ),
             ),
         )
         self.helper.layout.append(Submit('save', 'Valider'))
@@ -210,6 +209,7 @@ class CertificationsFormHelper(FormHelper):
 
 class AgentCertificationsForm(forms.ModelForm):
     model = AgentCertification
+
 
     class Meta:
         model = AgentCertification

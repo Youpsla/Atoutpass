@@ -84,27 +84,11 @@ class AgentCertificationsCreateView(LoginRequiredMixin, ModelFormSetView):
         return reverse("agent:create_agentcertifications",)
 
 
-#class AgentCreateView(LoginRequiredMixin, CreateView):
-
-    #form_class = AgentForm
-    #model = Agent
-
-    #def form_valid(self, form):
-            #obj = form.save(commit=False)
-            #obj.user = self.request.user
-            #obj.save()
-            #return HttpResponseRedirect(self.get_success_url())
-
-    ## send the user back to their own page after a successful update
-    #def get_success_url(self):
-        #return reverse("agent:create",
-                       #kwargs={"username": self.request.user.username})
-
-
-class AgentUpdateView(LoginRequiredMixin, UpdateView):
+class AgentView(LoginRequiredMixin, UpdateView):
 
     form_class = AgentForm
     model = Agent
+    template_name = 'agent/profile.html'
 
     def get_object(self, queryset=None):
         obj, created = Agent.objects.get_or_create(user=self.request.user)
@@ -136,10 +120,11 @@ class PoleEmploiUpdateView(LoginRequiredMixin, UpdateView):
                        kwargs={"username": self.request.user.username})
 
 
-class AgentIdCardUpdateView(LoginRequiredMixin, UpdateView):
+class AgentIdCardView(LoginRequiredMixin, UpdateView):
 
     form_class = AgentIdCardForm
     model = AgentIdCard
+    template_name = 'agent/profile.html'
 
     def get_object(self, queryset=None):
         obj, created = AgentIdCard.objects.get_or_create(agent=self.request.user.agent)
@@ -147,13 +132,14 @@ class AgentIdCardUpdateView(LoginRequiredMixin, UpdateView):
 
     # send the user back to their own page after a successful update
     def get_success_url(self):
-        return reverse("agent:~update_agent_id_card",)
+        return reverse("agent:~agent_id_card",)
 
 
 class AgentAddressView(LoginRequiredMixin, UpdateView):
 
     form_class = AgentAddressForm
     model = AgentAddress
+    template_name = 'agent/profile.html'
 
     def get_object(self, queryset=None):
         obj, created = AgentAddress.objects.get_or_create(agent=self.request.user.agent)
@@ -168,6 +154,7 @@ class AgentProCardView(LoginRequiredMixin, UpdateView):
 
     form_class = AgentProCardForm
     model = AgentProCard
+    template_name = 'agent/profile.html'
 
     def get_object(self, queryset=None):
         obj, created = AgentProCard.objects.get_or_create(agent=self.request.user.agent)
