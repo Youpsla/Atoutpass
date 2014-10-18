@@ -9,17 +9,17 @@ urlpatterns = patterns('',
         #view=views.AgentDetailView.as_view(),
         #name='details'
     #),
+    ## URL pattern for the AgentCreateView
+    #url(
+        #regex=r'^~create/$',
+        #view=views.AgentCreateView.as_view(),
+        #name='create'
+    #),
     # URL pattern for the AgentCreateView
     url(
-        regex=r'^~create/$',
-        view=views.AgentCreateView.as_view(),
-        name='create'
-    ),
-    # URL pattern for the AgentCreateView
-    url(
-        regex=r'^~update/$',
+        regex=r'^~agent/$',
         view=views.AgentUpdateView.as_view(),
-        name='update'
+        name='~agent'
     ),
     # URL pattern for the PoleEmploiCreateView
     url(

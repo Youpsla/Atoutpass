@@ -98,7 +98,7 @@ class AgentForm(forms.ModelForm):
         self.helper.label_class = 'col-lg-3'
         self.helper.field_class = 'col-lg-7'
         self.helper.form_method = 'post'
-        self.helper.action = reverse('agent:update')
+        self.helper.action = reverse('agent:~agent')
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Accordion(
