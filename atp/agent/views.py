@@ -30,7 +30,11 @@ from .models import AgentProCard
 # Various imports
 from django.http import HttpResponseRedirect
 from extra_views import ModelFormSetView
-# import pdb
+
+# import messages
+from django.contrib import messages
+
+
 
 
 def AddAgentContextProcessor(self, request):
@@ -84,6 +88,18 @@ class AgentCertificationsCreateView(LoginRequiredMixin, ModelFormSetView):
         return reverse("agent:create_agentcertifications",)
 
 
+
+
+# Init of Agent state form.
+AGENT_FORM_STATE = {
+    'AGENT' : 0,
+    'COORDONNEES' : 0,
+    'PAPIERS_IDENTITE' : 0,
+    'CARTE_PRO' : 0,
+    'CERTIFICATIONS' : 0
+}
+
+
 class AgentView(LoginRequiredMixin, UpdateView):
 
     form_class = AgentForm
@@ -98,6 +114,10 @@ class AgentView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse("agent:~agent",)
 
+    def form_valid(self, form):
+        form.save()
+        messages.add_message(self.request, messages.INFO, 'Hello world1.')
+        return HttpResponseRedirect('/agent/~agent')
 
 class PoleEmploiUpdateView(LoginRequiredMixin, UpdateView):
 

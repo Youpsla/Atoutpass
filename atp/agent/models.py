@@ -13,6 +13,18 @@ class Certification(models.Model):
         return self.long_name
 
 
+# Init of Agent state form.
+AGENT_FORM_STATE = {
+    'AGENT' : 0,
+    'COORDONNEES' : 0,
+    'PAPIERS_IDENTITE' : 0,
+    'CARTE_PRO' : 0,
+    'CERTIFICATIONS' : 0
+}
+
+
+
+
 class Agent(models.Model):
     user = models.OneToOneField(Common.AUTH_USER_MODEL, related_name='agent')
     birthdate = models.DateField('Date de naisance', blank=True, null=True)
@@ -33,6 +45,7 @@ class Agent(models.Model):
     picture = models.ImageField("Document officiel",
                                 blank=True, null=True)
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
+    # form_state = models.CharField(max_lenght=256, default=AGENT_FORM_STATE)
 
     def __unicode__(self):
         return self.user.username

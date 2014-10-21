@@ -1,4 +1,4 @@
-€}q(Uatp.config.common]q(UCommonqULOGGINGqUBASE_DIRqeUviews]q(UAgentCreateViewqUAddAgentContextProcessorqUAgentDetailViewq	UAgentUpdateViewq
-UloggerqUPoleEmploiUpdateViewqUUserRedirectViewqUAgentCertificationsCreateViewqeUmodels]q(UCertificationqU
-PoleEmploiqUAgentqUAgentCertificationqeUforms]q(U	AgentFormqUAgentCertificationsFormqUCertificationsFormHelperqUPoleEmploiFormqeUadmin]q(U
-AgentAdminqUCertificationAdminqeUurls]qUurlpatternsqaU	processor]q(UloggerqUAddAgentContextProcessorq eu.
+€}q(Uatp.config.common]q(UCommonqUBASE_DIRqeUviews]q(UAgentCreateViewqUAddAgentContextProcessorqUAgentIdCardUpdateViewqUAgentUpdateViewq	UPoleEmploiUpdateViewq
+UUserRedirectViewqUAgentCertificationsCreateViewqeUmodels]q(UCertificationqU
+PoleEmploiqUAgentqUAgentIdCardqUAgentCertificationqUAgentAddressqeUtags]q(UactiveqUregisterqeUforms]q(UPoleEmploiFormqU	AgentFormqUCertificationsFormHelperqUAgentCertificationsFormqUAgentIdCardFormqeUadmin]q(U
+AgentAdminqUCertificationAdminqeUurls]q Uurlpatternsq!aU	processor]q"(Uloggerq#UAddAgentContextProcessorq$eUatp.urls]q%(Uuploaderq&h!eu.

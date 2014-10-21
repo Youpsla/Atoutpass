@@ -12,11 +12,11 @@
             <h1>{% block header %}User: {{ user.username }}{% endblock %}</h1>
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-                <li class="{% active request "/agent/~agent/" %}"><a  href="{% url 'agent:~agent' %}" role="tab" >Etat Civil</a></li>
-                <li class="{% active request "/agent/~agent_address/" %}"><a  href="{% url 'agent:~agent_address' %}" role="tab" >Coordonnées</a></li>
-                <li class="{% active request "/agent/~agent_id_card/" %}"><a  href="{% url 'agent:~agent_id_card' %}" role="tab" >Papiers identité</a></li>
-                <li class="{% active request "/agent/~agent_procard/" %}"><a  href="{% url 'agent:~agent_pro_card' %}" role="tab" >Carte professionnelle</a></li>
-                <li class="{% active request "/agent/~agent_certification/" %}"><a  href="{% url 'agent:~agent_certification' %}" role="tab" >Certifications</a></li>
+                <li id="#agent" class="{% active request "/agent/~agent/" %}"><a  href="{% url 'agent:~agent' %}" role="tab" >Etat Civil</a></li>
+                <li id="#agent_address" class="{% active request "/agent/~agent_address/" %}"><a  href="{% url 'agent:~agent_address' %}" role="tab" >Coordonnées</a></li>
+                <li id="#agent_id_card" class="{% active request "/agent/~agent_id_card/" %}"><a  href="{% url 'agent:~agent_id_card' %}" role="tab" >Papiers identité</a></li>
+                <li id="#agent_pro_card" class="{% active request "/agent/~agent_procard/" %}"><a  href="{% url 'agent:~agent_pro_card' %}" role="tab" >Carte professionnelle</a></li>
+                <li id="#agent_certification" class="{% active request "/agent/~agent_certification/" %}"><a  href="{% url 'agent:~agent_certification' %}" role="tab" >Certifications</a></li>
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">

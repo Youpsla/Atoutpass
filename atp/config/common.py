@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 from os.path import join, dirname
-
 from configurations import Configuration, values
 
 BASE_DIR = dirname(dirname(__file__))
@@ -42,13 +41,16 @@ class Common(Configuration):
         'allauth',  # registration
         'allauth.account',  # registration
         'allauth.socialaccount',  # registration
+        # 'ajaxuploader', # ajax uploader for images
+        'ajax_upload',
+        'messages_extends',
+        'datetimewidget',
     )
 
     # Apps specific for this project go here.
     LOCAL_APPS = (
         'users',
         'agent',
-        'datetimewidget',
         # custom users app
         # Your stuff: custom apps go here
     )
@@ -241,6 +243,21 @@ class Common(Configuration):
     # SLUGLIFIER
     AUTOSLUG_SLUGIFY_FUNCTION = "slugify.slugify"
     # END SLUGLIFIER
+
+    # Django-messages-extends conf
+    MESSAGE_STORAGE = 'messages_extends.storages.FallbackStorage'
+
+    # Needed for Agent post login context update
+    ACCOUNT_ADAPTER = 'atp.users.accountadapter.AccountAdapter'
+
+    # Init of Agent state form.
+    AGENT_FORM_STATE = {
+        'AGENT' : 0,
+        'COORDONNEES' : 0,
+        'PAPIERS_IDENTITE' : 0,
+        'CARTE_PRO' : 0,
+        'CERTIFICATIONS' : 0
+    }
 
     # LOGGING CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#logging

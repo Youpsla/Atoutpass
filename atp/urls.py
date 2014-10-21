@@ -40,4 +40,7 @@ urlpatterns = patterns('',
     # Django-ajax-ipload-widget urls
     (r'^ajax-upload/', include('ajax_upload.urls')),
 
+    # Django-messages-extends urls
+    (r'^messages/', include('messages_extends.urls')),
+
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
