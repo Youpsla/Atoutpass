@@ -3,6 +3,7 @@ from django.db import models
 from config.common import Common
 from django.utils.translation import ugettext_lazy as _
 import datetime
+from jsonfield import JSONField
 
 
 class Certification(models.Model):
@@ -15,18 +16,24 @@ class Certification(models.Model):
 
 # Init of Agent state form.
 AGENT_FORM_STATE = {
-    'AGENT' : 0,
-    'COORDONNEES' : 0,
-    'PAPIERS_IDENTITE' : 0,
-    'CARTE_PRO' : 0,
-    'CERTIFICATIONS' : 0
+    'AGENT': 0,
+    'COORDONNEES': 0,
+    'PAPIERS_IDENTITE': 0,
+    'CARTE_PRO': 0,
+    'CERTIFICATIONS': 0
 }
 
 
+AGENT_GENRE_CHOICES = (
+    ('Homme', 1),
+    ('Femme', 2)
+)
 
 
 class Agent(models.Model):
     user = models.OneToOneField(Common.AUTH_USER_MODEL, related_name='agent')
+    genre = models.IntegerField(max_length=1, choices=AGENT_GENRE_CHOICES,
+                                blank=True, null=True)
     birthdate = models.DateField('Date de naisance', blank=True, null=True)
     birthplace = models.CharField(
         _('Lieu de naissance'), max_length=120, blank=True, null=True)
@@ -45,7 +52,7 @@ class Agent(models.Model):
     picture = models.ImageField("Document officiel",
                                 blank=True, null=True)
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
-    # form_state = models.CharField(max_lenght=256, default=AGENT_FORM_STATE)
+    form_state = JSONField(default=AGENT_FORM_STATE)
 
     def __unicode__(self):
         return self.user.username
@@ -56,18 +63,21 @@ class Agent(models.Model):
 
 
 PROCARD_CHOICES = ((True, 'Titulaire'), (False, 'Pas titulaire'))
+
+
 class AgentProCard(models.Model):
     agent = models.ForeignKey(Agent)
     pro_card = models.BooleanField(
         _(u'Etes-vous titulaire de la carte professionnelle ?'),
-        choices = PROCARD_CHOICES,
-        blank=True,default=False)
+        choices=PROCARD_CHOICES,
+        blank=True, default=False)
     pro_card_validity_start_date = models.DateTimeField(
         _(u'Date de début de validité'), blank=True, null=True)
     pro_card_validity_end_date = models.DateTimeField(
         _(u'Date de fin de validité'), blank=True, null=True)
     pro_card_front = models.ImageField(
-        _(u'Recto de votre carte professionnelle'), blank=True, null=True, upload_to='.')
+        _(u'Recto de votre carte professionnelle'), blank=True, null=True,
+        upload_to='.')
 
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
 
@@ -82,14 +92,15 @@ class AgentProCard(models.Model):
 class AgentIdCard(models.Model):
 
     ID_CARD_TYPES = (
-            ('CNI', 'Carte identite'),
-            ('PP', 'Passeport'),
-            ('CJ', 'Carte de sejour'),
-        )
+        ('CNI', 'Carte identite'),
+        ('PP', 'Passeport'),
+        ('CJ', 'Carte de sejour'),
+    )
 
     agent = models.ForeignKey(Agent)
     id_card_type = models.CharField(
-        _('Type de papier'), max_length=120, choices=ID_CARD_TYPES,default=1, blank=True, null=True)
+        _('Type de papier'), max_length=120, choices=ID_CARD_TYPES, default=1,
+        blank=True, null=True)
     id_card_validity_start_date = models.DateTimeField(
         _(u'Date de début de validité'), blank=True, null=True)
     id_card_validity_end_date = models.DateTimeField(
@@ -125,7 +136,6 @@ class AgentAddress(models.Model):
     def __unicode__(self):
         return self.address1
 
-
     def save(self, *args, **kwargs):
         self.last_modified = datetime.datetime.today()
         return super(AgentAddress, self).save(*args, **kwargs)
@@ -143,7 +153,8 @@ class PoleEmploi(models.Model):
 
 class AgentCertification(models.Model):
     agent = models.ForeignKey(Agent, related_name="agent_certifications")
-    certification = models.ForeignKey(Certification, blank=True, null=True, default=None)
+    certification = models.ForeignKey(Certification, blank=True, null=True,
+                                      default=None)
     start_date = models.DateField(_(u'Date de début'), blank=True, null=True)
     end_date = models.DateField(_(u'Date de fin'), blank=True, null=True)
     picture = models.ImageField("Document officiel", blank=True, null=True)
@@ -156,4 +167,3 @@ class Countries(models.Model):
     alpha2 = models.CharField('Code 2 lettre', max_length=2)
     alpha3 = models.CharField('Code 3 lettres', max_length=3)
     name = models.CharField('Nom Pays', max_length=128)
-
