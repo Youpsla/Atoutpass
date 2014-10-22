@@ -81,6 +81,7 @@ class AgentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(AgentForm, self).__init__(*args, **kwargs)
+        self.fields['genre'].required = True
         self.fields['birthdate'].required = True
         self.fields['birthplace'].required = True
         self.fields['vital_card_validity_end_date'].required = True
@@ -92,14 +93,16 @@ class AgentForm(forms.ModelForm):
         self.helper.form_method = 'post'
         self.helper.form_action = reverse('agent:~agent')
         self.helper.layout = Layout(
-                Fieldset('1) Naissance',
+            Fieldset(u'1) Genre: Indiquez si vous êtes une femme ou un homme.',
+                    'genre',),
+            Fieldset('2) Naissance: Indiquez votre date de naissance puis votre lieu de naissance',
                     'birthdate',
                     'birthplace'),
-                Fieldset('2) Carte vitale',
+                Fieldset('3) Carte vitale',
                     'vital_card_validity_start_date',
                     'vital_card_validity_end_date',
                     ),
-                Fieldset('3) Photo identite',
+                Fieldset('4) Photo identite',
                     'picture',
                     ),
         )
