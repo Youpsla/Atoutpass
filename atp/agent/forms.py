@@ -14,7 +14,6 @@ from crispy_forms.layout import Submit
 from crispy_forms.layout import MultiField
 from crispy_forms.layout import Field
 from crispy_forms.bootstrap import Accordion
-from crispy_forms.bootstrap import AccordionGroup
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from ajax_upload.widgets import AjaxClearableFileInput
@@ -93,18 +92,16 @@ class AgentForm(forms.ModelForm):
         self.helper.form_method = 'post'
         self.helper.form_action = reverse('agent:~agent')
         self.helper.layout = Layout(
-            Accordion(
-                AccordionGroup('1) Naissance',
+                Fieldset('1) Naissance',
                     'birthdate',
                     'birthplace'),
-                AccordionGroup('2) Carte vitale',
+                Fieldset('2) Carte vitale',
                     'vital_card_validity_start_date',
                     'vital_card_validity_end_date',
                     ),
-                AccordionGroup('3) Photo identite',
+                Fieldset('3) Photo identite',
                     'picture',
                     ),
-            ),
         )
         self.helper.layout.append(Submit('save', 'Valider'))
 
@@ -127,17 +124,15 @@ class AgentAddressForm(forms.ModelForm):
         self.helper.form_method = 'post'
         self.helper.form_action = reverse('agent:~agent_address')
         self.helper.layout = Layout(
-            Accordion(
-                AccordionGroup('1) Adresse',
+                Fieldset('1) Adresse',
                     'address1',
                     'address2',
                     'zipcode',
                     'city',),
-                AccordionGroup(u'2) Téléphone',
+                Fieldset(u'2) Téléphone',
                     'mobilephonenumber',
                     'fixephonenumber',
                     ),
-            ),
         )
         self.helper.layout.append(Submit('save', 'Valider'))
 
