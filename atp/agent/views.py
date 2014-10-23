@@ -26,7 +26,7 @@ from .models import AgentCertification
 from .models import AgentIdCard
 from .models import AgentAddress
 from .models import AgentProCard
-from .models import AGENT_FORM_STATE
+# from .models import AGENT_FORM_STATE
 
 # Various imports
 from django.http import HttpResponseRedirect
@@ -81,6 +81,10 @@ class AgentCertificationsCreateView(LoginRequiredMixin, ModelFormSetView):
         for i in new_instances:
             i.agent = self.user.agent
         formset.save()
+        obj = Agent.objects.get(user=self.request.user)
+        AGENT_FORM_STATE = obj.form_state
+        AGENT_FORM_STATE['CERTIFICATIONS'] = 1
+        Agent.objects.filter(user = self.request.user).update(form_state = AGENT_FORM_STATE)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
@@ -104,9 +108,9 @@ class AgentView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         form.save()
         obj = Agent.objects.get(user=self.request.user)
+        AGENT_FORM_STATE = obj.form_state
         AGENT_FORM_STATE['AGENT'] = 1
         Agent.objects.filter(user = self.request.user).update(form_state = AGENT_FORM_STATE)
-        # print Agent.objects.get(user = self.request.user).form_state
         messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
         return HttpResponseRedirect(self.get_success_url())
 
@@ -141,6 +145,15 @@ class AgentIdCardView(LoginRequiredMixin, UpdateView):
         obj, created = AgentIdCard.objects.get_or_create(agent=self.request.user.agent)
         return obj
 
+    def form_valid(self, form):
+        form.save()
+        obj = Agent.objects.get(user=self.request.user)
+        AGENT_FORM_STATE = obj.form_state
+        AGENT_FORM_STATE['PAPIERS_IDENTITE'] = 1
+        Agent.objects.filter(user = self.request.user).update(form_state = AGENT_FORM_STATE)
+        messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
+        return HttpResponseRedirect(self.get_success_url())
+
     # send the user back to their own page after a successful update
     def get_success_url(self):
         return reverse("agent:~agent_id_card",)
@@ -156,6 +169,15 @@ class AgentAddressView(LoginRequiredMixin, UpdateView):
         obj, created = AgentAddress.objects.get_or_create(agent=self.request.user.agent)
         return obj
 
+    def form_valid(self, form):
+        form.save()
+        obj = Agent.objects.get(user=self.request.user)
+        AGENT_FORM_STATE = obj.form_state
+        AGENT_FORM_STATE['COORDONNEES'] = 1
+        Agent.objects.filter(user = self.request.user).update(form_state = AGENT_FORM_STATE)
+        messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
+        return HttpResponseRedirect(self.get_success_url())
+
     # send the user back to their own page after a successful update
     def get_success_url(self):
         return reverse("agent:~agent_id_card",)
@@ -170,6 +192,16 @@ class AgentProCardView(LoginRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         obj, created = AgentProCard.objects.get_or_create(agent=self.request.user.agent)
         return obj
+
+    def form_valid(self, form):
+        form.save()
+        obj = Agent.objects.get(user=self.request.user)
+        AGENT_FORM_STATE = obj.form_state
+        AGENT_FORM_STATE['CARTE_PRO'] = 1
+        print "dadadaa", AGENT_FORM_STATE
+        Agent.objects.filter(user = self.request.user).update(form_state = AGENT_FORM_STATE)
+        messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
+        return HttpResponseRedirect(self.get_success_url())
 
     # send the user back to their own page after a successful update
     def get_success_url(self):

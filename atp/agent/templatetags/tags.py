@@ -16,6 +16,6 @@ def active(request, pattern):
 def switch_state(request, pattern):
     print request.user.agent.form_state[pattern]
     if request.user.agent.form_state[pattern] == 1:
-        return 'completed'
+        return 'bg-success'
     else:
-        return ''
+        return 'bg-danger'
