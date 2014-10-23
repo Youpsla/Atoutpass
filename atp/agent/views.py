@@ -26,6 +26,7 @@ from .models import AgentCertification
 from .models import AgentIdCard
 from .models import AgentAddress
 from .models import AgentProCard
+from .models import AGENT_FORM_STATE
 
 # Various imports
 from django.http import HttpResponseRedirect
@@ -79,25 +80,11 @@ class AgentCertificationsCreateView(LoginRequiredMixin, ModelFormSetView):
         new_instances = formset.save(commit=False)
         for i in new_instances:
             i.agent = self.user.agent
-        for form in formset.forms:
-            form.agent = self.user.agent
         formset.save()
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse("agent:create_agentcertifications",)
-
-
-
-
-# Init of Agent state form.
-AGENT_FORM_STATE = {
-    'AGENT' : 0,
-    'COORDONNEES' : 0,
-    'PAPIERS_IDENTITE' : 0,
-    'CARTE_PRO' : 0,
-    'CERTIFICATIONS' : 0
-}
+        return reverse("agent:~agent_certification",)
 
 
 class AgentView(LoginRequiredMixin, UpdateView):
@@ -112,12 +99,16 @@ class AgentView(LoginRequiredMixin, UpdateView):
 
     # send the user back to their own page after a successful update
     def get_success_url(self):
-        return reverse("agent:~agent",)
+        return reverse("agent:~agent")
 
     def form_valid(self, form):
         form.save()
-        messages.add_message(self.request, messages.INFO, 'Hello world1.')
-        return HttpResponseRedirect('/agent/~agent')
+        obj = Agent.objects.get(user=self.request.user)
+        AGENT_FORM_STATE['AGENT'] = 1
+        Agent.objects.filter(user = self.request.user).update(form_state = AGENT_FORM_STATE)
+        # print Agent.objects.get(user = self.request.user).form_state
+        messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
+        return HttpResponseRedirect(self.get_success_url())
 
 class PoleEmploiUpdateView(LoginRequiredMixin, UpdateView):
 
@@ -167,7 +158,7 @@ class AgentAddressView(LoginRequiredMixin, UpdateView):
 
     # send the user back to their own page after a successful update
     def get_success_url(self):
-        return reverse("agent:~update_agent_id_card",)
+        return reverse("agent:~agent_id_card",)
 
 
 class AgentProCardView(LoginRequiredMixin, UpdateView):

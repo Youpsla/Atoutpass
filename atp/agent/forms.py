@@ -65,10 +65,8 @@ class AgentForm(forms.ModelForm):
         # Set this form to use the User model.
         model = Agent
 
-        # exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date', 'certifications')
-        exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date', 'certifications')
+        exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date', 'certifications', 'form_state')
         widgets = {
-            #Use localization and bootstrap 3
             'birthdate': DateWidget(usel10n = True, bootstrap_version=3),
             'id_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
             'id_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
@@ -205,14 +203,10 @@ class AgentCertificationsForm(forms.ModelForm):
 
     class Meta:
         model = AgentCertification
-        # Set this form to use the User model.
-        # model = Agent
 
-        # exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date', 'certifications')
         widgets = {
             'certification' : forms.Select(attrs={'data-width':'auto'}),
-            # 'certification' : forms.Select(attrs={'class':'selectpicker'}),
-            'start_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'end_date': DateWidget(usel10n = True, bootstrap_version=3),
+            'start_date': DateWidget(usel10n=True, bootstrap_version=3),
+            'end_date': DateWidget(usel10n=True, bootstrap_version=3),
             'picture' : AjaxClearableFileInput
         }

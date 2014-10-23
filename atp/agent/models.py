@@ -25,14 +25,14 @@ AGENT_FORM_STATE = {
 
 
 AGENT_GENRE_CHOICES = (
-    ('Homme', 1),
-    ('Femme', 2)
+    ('M', 'Homme'),
+    ('F', 'Femme')
 )
 
 
 class Agent(models.Model):
     user = models.OneToOneField(Common.AUTH_USER_MODEL, related_name='agent')
-    genre = models.IntegerField(max_length=1, choices=AGENT_GENRE_CHOICES,
+    genre = models.CharField(max_length=1, choices=AGENT_GENRE_CHOICES,
                                 blank=True, null=True)
     birthdate = models.DateField('Date de naisance', blank=True, null=True)
     birthplace = models.CharField(
