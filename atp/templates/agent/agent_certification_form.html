@@ -3,22 +3,11 @@
 {% load tags %}
 
 
-{% block title %}User: {{ user.username }}{% endblock %}
-
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col-lg-12">
-            <h1>{% block header %}User: {{ user.username }}{% endblock %}</h1>
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs" role="tablist">
-                <li class="{% active request "/agent/~agent/" %}"><a  href="{% url 'agent:~agent' %}" role="tab" >Etat Civil</a></li>
-                <li class="{% active request "/agent/~agent_address/" %}"><a  href="{% url 'agent:~agent_address' %}" role="tab" >Coordonnées</a></li>
-                <li class="{% active request "/agent/~agent_id_card/" %}"><a  href="{% url 'agent:~agent_id_card' %}" role="tab" >Papiers identité</a></li>
-                <li class="{% active request "/agent/~agent_procard/" %}"><a  href="{% url 'agent:~agent_pro_card' %}" role="tab" >Carte professionnelle</a></li>
-                <li class="{% active request "/agent/~agent_certification/" %}"><a  href="{% url 'agent:~agent_certification' %}" role="tab" >Certifications</a></li>
-            </ul>
-            <!-- Tab panes -->
+        <div class="col-lg-18">
+            {% include "agent/agent_form_tabs.html" %}
             <div class="tab-content">
             <form class="form-horizontal" method="post" action="{% url 'agent:~agent_certification' %}">
                 {% csrf_token %}

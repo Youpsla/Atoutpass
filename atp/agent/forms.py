@@ -5,19 +5,14 @@ from .models import AgentCertification
 from .models import AgentIdCard
 from .models import AgentAddress
 from .models import AgentProCard
+from users.models import User
 from datetimewidget.widgets import DateWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
-from crispy_forms.layout import Div
 from crispy_forms.layout import Fieldset
 from crispy_forms.layout import Submit
-from crispy_forms.layout import MultiField
-from crispy_forms.layout import Field
-from crispy_forms.bootstrap import Accordion
 from django.core.urlresolvers import reverse
-from django.utils.safestring import mark_safe
 from ajax_upload.widgets import AjaxClearableFileInput
-
 
 
 class AgentIdCardForm(forms.ModelForm):
@@ -26,10 +21,10 @@ class AgentIdCardForm(forms.ModelForm):
         model = AgentIdCard
         exclude = ('agent',)
         widgets = {
-            'id_card_front' : AjaxClearableFileInput,
-            'id_card_back' : AjaxClearableFileInput,
-            'id_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'id_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
+            'id_card_front': AjaxClearableFileInput,
+            'id_card_back': AjaxClearableFileInput,
+            'id_card_validity_start_date': DateWidget(usel10n=True, bootstrap_version=3),
+            'id_card_validity_end_date': DateWidget(usel10n=True, bootstrap_version=3),
         }
 
     def __init__(self, *args, **kwargs):
@@ -67,14 +62,14 @@ class AgentForm(forms.ModelForm):
 
         exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date', 'certifications', 'form_state')
         widgets = {
-            'birthdate': DateWidget(usel10n = True, bootstrap_version=3),
-            'id_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'id_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'vital_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'vital_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'pro_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'pro_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'picture' : AjaxClearableFileInput
+            'birthdate': DateWidget(usel10n=True, bootstrap_version=3),
+            'id_card_validity_start_date': DateWidget(usel10n=True, bootstrap_version=3),
+            'id_card_validity_end_date': DateWidget(usel10n=True, bootstrap_version=3),
+            'vital_card_validity_start_date': DateWidget(usel10n=True, bootstrap_version=3),
+            'vital_card_validity_end_date': DateWidget(usel10n=True, bootstrap_version=3),
+            'pro_card_validity_start_date': DateWidget(usel10n=True, bootstrap_version=3),
+            'pro_card_validity_end_date': DateWidget(usel10n=True, bootstrap_version=3),
+            'picture': AjaxClearableFileInput
         }
 
     def __init__(self, *args, **kwargs):
@@ -92,17 +87,17 @@ class AgentForm(forms.ModelForm):
         self.helper.form_action = reverse('agent:~agent')
         self.helper.layout = Layout(
             Fieldset(u'1) Genre: Indiquez si vous êtes une femme ou un homme.',
-                    'genre',),
+                     'genre',),
             Fieldset('2) Naissance: Indiquez votre date de naissance puis votre lieu de naissance',
-                    'birthdate',
-                    'birthplace'),
-                Fieldset('3) Carte vitale',
-                    'vital_card_validity_start_date',
-                    'vital_card_validity_end_date',
+                     'birthdate',
+                     'birthplace'),
+            Fieldset('3) Carte vitale',
+                     'vital_card_validity_start_date',
+                     'vital_card_validity_end_date',
                     ),
-                Fieldset('4) Photo identite',
-                    'picture',
-                    ),
+            Fieldset('4) Photo identite',
+                     'picture',
+            ),
         )
         self.helper.layout.append(Submit('save', 'Valider'))
 
@@ -200,13 +195,38 @@ class CertificationsFormHelper(FormHelper):
 class AgentCertificationsForm(forms.ModelForm):
     model = AgentCertification
 
-
     class Meta:
         model = AgentCertification
 
         widgets = {
-            'certification' : forms.Select(attrs={'data-width':'auto'}),
+            'certification': forms.Select(attrs={'data-width': 'auto'}),
             'start_date': DateWidget(usel10n=True, bootstrap_version=3),
             'end_date': DateWidget(usel10n=True, bootstrap_version=3),
-            'picture' : AjaxClearableFileInput
+            'picture': AjaxClearableFileInput
         }
+
+
+#class UserFirstLastNameForm(forms.ModelForm):
+
+    #class Meta:
+        ## Set this form to use the User model.
+        #model = User
+
+        ## Constrain the UserForm to just these fields.
+        #fields = ("first_name", "last_name")
+
+    #def __init__(self, *args, **kwargs):
+        #super(UserFirstLastNameForm, self).__init__(*args, **kwargs)
+        #self.helper = FormHelper()
+        #self.helper.form_class = 'form-horizontal'
+        #self.helper.label_class = 'col-lg-3'
+        #self.helper.field_class = 'col-lg-3'
+        #self.helper.form_method = 'post'
+        #self.helper.form_action = reverse('users:update')
+        #self.helper.layout = Layout(
+            #Fieldset(u'Precisez votre nom et vos prénoms',
+                     #'first_name',
+                     #'last_name',
+                     #),
+        #)
+        #self.helper.layout.append(Submit('save', 'Valider'))

@@ -17,6 +17,7 @@ class Certification(models.Model):
 # Init of Agent state form.
 AGENT_FORM_STATE = {
     'AGENT': 0,
+    # 'NOM_PRENOM': 0,
     'COORDONNEES': 0,
     'PAPIERS_IDENTITE': 0,
     'CARTE_PRO': 0,
@@ -33,7 +34,7 @@ AGENT_GENRE_CHOICES = (
 class Agent(models.Model):
     user = models.OneToOneField(Common.AUTH_USER_MODEL, related_name='agent')
     genre = models.CharField(max_length=1, choices=AGENT_GENRE_CHOICES,
-                                blank=True, null=True)
+                             blank=True, null=True)
     birthdate = models.DateField('Date de naisance', blank=True, null=True)
     birthplace = models.CharField(
         _('Lieu de naissance'), max_length=120, blank=True, null=True)
