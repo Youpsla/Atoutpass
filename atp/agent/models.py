@@ -4,6 +4,7 @@ from config.common import Common
 from django.utils.translation import ugettext_lazy as _
 import datetime
 from jsonfield import JSONField
+import collections
 
 
 class Certification(models.Model):
@@ -15,14 +16,24 @@ class Certification(models.Model):
 
 
 # Init of Agent state form.
-AGENT_FORM_STATE = {
-    'AGENT': 0,
-    # 'NOM_PRENOM': 0,
-    'COORDONNEES': 0,
-    'PAPIERS_IDENTITE': 0,
-    'CARTE_PRO': 0,
-    'CERTIFICATIONS': 0
-}
+#AGENT_FORM_STATE = {
+    #'NOM_PRENOM': 0,
+    #'AGENT': 0,
+    #'COORDONNEES': 0,
+    #'PAPIERS_IDENTITE': 0,
+    #'CARTE_PRO': 0,
+    #'CERTIFICATIONS': 0
+#}
+
+from collections import OrderedDict
+AGENT_FORM_STATE = OrderedDict([
+    ('NOM_PRENOM', 0),
+    ('AGENT', 0),
+    ('COORDONNEES', 0),
+    ('PAPIERS_IDENTITE', 0),
+    ('CARTE_PRO', 0),
+    ('CERTIFICATIONS', 0)
+    ])
 
 
 AGENT_GENRE_CHOICES = (
@@ -53,7 +64,8 @@ class Agent(models.Model):
     picture = models.ImageField("Document officiel",
                                 blank=True, null=True)
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
-    form_state = JSONField(default=AGENT_FORM_STATE)
+    form_state = JSONField(load_kwargs={'object_pairs_hook': collections.OrderedDict},
+                           default=AGENT_FORM_STATE)
 
     def __unicode__(self):
         return self.user.username

@@ -55,6 +55,38 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
                        kwargs={"username": self.request.user.username})
 
 
+def agent_form_redirect(form_state):
+    form_state = form_state
+    print 'form_state', form_state
+    for k in form_state.items():
+        print 'cle', k[0]
+        if k[1] == 0:
+            print 'TROUVE CLE VIDE POUR REDIRECTION'
+            if k[0] == 'NOM_PRENOM':
+                redirect_url = 'users:update'
+                break
+            elif k[0] == 'AGENT':
+                redirect_url = 'agent:~agent'
+                break
+            elif k[0] == 'COORDONNEES':
+                redirect_url = 'agent:~agent_address'
+                break
+            elif k[0] == 'PAPIER_IDENTITE':
+                redirect_url = 'agent:~agent_id_card'
+                break
+            elif k[0] == 'CARTE_PRO':
+                redirect_url = 'agent:~agent_pro_card'
+                break
+            elif k[0] == 'CERTIFICATIONS':
+                redirect_url = 'agent:~agent_certification'
+                break
+        else:
+            redirect_url = 'agent:~agent'
+
+    print 'AGENT_FORN_REDIRECT_URL', redirect_url
+    return redirect_url
+
+
 class AgentCertificationsCreateView(LoginRequiredMixin, ModelFormSetView):
     template_name = 'agent/agent_certification_form.html'
     model = AgentCertification
@@ -94,24 +126,22 @@ class AgentView(LoginRequiredMixin, UpdateView):
     form_class = AgentForm
     model = Agent
     template_name = 'agent/profile.html'
-    # template_name = 'agent/agent_form_tabs.html'
 
     def get_object(self, queryset=None):
         obj, created = Agent.objects.get_or_create(user=self.request.user)
         return obj
 
-    # send the user back to their own page after a successful update
-    def get_success_url(self):
-        return reverse("agent:~agent")
-
     def form_valid(self, form):
+        print 'SAUVEGARDE FORMULAIRE AGENT'
         form.save()
         obj = Agent.objects.get(user=self.request.user)
         AGENT_FORM_STATE = obj.form_state
         AGENT_FORM_STATE['AGENT'] = 1
         Agent.objects.filter(user=self.request.user).update(form_state=AGENT_FORM_STATE)
+        form_state = Agent.objects.get(user=self.request.user).form_state
         messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
-        return HttpResponseRedirect(self.get_success_url())
+        redirect_url = agent_form_redirect(form_state)
+        return HttpResponseRedirect(reverse(redirect_url))
 
 
 class PoleEmploiUpdateView(LoginRequiredMixin, UpdateView):
@@ -146,17 +176,17 @@ class AgentIdCardView(LoginRequiredMixin, UpdateView):
         return obj
 
     def form_valid(self, form):
+        print 'DADADADADADADADADADADADADADADADADADADA'
         form.save()
         obj = Agent.objects.get(user=self.request.user)
         AGENT_FORM_STATE = obj.form_state
+        print 'form_state avant react', obj.form_state
         AGENT_FORM_STATE['PAPIERS_IDENTITE'] = 1
         Agent.objects.filter(user=self.request.user).update(form_state=AGENT_FORM_STATE)
+        form_state = Agent.objects.get(user=self.request.user).form_state
         messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
-        return HttpResponseRedirect(self.get_success_url())
-
-    # send the user back to their own page after a successful update
-    def get_success_url(self):
-        return reverse("agent:~agent_id_card",)
+        redirect_url = agent_form_redirect(form_state)
+        return HttpResponseRedirect(reverse(redirect_url))
 
 
 class AgentAddressView(LoginRequiredMixin, UpdateView):
@@ -206,25 +236,3 @@ class AgentProCardView(LoginRequiredMixin, UpdateView):
     # send the user back to their own page after a successful update
     def get_success_url(self):
         return reverse("agent:~agent_pro_card",)
-
-
-#class UserFirstLastName(LoginRequiredMixin, UpdateView):
-
-    #form_class = UserFirstLastNameForm
-    #model = User
-    #template_name = 'agent/profile.html'
-
-    #def get_object(self, queryset=None):
-        #return User.objects.get(username=self.request.user.username)
-
-    #def form_valid(self, form):
-        #form.save()
-        #obj = Agent.objects.get(user=self.request.user)
-        #AGENT_FORM_STATE = obj.form_state
-        #AGENT_FORM_STATE['NOM_PRENOM'] = 1
-        #Agent.objects.filter(user=self.request.user).update(form_state=AGENT_FORM_STATE)
-        #messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
-        #return HttpResponseRedirect(self.get_success_url())
-
-    #def get_success_url(self):
-        #return reverse("agent:agent",)
