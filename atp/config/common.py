@@ -248,15 +248,15 @@ class Common(Configuration):
     MESSAGE_STORAGE = 'messages_extends.storages.FallbackStorage'
 
     # Needed for Agent post login context update
-    # ACCOUNT_ADAPTER = 'atp.users.accountadapter.AccountAdapter'
+    ACCOUNT_ADAPTER = 'users.accountadapter.AccountAdapter'
 
     # Init of Agent state form.
     AGENT_FORM_STATE = {
-        'AGENT' : 0,
-        'COORDONNEES' : 0,
-        'PAPIERS_IDENTITE' : 0,
-        'CARTE_PRO' : 0,
-        'CERTIFICATIONS' : 0
+        'AGENT': 0,
+        'COORDONNEES': 0,
+        'PAPIERS_IDENTITE': 0,
+        'CARTE_PRO': 0,
+        'CERTIFICATIONS': 0
     }
 
     # LOGGING CONFIGURATION

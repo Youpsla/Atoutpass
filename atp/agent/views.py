@@ -37,6 +37,21 @@ from extra_views import ModelFormSetView
 from django.contrib import messages
 
 
+from allauth.account.signals import user_logged_in
+from django.dispatch import receiver
+
+@receiver(user_logged_in, dispatch_uid="some.unique.string.id.for.allauth.user_signed_up")
+def user_logged_in(request, user, **kwargs):
+    print 'POST SIGNED UP SIGNAL RECEIVED'
+    obj, created = Agent.objects.get_or_create(user=request.user)
+    if created:
+        print 'AGENT A ETE CREE', obj
+    else:
+        print 'AGENT EXISTE DEJA'
+    # user signed up now send email
+    # send email part - do your self
+
+
 def AddAgentContextProcessor(self, request):
     try:
         user = self.user.request
@@ -71,7 +86,7 @@ def agent_form_redirect(form_state):
             elif k[0] == 'COORDONNEES':
                 redirect_url = 'agent:~agent_address'
                 break
-            elif k[0] == 'PAPIER_IDENTITE':
+            elif k[0] == 'PAPIERS_IDENTITE':
                 redirect_url = 'agent:~agent_id_card'
                 break
             elif k[0] == 'CARTE_PRO':
@@ -85,6 +100,12 @@ def agent_form_redirect(form_state):
 
     print 'AGENT_FORN_REDIRECT_URL', redirect_url
     return redirect_url
+
+
+def agent_form_state_update(request, obj, state):
+        AGENT_FORM_STATE = obj.form_state
+        AGENT_FORM_STATE[state] = 1
+        Agent.objects.filter(user=request.user).update(form_state=AGENT_FORM_STATE)
 
 
 class AgentCertificationsCreateView(LoginRequiredMixin, ModelFormSetView):
@@ -112,9 +133,7 @@ class AgentCertificationsCreateView(LoginRequiredMixin, ModelFormSetView):
             i.agent = self.user.agent
         formset.save()
         obj = Agent.objects.get(user=self.request.user)
-        AGENT_FORM_STATE = obj.form_state
-        AGENT_FORM_STATE['CERTIFICATIONS'] = 1
-        Agent.objects.filter(user=self.request.user).update(form_state=AGENT_FORM_STATE)
+        agent_form_state_update(self.request, obj, 'CERTIFICATIONS')
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
@@ -128,16 +147,13 @@ class AgentView(LoginRequiredMixin, UpdateView):
     template_name = 'agent/profile.html'
 
     def get_object(self, queryset=None):
-        obj, created = Agent.objects.get_or_create(user=self.request.user)
+        obj = Agent.objects.get(user=self.request.user)
         return obj
 
     def form_valid(self, form):
-        print 'SAUVEGARDE FORMULAIRE AGENT'
         form.save()
         obj = Agent.objects.get(user=self.request.user)
-        AGENT_FORM_STATE = obj.form_state
-        AGENT_FORM_STATE['AGENT'] = 1
-        Agent.objects.filter(user=self.request.user).update(form_state=AGENT_FORM_STATE)
+        agent_form_state_update(self.request, obj, 'AGENT')
         form_state = Agent.objects.get(user=self.request.user).form_state
         messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
         redirect_url = agent_form_redirect(form_state)
@@ -176,13 +192,9 @@ class AgentIdCardView(LoginRequiredMixin, UpdateView):
         return obj
 
     def form_valid(self, form):
-        print 'DADADADADADADADADADADADADADADADADADADA'
         form.save()
         obj = Agent.objects.get(user=self.request.user)
-        AGENT_FORM_STATE = obj.form_state
-        print 'form_state avant react', obj.form_state
-        AGENT_FORM_STATE['PAPIERS_IDENTITE'] = 1
-        Agent.objects.filter(user=self.request.user).update(form_state=AGENT_FORM_STATE)
+        agent_form_state_update(self.request, obj, 'PAPIERS_IDENTITE')
         form_state = Agent.objects.get(user=self.request.user).form_state
         messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
         redirect_url = agent_form_redirect(form_state)
@@ -202,9 +214,7 @@ class AgentAddressView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         form.save()
         obj = Agent.objects.get(user=self.request.user)
-        AGENT_FORM_STATE = obj.form_state
-        AGENT_FORM_STATE['COORDONNEES'] = 1
-        Agent.objects.filter(user=self.request.user).update(form_state=AGENT_FORM_STATE)
+        agent_form_state_update(self.request, obj, 'COORDONNEES')
         messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
         return HttpResponseRedirect(self.get_success_url())
 
@@ -226,10 +236,7 @@ class AgentProCardView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         form.save()
         obj = Agent.objects.get(user=self.request.user)
-        AGENT_FORM_STATE = obj.form_state
-        AGENT_FORM_STATE['CARTE_PRO'] = 1
-        print "dadadaa", AGENT_FORM_STATE
-        Agent.objects.filter(user=self.request.user).update(form_state=AGENT_FORM_STATE)
+        agent_form_state_update(self.request, obj, 'CARTE_PRO')
         messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
         return HttpResponseRedirect(self.get_success_url())
 

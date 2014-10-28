@@ -2,44 +2,18 @@
 
 
 from allauth.account.adapter import DefaultAccountAdapter
-from django.conf import settings
-from django.shortcuts import resolve_url
-from datetime import datetime, timedelta
+from agent.views import agent_form_redirect
+from django.core.urlresolvers import reverse
+from agent.models import Agent
 
-from config.common import Common
 
 class AccountAdapter(DefaultAccountAdapter):
 
     def get_login_redirect_url(self, request):
-
-        assert request.user.is_authenticated()
-        print Common.AGENT_FORM_STATE
-
-        try:
-            agent_form = request.user.agent.agent_form
-        except:
-            pass
-            #Agent.filter(id=id).update(field=F('field') +1))
-
-            #pass
-
-
-        #print request
-
-        #dede = request.context
-
-        ## context['AGENT_FORM_SATE'] =
-
-        #if last_modified is not null:
-
-
-
-
-        #if (request.user.last_login - request.user.date_joined).seconds < threshold:
-            #url = '/registration/success'
-        #else:
-            #url = settings.LOGIN_REDIRECT_URL
-        #return resolve_url(url)
-        print "waoooooooooooo"
-        url = settings.LOGIN_REDIRECT_URL
-        return resolve_url(url)
+        form_state = Agent.objects.get(user=request.user).form_state
+        redirect_url = agent_form_redirect(form_state)
+        print 'Entry in users.accountadaptater get_login_redirect_url'
+        print 'URL DE REDIRECTION APRES get_login_redirect_url', redirect_url
+        # return '/agent/~agent/'
+        # return HttpResponseRedirect(reverse(redirect_url))
+        return reverse(redirect_url)
