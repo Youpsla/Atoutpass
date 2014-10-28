@@ -165,24 +165,6 @@ class AgentProCardForm(forms.ModelForm):
         self.helper.layout.append(Submit('save', 'Valider'))
 
 
-class PoleEmploiForm(forms.ModelForm):
-
-    class Meta:
-        # Set this form to use the User model.
-        model = Agent
-
-        # Constrain the UserForm to just these fields.
-        fields = ("pole_emploi_start_date", "pole_emploi_end_date")
-
-        exclude = ('address1',)
-
-        pole_emploi = forms.BooleanField(
-                label ="Etes-vous isncrits a Pole emploi",
-                required =True,
-            )
-
-
-
 class CertificationsFormHelper(FormHelper):
 
     def __init__(self, *args, **kwargs):

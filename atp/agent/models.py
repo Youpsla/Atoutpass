@@ -154,16 +154,6 @@ class AgentAddress(models.Model):
         return super(AgentAddress, self).save(*args, **kwargs)
 
 
-class PoleEmploi(models.Model):
-    agent = models.ForeignKey(Agent)
-    pole_emploi = models.BooleanField('Pole_ Emploi', default=False)
-    start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
-
-    def __unicode__(self):
-        return self.pole_emploi
-
-
 class AgentCertification(models.Model):
     agent = models.ForeignKey(Agent, related_name="agent_certifications")
     certification = models.ForeignKey(Certification, blank=True, null=True,

@@ -15,7 +15,6 @@ from braces.views import LoginRequiredMixin
 from .forms import AgentForm
 from .forms import AgentIdCardForm
 from .forms import AgentAddressForm
-from .forms import PoleEmploiForm
 from .forms import CertificationsFormHelper
 from .forms import AgentCertificationsForm
 from .forms import AgentProCardForm
@@ -160,27 +159,6 @@ class AgentView(LoginRequiredMixin, UpdateView):
         return HttpResponseRedirect(reverse(redirect_url))
 
 
-class PoleEmploiUpdateView(LoginRequiredMixin, UpdateView):
-
-    form_class = PoleEmploiForm
-    model = Agent
-    template_name = 'agent/poleemploi_form.html'
-
-    def get_object(self, queryset=None):
-        return Agent.objects.get(user=self.request.user)
-
-    def form_valid(self, form):
-            obj = form.save(commit=False)
-            obj.user = self.request.user
-            obj.save()
-            return HttpResponseRedirect(self.get_success_url())
-
-    # send the user back to their own page after a successful update
-    def get_success_url(self):
-        return reverse("users:detail",
-                       kwargs={"username": self.request.user.username})
-
-
 class AgentIdCardView(LoginRequiredMixin, UpdateView):
 
     form_class = AgentIdCardForm
@@ -218,10 +196,6 @@ class AgentAddressView(LoginRequiredMixin, UpdateView):
         messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
         return HttpResponseRedirect(self.get_success_url())
 
-    # send the user back to their own page after a successful update
-    def get_success_url(self):
-        return reverse("agent:~agent_id_card",)
-
 
 class AgentProCardView(LoginRequiredMixin, UpdateView):
 
@@ -239,7 +213,3 @@ class AgentProCardView(LoginRequiredMixin, UpdateView):
         agent_form_state_update(self.request, obj, 'CARTE_PRO')
         messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
         return HttpResponseRedirect(self.get_success_url())
-
-    # send the user back to their own page after a successful update
-    def get_success_url(self):
-        return reverse("agent:~agent_pro_card",)

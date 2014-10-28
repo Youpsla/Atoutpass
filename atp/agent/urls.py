@@ -3,29 +3,11 @@ from django.conf.urls import patterns, url
 import views
 
 urlpatterns = patterns('',
-    # URL pattern for the AgentDetailView
-    #url(
-        #regex=r'^(?P<username>[\w.@+-]+)/$',
-        #view=views.AgentDetailView.as_view(),
-        #name='details'
-    #),
-    ## URL pattern for the AgentCreateView
-    #url(
-        #regex=r'^~create/$',
-        #view=views.AgentCreateView.as_view(),
-        #name='create'
-    #),
     # URL pattern for the AgentCreateView
     url(
         regex=r'^~agent/$',
         view=views.AgentView.as_view(),
         name='~agent'
-    ),
-    # URL pattern for the PoleEmploiCreateView
-    url(
-        regex=r'^~update_poleemploi/$',
-        view=views.PoleEmploiUpdateView.as_view(),
-        name='update_poleemploi'
     ),
     # URL pattern for the AgentCertificationsCreateView
     url(
