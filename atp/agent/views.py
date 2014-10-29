@@ -124,6 +124,8 @@ class AgentFormValidMixin(LoginRequiredMixin, UpdateView):
     """
 
     def form_valid(self, form):
+
+        # Update AGENT_FORM_STATE
         path = self.request.META['PATH_INFO']
         var = path.split('/')[2]
 
@@ -137,7 +139,7 @@ class AgentFormValidMixin(LoginRequiredMixin, UpdateView):
             FORM_STATE = 'CARTE_PRO'
         elif var == '~agent_certifications':
             FORM_STATE = 'CERTIFICATIONS'
-       
+
         # Save Form
         form.save()
 
@@ -186,12 +188,6 @@ class AgentCertificationsCreateView(LoginRequiredMixin, ModelFormSetView):
 
     def get_success_url(self):
         return reverse("agent:~agent_certification",)
-
-from django.utils.decorators import method_decorator
-
-def agent_profil_completed_decorator(dede):
-    print dede
-    print 'yahooooooooooooooooooooooo'
 
 
 class AgentView(AgentFormValidMixin):
