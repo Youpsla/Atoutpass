@@ -39,6 +39,10 @@ from django.contrib import messages
 from allauth.account.signals import user_logged_in
 from django.dispatch import receiver
 
+
+from messages_extends import constants
+
+
 @receiver(user_logged_in, dispatch_uid="some.unique.string.id.for.allauth.user_signed_up")
 def user_logged_in(request, user, **kwargs):
     print 'POST SIGNED UP SIGNAL RECEIVED'
@@ -106,7 +110,6 @@ def agent_form_state_update(request, obj, state):
         AGENT_FORM_STATE[state] = 1
         if 0 in AGENT_FORM_STATE.values():
             print 'ca passe dedans'
-            messages.add_message(request, messages.ERROR, u'Votre Profil est incomplet. Veuillez renseigner les formulaires des onglets encore en rouge.')
         else:
             pass
         Agent.objects.filter(user=request.user).update(form_state=AGENT_FORM_STATE)
@@ -119,7 +122,7 @@ def agent_get_current_form(path_info):
 class AgentFormValidMixin(LoginRequiredMixin, UpdateView):
     """
     This Mixin:
-    - update AGENT_FOMR_STATE
+    - update AGENT_FORM_STATE
     - determine redirect_url using agent_form_redirect()
     """
 
@@ -128,6 +131,7 @@ class AgentFormValidMixin(LoginRequiredMixin, UpdateView):
         # Update AGENT_FORM_STATE
         path = self.request.META['PATH_INFO']
         var = path.split('/')[2]
+        print 'fffffff', var
 
         if var == '~agent':
             FORM_STATE = 'AGENT'
@@ -147,9 +151,17 @@ class AgentFormValidMixin(LoginRequiredMixin, UpdateView):
         obj = Agent.objects.get(user=self.request.user)
         agent_form_state_update(self.request, obj, FORM_STATE)
 
-        # Determine redirect_url by fetching form_state in the DB
+        # Retrieve form_state from DB
         form_state = Agent.objects.get(user=self.request.user).form_state
+
+        # Set redirect_url by passing form_state to agent_form_redirect
         redirect_url = agent_form_redirect(form_state)
+
+        # Check if agent form is complete
+        if 0 in form_state.values():
+            messages.add_message(self.request, messages.ERROR, u'Votre Profil est incomplet. Veuillez renseigner les formulaires des onglets encore en rouge.')
+        else:
+            messages.add_message(self.request, messages.SUCCESS, u'Merci. Votre profil va maintenant etre communiqué a un conseiller. Vous serez contacté dans les plus brefs délais')
 
         # Update messages
         messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
@@ -184,6 +196,17 @@ class AgentCertificationsCreateView(LoginRequiredMixin, ModelFormSetView):
         formset.save()
         obj = Agent.objects.get(user=self.request.user)
         agent_form_state_update(self.request, obj, 'CERTIFICATIONS')
+        # Retrieve form_state from DB
+        form_state = Agent.objects.get(user=self.request.user).form_state
+
+        # Check if agent form is complete
+        if 0 in form_state.values():
+            messages.add_message(self.request, messages.ERROR, u'Votre Profil est incomplet. Veuillez renseigner les formulaires des onglets encore en rouge.')
+        else:
+            messages.add_message(self.request, messages.SUCCESS, u'Merci. Votre profil va maintenant etre communiqué a un conseiller. Vous serez contacté dans les plus brefs délais')
+
+        # Update messages
+        messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):

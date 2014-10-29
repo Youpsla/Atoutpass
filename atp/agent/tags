@@ -4,9 +4,8 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-AGENT_FORM_STATE	models.py	/^AGENT_FORM_STATE = {$/;"	v
+AGENT_FORM_STATE	models.py	/^AGENT_FORM_STATE = OrderedDict([$/;"	v
 AGENT_GENRE_CHOICES	models.py	/^AGENT_GENRE_CHOICES = ($/;"	v
-Accordion	forms.py	/^from crispy_forms.bootstrap import Accordion$/;"	i
 AddAgentContextProcessor	processor.py	/^def AddAgentContextProcessor(request):$/;"	f
 AddAgentContextProcessor	views.py	/^def AddAgentContextProcessor(self, request):$/;"	f
 Agent	forms.py	/^from .models import Agent$/;"	i
@@ -18,7 +17,7 @@ AgentAddress	models.py	/^class AgentAddress(models.Model):$/;"	c
 AgentAddress	views.py	/^from .models import AgentAddress$/;"	i
 AgentAddressForm	forms.py	/^class AgentAddressForm(forms.ModelForm):$/;"	c
 AgentAddressForm	views.py	/^from .forms import AgentAddressForm$/;"	i
-AgentAddressView	views.py	/^class AgentAddressView(LoginRequiredMixin, UpdateView):$/;"	c
+AgentAddressView	views.py	/^class AgentAddressView(AgentFormValidMixin):$/;"	c
 AgentAdmin	admin.py	/^class AgentAdmin(admin.ModelAdmin):$/;"	c
 AgentCertification	forms.py	/^from .models import AgentCertification$/;"	i
 AgentCertification	models.py	/^class AgentCertification(models.Model):$/;"	c
@@ -28,19 +27,20 @@ AgentCertificationsForm	forms.py	/^class AgentCertificationsForm(forms.ModelForm
 AgentCertificationsForm	views.py	/^from .forms import AgentCertificationsForm$/;"	i
 AgentForm	forms.py	/^class AgentForm(forms.ModelForm):$/;"	c
 AgentForm	views.py	/^from .forms import AgentForm$/;"	i
+AgentFormValidMixin	views.py	/^class AgentFormValidMixin(LoginRequiredMixin, UpdateView):$/;"	c
 AgentIdCard	forms.py	/^from .models import AgentIdCard$/;"	i
 AgentIdCard	models.py	/^class AgentIdCard(models.Model):$/;"	c
 AgentIdCard	views.py	/^from .models import AgentIdCard$/;"	i
 AgentIdCardForm	forms.py	/^class AgentIdCardForm(forms.ModelForm):$/;"	c
 AgentIdCardForm	views.py	/^from .forms import AgentIdCardForm$/;"	i
-AgentIdCardView	views.py	/^class AgentIdCardView(LoginRequiredMixin, UpdateView):$/;"	c
+AgentIdCardView	views.py	/^class AgentIdCardView(AgentFormValidMixin):$/;"	c
 AgentProCard	forms.py	/^from .models import AgentProCard$/;"	i
 AgentProCard	models.py	/^class AgentProCard(models.Model):$/;"	c
 AgentProCard	views.py	/^from .models import AgentProCard$/;"	i
 AgentProCardForm	forms.py	/^class AgentProCardForm(forms.ModelForm):$/;"	c
 AgentProCardForm	views.py	/^from .forms import AgentProCardForm$/;"	i
-AgentProCardView	views.py	/^class AgentProCardView(LoginRequiredMixin, UpdateView):$/;"	c
-AgentView	views.py	/^class AgentView(LoginRequiredMixin, UpdateView):$/;"	c
+AgentProCardView	views.py	/^class AgentProCardView(AgentFormValidMixin):$/;"	c
+AgentView	views.py	/^class AgentView(AgentFormValidMixin):$/;"	c
 AjaxClearableFileInput	forms.py	/^from ajax_upload.widgets import AjaxClearableFileInput$/;"	i
 Certification	models.py	/^class Certification(models.Model):$/;"	c
 CertificationAdmin	admin.py	/^class CertificationAdmin(admin.ModelAdmin):$/;"	c
@@ -48,10 +48,7 @@ CertificationsFormHelper	forms.py	/^class CertificationsFormHelper(FormHelper):$
 CertificationsFormHelper	views.py	/^from .forms import CertificationsFormHelper$/;"	i
 Common	models.py	/^from config.common import Common$/;"	i
 Countries	models.py	/^class Countries(models.Model):$/;"	c
-CreateView	views.py	/^from django.views.generic import CreateView$/;"	i
 DateWidget	forms.py	/^from datetimewidget.widgets import DateWidget$/;"	i
-Div	forms.py	/^from crispy_forms.layout import Div$/;"	i
-Field	forms.py	/^from crispy_forms.layout import Field$/;"	i
 Fieldset	forms.py	/^from crispy_forms.layout import Fieldset$/;"	i
 FormHelper	forms.py	/^from crispy_forms.helper import FormHelper$/;"	i
 HttpResponseRedirect	views.py	/^from django.http import HttpResponseRedirect$/;"	i
@@ -64,7 +61,6 @@ Meta	forms.py	/^    class Meta:$/;"	c	class:AgentCertificationsForm
 Meta	forms.py	/^    class Meta:$/;"	c	class:AgentForm
 Meta	forms.py	/^    class Meta:$/;"	c	class:AgentIdCardForm
 Meta	forms.py	/^    class Meta:$/;"	c	class:AgentProCardForm
-Meta	forms.py	/^    class Meta:$/;"	c	class:PoleEmploiForm
 Migration	migrations/0001_initial.py	/^class Migration(migrations.Migration):$/;"	c
 Migration	migrations/0002_agent_phone_number.py	/^class Migration(migrations.Migration):$/;"	c
 Migration	migrations/0003_auto_20141005_1535.py	/^class Migration(migrations.Migration):$/;"	c
@@ -98,13 +94,10 @@ Migration	migrations/0030_countries.py	/^class Migration(migrations.Migration):$
 Migration	migrations/0031_auto_20141018_2200.py	/^class Migration(migrations.Migration):$/;"	c
 Migration	migrations/0032_auto_20141023_1527.py	/^class Migration(migrations.Migration):$/;"	c
 Migration	migrations/0033_auto_20141023_1604.py	/^class Migration(migrations.Migration):$/;"	c
+Migration	migrations/0034_auto_20141028_1203.py	/^class Migration(migrations.Migration):$/;"	c
 ModelFormSetView	views.py	/^from extra_views import ModelFormSetView$/;"	i
-MultiField	forms.py	/^from crispy_forms.layout import MultiField$/;"	i
+OrderedDict	models.py	/^from collections import OrderedDict$/;"	i
 PROCARD_CHOICES	models.py	/^PROCARD_CHOICES = ((True, 'Titulaire'), (False, 'Pas titulaire'))$/;"	v
-PoleEmploi	models.py	/^class PoleEmploi(models.Model):$/;"	c
-PoleEmploiForm	forms.py	/^class PoleEmploiForm(forms.ModelForm):$/;"	c
-PoleEmploiForm	views.py	/^from .forms import PoleEmploiForm$/;"	i
-PoleEmploiUpdateView	views.py	/^class PoleEmploiUpdateView(LoginRequiredMixin, UpdateView):$/;"	c
 RedirectView	views.py	/^from django.views.generic import RedirectView$/;"	i
 Submit	forms.py	/^from crispy_forms.layout import Submit$/;"	i
 TestCase	tests.py	/^from django.test import TestCase$/;"	i
@@ -124,7 +117,6 @@ __unicode__	models.py	/^    def __unicode__(self):$/;"	m	class:AgentCertificatio
 __unicode__	models.py	/^    def __unicode__(self):$/;"	m	class:AgentIdCard	file:
 __unicode__	models.py	/^    def __unicode__(self):$/;"	m	class:AgentProCard	file:
 __unicode__	models.py	/^    def __unicode__(self):$/;"	m	class:Certification	file:
-__unicode__	models.py	/^    def __unicode__(self):$/;"	m	class:PoleEmploi	file:
 active	templatetags/tags.py	/^def active(request, pattern):$/;"	f
 address1	models.py	/^    address1 = models.CharField(_('Adresse 1'), max_length=120, blank=True)$/;"	v	class:AgentAddress
 address2	models.py	/^    address2 = models.CharField(_('Adresse 2'), max_length=120, blank=True)$/;"	v	class:AgentAddress
@@ -134,8 +126,10 @@ agent	migrations/0015_agent_picture.py	/^import agent.models$/;"	i
 agent	models.py	/^    agent = models.ForeignKey(Agent)$/;"	v	class:AgentAddress
 agent	models.py	/^    agent = models.ForeignKey(Agent)$/;"	v	class:AgentIdCard
 agent	models.py	/^    agent = models.ForeignKey(Agent)$/;"	v	class:AgentProCard
-agent	models.py	/^    agent = models.ForeignKey(Agent)$/;"	v	class:PoleEmploi
 agent	models.py	/^    agent = models.ForeignKey(Agent, related_name="agent_certifications")$/;"	v	class:AgentCertification
+agent_form_redirect	views.py	/^def agent_form_redirect(form_state):$/;"	f
+agent_form_state_update	views.py	/^def agent_form_state_update(request, obj, state):$/;"	f
+agent_get_current_form	views.py	/^def agent_get_current_form(path_info):$/;"	f
 alpha2	models.py	/^    alpha2 = models.CharField('Code 2 lettre', max_length=2)$/;"	v	class:Countries
 alpha3	models.py	/^    alpha3 = models.CharField('Code 3 lettres', max_length=3)$/;"	v	class:Countries
 bases	migrations/0001_initial.py	/^            bases=(models.Model,),$/;"	v	class:Migration
@@ -152,9 +146,12 @@ certification	models.py	/^    certification = models.ForeignKey(Certification, b
 certifications	models.py	/^    certifications = models.ManyToManyField(Certification, blank=True,$/;"	v	class:Agent
 choices	models.py	/^        choices=PROCARD_CHOICES,$/;"	v	class:AgentProCard
 city	models.py	/^    city = models.CharField(_('Ville'), max_length=120, blank=True)$/;"	v	class:AgentAddress
+collections	models.py	/^import collections$/;"	i
+constants	views.py	/^from messages_extends import constants$/;"	i
 datetime	models.py	/^import datetime$/;"	i
 datetime_safe	migrations/0016_agent_last_modified.py	/^import django.utils.datetime_safe$/;"	i
 default	models.py	/^                                      default=None)$/;"	v	class:AgentCertification
+default	models.py	/^                           default=AGENT_FORM_STATE)$/;"	v	class:Agent
 dependencies	migrations/0001_initial.py	/^    dependencies = [$/;"	v	class:Migration
 dependencies	migrations/0002_agent_phone_number.py	/^    dependencies = [$/;"	v	class:Migration
 dependencies	migrations/0003_auto_20141005_1535.py	/^    dependencies = [$/;"	v	class:Migration
@@ -188,11 +185,10 @@ dependencies	migrations/0030_countries.py	/^    dependencies = [$/;"	v	class:Mig
 dependencies	migrations/0031_auto_20141018_2200.py	/^    dependencies = [$/;"	v	class:Migration
 dependencies	migrations/0032_auto_20141023_1527.py	/^    dependencies = [$/;"	v	class:Migration
 dependencies	migrations/0033_auto_20141023_1604.py	/^    dependencies = [$/;"	v	class:Migration
+dependencies	migrations/0034_auto_20141028_1203.py	/^    dependencies = [$/;"	v	class:Migration
 django	migrations/0016_agent_last_modified.py	/^import django.utils.datetime_safe$/;"	i
 driver_license_type	models.py	/^    driver_license_type = models.CharField(max_length=120, blank=True,$/;"	v	class:Agent
 end_date	models.py	/^    end_date = models.DateField(_(u'Date de fin'), blank=True, null=True)$/;"	v	class:AgentCertification
-end_date	models.py	/^    end_date = models.DateField(blank=True, null=True)$/;"	v	class:PoleEmploi
-exclude	forms.py	/^        exclude = ('address1',)$/;"	v	class:PoleEmploiForm.Meta
 exclude	forms.py	/^        exclude = ('agent',)$/;"	v	class:AgentAddressForm.Meta
 exclude	forms.py	/^        exclude = ('agent',)$/;"	v	class:AgentIdCardForm.Meta
 exclude	forms.py	/^        exclude = ('agent',)$/;"	v	class:AgentProCardForm.Meta
@@ -256,7 +252,7 @@ field	migrations/0029_auto_20141018_1930.py	/^            field=models.IntegerFi
 field	migrations/0032_auto_20141023_1527.py	/^            field=jsonfield.fields.JSONField(default={b'PAPIERS_IDENTITE': 0, b'CARTE_PRO': 0, b'CERTIFICATIONS': 0, b'COORDONNEES': 0, b'AGENT': 0}),$/;"	v	class:Migration
 field	migrations/0032_auto_20141023_1527.py	/^            field=models.IntegerField(blank=True, max_length=1, null=True, choices=[(b'Homme', 1), (b'Femme', 2)]),$/;"	v	class:Migration
 field	migrations/0033_auto_20141023_1604.py	/^            field=models.CharField(blank=True, max_length=1, null=True, choices=[(b'M', b'Homme'), (b'F', b'Femme')]),$/;"	v	class:Migration
-fields	forms.py	/^        fields = ("pole_emploi_start_date", "pole_emploi_end_date")$/;"	v	class:PoleEmploiForm.Meta
+field	migrations/0034_auto_20141028_1203.py	/^            field=jsonfield.fields.JSONField(default={b'NOM_PRENOM': 0, b'AGENT': 0, b'COORDONNEES': 0, b'PAPIERS_IDENTITE': 0, b'CARTE_PRO': 0, b'CERTIFICATIONS': 0}),$/;"	v	class:Migration
 fields	migrations/0001_initial.py	/^            fields=[$/;"	v	class:Migration
 fields	migrations/0004_auto_20141005_1545.py	/^            fields=[$/;"	v	class:Migration
 fields	migrations/0006_auto_20141005_1718.py	/^            fields=[$/;"	v	class:Migration
@@ -265,6 +261,7 @@ fields	migrations/0022_auto_20141016_1728.py	/^            fields=[$/;"	v	class:
 fields	migrations/0026_auto_20141017_1910.py	/^            fields=[$/;"	v	class:Migration
 fields	migrations/0030_countries.py	/^            fields=[$/;"	v	class:Migration
 fields	migrations/0032_auto_20141023_1527.py	/^import jsonfield.fields$/;"	i
+fields	migrations/0034_auto_20141028_1203.py	/^import jsonfield.fields$/;"	i
 fields	views.py	/^    fields = ('certification', 'start_date', 'end_date', 'picture')$/;"	v	class:AgentCertificationsCreateView
 fixephonenumber	models.py	/^    fixephonenumber = models.IntegerField($/;"	v	class:AgentAddress
 form_class	views.py	/^    form_class = AgentAddressForm$/;"	v	class:AgentAddressView
@@ -272,13 +269,8 @@ form_class	views.py	/^    form_class = AgentCertificationsForm$/;"	v	class:Agent
 form_class	views.py	/^    form_class = AgentForm$/;"	v	class:AgentView
 form_class	views.py	/^    form_class = AgentIdCardForm$/;"	v	class:AgentIdCardView
 form_class	views.py	/^    form_class = AgentProCardForm$/;"	v	class:AgentProCardView
-form_class	views.py	/^    form_class = PoleEmploiForm$/;"	v	class:PoleEmploiUpdateView
-form_state	models.py	/^    form_state = JSONField(default=AGENT_FORM_STATE)$/;"	v	class:Agent
-form_valid	views.py	/^    def form_valid(self, form):$/;"	m	class:AgentAddressView
-form_valid	views.py	/^    def form_valid(self, form):$/;"	m	class:AgentIdCardView
-form_valid	views.py	/^    def form_valid(self, form):$/;"	m	class:AgentProCardView
-form_valid	views.py	/^    def form_valid(self, form):$/;"	m	class:AgentView
-form_valid	views.py	/^    def form_valid(self, form):$/;"	m	class:PoleEmploiUpdateView
+form_state	models.py	/^    form_state = JSONField(load_kwargs={'object_pairs_hook': collections.OrderedDict},$/;"	v	class:Agent
+form_valid	views.py	/^    def form_valid(self, form):$/;"	m	class:AgentFormValidMixin
 forms	forms.py	/^from django import forms$/;"	i
 formset_valid	views.py	/^    def formset_valid(self, formset):$/;"	m	class:AgentCertificationsCreateView
 genre	models.py	/^    genre = models.CharField(max_length=1, choices=AGENT_GENRE_CHOICES,$/;"	v	class:Agent
@@ -287,15 +279,9 @@ get_object	views.py	/^    def get_object(self, queryset=None):$/;"	m	class:Agent
 get_object	views.py	/^    def get_object(self, queryset=None):$/;"	m	class:AgentIdCardView
 get_object	views.py	/^    def get_object(self, queryset=None):$/;"	m	class:AgentProCardView
 get_object	views.py	/^    def get_object(self, queryset=None):$/;"	m	class:AgentView
-get_object	views.py	/^    def get_object(self, queryset=None):$/;"	m	class:PoleEmploiUpdateView
 get_queryset	views.py	/^    def get_queryset(self):$/;"	m	class:AgentCertificationsCreateView
 get_redirect_url	views.py	/^    def get_redirect_url(self):$/;"	m	class:UserRedirectView
-get_success_url	views.py	/^    def get_success_url(self):$/;"	m	class:AgentAddressView
 get_success_url	views.py	/^    def get_success_url(self):$/;"	m	class:AgentCertificationsCreateView
-get_success_url	views.py	/^    def get_success_url(self):$/;"	m	class:AgentIdCardView
-get_success_url	views.py	/^    def get_success_url(self):$/;"	m	class:AgentProCardView
-get_success_url	views.py	/^    def get_success_url(self):$/;"	m	class:AgentView
-get_success_url	views.py	/^    def get_success_url(self):$/;"	m	class:PoleEmploiUpdateView
 id_card_back	models.py	/^    id_card_back = models.ImageField($/;"	v	class:AgentIdCard
 id_card_front	models.py	/^    id_card_front = models.ImageField($/;"	v	class:AgentIdCard
 id_card_type	models.py	/^    id_card_type = models.CharField($/;"	v	class:AgentIdCard
@@ -303,7 +289,7 @@ id_card_validity_end_date	models.py	/^    id_card_validity_end_date = models.Dat
 id_card_validity_start_date	models.py	/^    id_card_validity_start_date = models.DateTimeField($/;"	v	class:AgentIdCard
 is_completed	models.py	/^    is_completed = models.BooleanField(_('Profil complet'), default=False,)$/;"	v	class:Agent
 jsonfield	migrations/0032_auto_20141023_1527.py	/^import jsonfield.fields$/;"	i
-label	forms.py	/^                label ="Etes-vous isncrits a Pole emploi",$/;"	v	class:PoleEmploiForm.Meta
+jsonfield	migrations/0034_auto_20141028_1203.py	/^import jsonfield.fields$/;"	i
 last_modified	models.py	/^    last_modified = models.DateTimeField(auto_now_add=True, blank=True)$/;"	v	class:Agent
 last_modified	models.py	/^    last_modified = models.DateTimeField(auto_now_add=True, blank=True)$/;"	v	class:AgentAddress
 last_modified	models.py	/^    last_modified = models.DateTimeField(auto_now_add=True, blank=True)$/;"	v	class:AgentIdCard
@@ -311,7 +297,6 @@ last_modified	models.py	/^    last_modified = models.DateTimeField(auto_now_add=
 logger	processor.py	/^logger = logging.getLogger('agent')$/;"	v
 logging	processor.py	/^import logging$/;"	i
 long_name	models.py	/^    long_name = models.CharField('Nom long', max_length=240, blank=False)$/;"	v	class:Certification
-mark_safe	forms.py	/^from django.utils.safestring import mark_safe$/;"	i
 max_num	views.py	/^    max_num = 3$/;"	v	class:AgentCertificationsCreateView
 messages	views.py	/^from django.contrib import messages$/;"	i
 migrations	migrations/0001_initial.py	/^from django.db import models, migrations$/;"	i
@@ -347,16 +332,15 @@ migrations	migrations/0030_countries.py	/^from django.db import models, migratio
 migrations	migrations/0031_auto_20141018_2200.py	/^from django.db import models, migrations$/;"	i
 migrations	migrations/0032_auto_20141023_1527.py	/^from django.db import models, migrations$/;"	i
 migrations	migrations/0033_auto_20141023_1604.py	/^from django.db import models, migrations$/;"	i
+migrations	migrations/0034_auto_20141028_1203.py	/^from django.db import models, migrations$/;"	i
 mobilephonenumber	models.py	/^    mobilephonenumber = models.IntegerField($/;"	v	class:AgentAddress
 model	forms.py	/^        model = Agent$/;"	v	class:AgentForm.Meta
-model	forms.py	/^        model = Agent$/;"	v	class:PoleEmploiForm.Meta
 model	forms.py	/^        model = AgentAddress$/;"	v	class:AgentAddressForm.Meta
 model	forms.py	/^        model = AgentCertification$/;"	v	class:AgentCertificationsForm.Meta
 model	forms.py	/^        model = AgentIdCard$/;"	v	class:AgentIdCardForm.Meta
 model	forms.py	/^        model = AgentProCard$/;"	v	class:AgentProCardForm.Meta
 model	forms.py	/^    model = AgentCertification$/;"	v	class:AgentCertificationsForm
 model	views.py	/^    model = Agent$/;"	v	class:AgentView
-model	views.py	/^    model = Agent$/;"	v	class:PoleEmploiUpdateView
 model	views.py	/^    model = AgentAddress$/;"	v	class:AgentAddressView
 model	views.py	/^    model = AgentCertification$/;"	v	class:AgentCertificationsCreateView
 model	views.py	/^    model = AgentIdCard$/;"	v	class:AgentIdCardView
@@ -400,6 +384,8 @@ model_name	migrations/0029_auto_20141018_1930.py	/^            model_name='agent
 model_name	migrations/0029_auto_20141018_1930.py	/^            model_name='agentprocard',$/;"	v	class:Migration
 model_name	migrations/0032_auto_20141023_1527.py	/^            model_name='agent',$/;"	v	class:Migration
 model_name	migrations/0033_auto_20141023_1604.py	/^            model_name='agent',$/;"	v	class:Migration
+model_name	migrations/0034_auto_20141028_1203.py	/^            model_name='agent',$/;"	v	class:Migration
+model_name	migrations/0034_auto_20141028_1203.py	/^            model_name='poleemploi',$/;"	v	class:Migration
 models	migrations/0001_initial.py	/^from django.db import models, migrations$/;"	i
 models	migrations/0002_agent_phone_number.py	/^from django.db import models, migrations$/;"	i
 models	migrations/0003_auto_20141005_1535.py	/^from django.db import models, migrations$/;"	i
@@ -435,6 +421,7 @@ models	migrations/0030_countries.py	/^from django.db import models, migrations$/
 models	migrations/0031_auto_20141018_2200.py	/^from django.db import models, migrations$/;"	i
 models	migrations/0032_auto_20141023_1527.py	/^from django.db import models, migrations$/;"	i
 models	migrations/0033_auto_20141023_1604.py	/^from django.db import models, migrations$/;"	i
+models	migrations/0034_auto_20141028_1203.py	/^from django.db import models, migrations$/;"	i
 models	models.py	/^from django.db import models$/;"	i
 name	migrations/0001_initial.py	/^            name='Agent',$/;"	v	class:Migration
 name	migrations/0001_initial.py	/^            name='PoleEmploi',$/;"	v	class:Migration
@@ -540,8 +527,10 @@ name	migrations/0030_countries.py	/^            name='Countries',$/;"	v	class:Mi
 name	migrations/0032_auto_20141023_1527.py	/^            name='form_state',$/;"	v	class:Migration
 name	migrations/0032_auto_20141023_1527.py	/^            name='genre',$/;"	v	class:Migration
 name	migrations/0033_auto_20141023_1604.py	/^            name='genre',$/;"	v	class:Migration
+name	migrations/0034_auto_20141028_1203.py	/^            name='PoleEmploi',$/;"	v	class:Migration
+name	migrations/0034_auto_20141028_1203.py	/^            name='agent',$/;"	v	class:Migration
+name	migrations/0034_auto_20141028_1203.py	/^            name='form_state',$/;"	v	class:Migration
 name	models.py	/^    name = models.CharField('Nom Pays', max_length=128)$/;"	v	class:Countries
-name	urls.py	/^        name='update_poleemploi'$/;"	v
 name	urls.py	/^        name='~agent'$/;"	v
 name	urls.py	/^        name='~agent_address'$/;"	v
 name	urls.py	/^        name='~agent_certification'$/;"	v
@@ -585,6 +574,7 @@ operations	migrations/0030_countries.py	/^    operations = [$/;"	v	class:Migrati
 operations	migrations/0031_auto_20141018_2200.py	/^    operations = [$/;"	v	class:Migration
 operations	migrations/0032_auto_20141023_1527.py	/^    operations = [$/;"	v	class:Migration
 operations	migrations/0033_auto_20141023_1604.py	/^    operations = [$/;"	v	class:Migration
+operations	migrations/0034_auto_20141028_1203.py	/^    operations = [$/;"	v	class:Migration
 options	migrations/0001_initial.py	/^            options={$/;"	v	class:Migration
 options	migrations/0004_auto_20141005_1545.py	/^            options={$/;"	v	class:Migration
 options	migrations/0006_auto_20141005_1718.py	/^            options={$/;"	v	class:Migration
@@ -596,8 +586,6 @@ patterns	urls.py	/^from django.conf.urls import patterns, url$/;"	i
 permanent	views.py	/^    permanent = False$/;"	v	class:UserRedirectView
 picture	models.py	/^    picture = models.ImageField("Document officiel", blank=True, null=True)$/;"	v	class:AgentCertification
 picture	models.py	/^    picture = models.ImageField("Document officiel",$/;"	v	class:Agent
-pole_emploi	forms.py	/^        pole_emploi = forms.BooleanField($/;"	v	class:PoleEmploiForm.Meta
-pole_emploi	models.py	/^    pole_emploi = models.BooleanField('Pole_ Emploi', default=False)$/;"	v	class:PoleEmploi
 pole_emploi_end_date	models.py	/^    pole_emploi_end_date = models.DateTimeField(blank=True, null=True)$/;"	v	class:Agent
 pole_emploi_start_date	models.py	/^    pole_emploi_start_date = models.DateTimeField(blank=True, null=True)$/;"	v	class:Agent
 preserve_default	migrations/0002_agent_phone_number.py	/^            preserve_default=False,$/;"	v	class:Migration
@@ -621,14 +609,13 @@ pro_card_validity_end_date	models.py	/^    pro_card_validity_end_date = models.D
 pro_card_validity_start_date	models.py	/^    pro_card_validity_start_date = models.DateTimeField($/;"	v	class:AgentProCard
 project_opened	.ropeproject/config.py	/^def project_opened(project):$/;"	f
 project_opened	templatetags/.ropeproject/config.py	/^def project_opened(project):$/;"	f
+receiver	views.py	/^from django.dispatch import receiver$/;"	i
 regex	urls.py	/^        regex=r'^~agent\/$',$/;"	v
 regex	urls.py	/^        regex=r'^~agent_address\/$',$/;"	v
 regex	urls.py	/^        regex=r'^~agent_certification\/$',$/;"	v
 regex	urls.py	/^        regex=r'^~agent_id_card\/$',$/;"	v
-regex	urls.py	/^        regex=r'^~agent_procard\/$',$/;"	v
-regex	urls.py	/^        regex=r'^~update_poleemploi\/$',$/;"	v
+regex	urls.py	/^        regex=r'^~agent_pro_card\/$',$/;"	v
 register	templatetags/tags.py	/^register = template.Library()$/;"	v
-required	forms.py	/^                required =True,$/;"	v	class:PoleEmploiForm.Meta
 reverse	forms.py	/^from django.core.urlresolvers import reverse$/;"	i
 reverse	views.py	/^from django.core.urlresolvers import reverse$/;"	i
 save	models.py	/^    def save(self, *args, **kwargs):$/;"	m	class:Agent
@@ -644,11 +631,9 @@ settings	migrations/0006_auto_20141005_1718.py	/^from django.conf import setting
 settings	migrations/0014_auto_20141015_1822.py	/^from django.conf import settings$/;"	i
 short_name	models.py	/^    short_name = models.CharField('Nom court', max_length=24, blank=False)$/;"	v	class:Certification
 start_date	models.py	/^    start_date = models.DateField(_(u'Date de début'), blank=True, null=True)$/;"	v	class:AgentCertification
-start_date	models.py	/^    start_date = models.DateField(blank=True, null=True)$/;"	v	class:PoleEmploi
 switch_state	templatetags/tags.py	/^def switch_state(request, pattern):$/;"	f
 template	templatetags/tags.py	/^from django import template$/;"	i
 template_name	views.py	/^    template_name = 'agent\/agent_certification_form.html'$/;"	v	class:AgentCertificationsCreateView
-template_name	views.py	/^    template_name = 'agent\/poleemploi_form.html'$/;"	v	class:PoleEmploiUpdateView
 template_name	views.py	/^    template_name = 'agent\/profile.html'$/;"	v	class:AgentAddressView
 template_name	views.py	/^    template_name = 'agent\/profile.html'$/;"	v	class:AgentIdCardView
 template_name	views.py	/^    template_name = 'agent\/profile.html'$/;"	v	class:AgentProCardView
@@ -687,17 +672,19 @@ unicode_literals	migrations/0030_countries.py	/^from __future__ import unicode_l
 unicode_literals	migrations/0031_auto_20141018_2200.py	/^from __future__ import unicode_literals$/;"	i
 unicode_literals	migrations/0032_auto_20141023_1527.py	/^from __future__ import unicode_literals$/;"	i
 unicode_literals	migrations/0033_auto_20141023_1604.py	/^from __future__ import unicode_literals$/;"	i
+unicode_literals	migrations/0034_auto_20141028_1203.py	/^from __future__ import unicode_literals$/;"	i
 upload_to	models.py	/^        upload_to='.')$/;"	v	class:AgentProCard
 url	urls.py	/^from django.conf.urls import patterns, url$/;"	i
 urlpatterns	urls.py	/^urlpatterns = patterns('',$/;"	v
 user	models.py	/^    user = models.OneToOneField(Common.AUTH_USER_MODEL, related_name='agent')$/;"	v	class:Agent
+user_logged_in	views.py	/^def user_logged_in(request, user, **kwargs):$/;"	f
+user_logged_in	views.py	/^from allauth.account.signals import user_logged_in$/;"	i
 utils	migrations/0016_agent_last_modified.py	/^import django.utils.datetime_safe$/;"	i
 view	urls.py	/^        view=views.AgentAddressView.as_view(),$/;"	v
 view	urls.py	/^        view=views.AgentCertificationsCreateView.as_view(),$/;"	v
 view	urls.py	/^        view=views.AgentIdCardView.as_view(),$/;"	v
 view	urls.py	/^        view=views.AgentProCardView.as_view(),$/;"	v
 view	urls.py	/^        view=views.AgentView.as_view(),$/;"	v
-view	urls.py	/^        view=views.PoleEmploiUpdateView.as_view(),$/;"	v
 views	urls.py	/^import views$/;"	i
 vital_card_validity_end_date	models.py	/^    vital_card_validity_end_date = models.DateTimeField(blank=True, null=True)$/;"	v	class:Agent
 vital_card_validity_start_date	models.py	/^    vital_card_validity_start_date = models.DateTimeField(blank=True, null=True)$/;"	v	class:Agent

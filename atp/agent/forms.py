@@ -5,7 +5,6 @@ from .models import AgentCertification
 from .models import AgentIdCard
 from .models import AgentAddress
 from .models import AgentProCard
-from users.models import User
 from datetimewidget.widgets import DateWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
@@ -81,6 +80,7 @@ class AgentForm(forms.ModelForm):
         self.fields['vital_card_validity_start_date'].required = True
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal'
+        self.helper.form = 'AGENT'
         self.helper.label_class = 'col-lg-3'
         self.helper.field_class = 'col-lg-7'
         self.helper.form_method = 'post'

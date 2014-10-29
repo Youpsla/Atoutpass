@@ -29,7 +29,7 @@ urlpatterns = patterns('',
     ),
     # URL pattern for the AgentIdCard
     url(
-        regex=r'^~agent_procard/$',
+        regex=r'^~agent_pro_card/$',
         view=views.AgentProCardView.as_view(),
         name='~agent_pro_card'
     ),
