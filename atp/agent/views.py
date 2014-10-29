@@ -215,15 +215,6 @@ class AgentIdCardView(AgentFormValidMixin):
         obj, created = AgentIdCard.objects.get_or_create(agent=self.request.user.agent)
         return obj
 
-    def form_valid(self, form):
-        form.save()
-        obj = Agent.objects.get(user=self.request.user)
-        agent_form_state_update(self.request, obj, 'PAPIERS_IDENTITE')
-        form_state = Agent.objects.get(user=self.request.user).form_state
-        messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
-        redirect_url = agent_form_redirect(form_state)
-        return HttpResponseRedirect(reverse(redirect_url))
-
 
 class AgentAddressView(AgentFormValidMixin):
 
@@ -235,15 +226,6 @@ class AgentAddressView(AgentFormValidMixin):
         obj, created = AgentAddress.objects.get_or_create(agent=self.request.user.agent)
         return obj
 
-    def form_valid(self, form):
-        form.save()
-        obj = Agent.objects.get(user=self.request.user)
-        agent_form_state_update(self.request, obj, 'COORDONNEES')
-        form_state = Agent.objects.get(user=self.request.user).form_state
-        messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
-        redirect_url = agent_form_redirect(form_state)
-        return HttpResponseRedirect(reverse(redirect_url))
-
 
 class AgentProCardView(AgentFormValidMixin):
 
@@ -254,12 +236,3 @@ class AgentProCardView(AgentFormValidMixin):
     def get_object(self, queryset=None):
         obj, created = AgentProCard.objects.get_or_create(agent=self.request.user.agent)
         return obj
-
-    def form_valid(self, form):
-        form.save()
-        obj = Agent.objects.get(user=self.request.user)
-        agent_form_state_update(self.request, obj, 'CARTE_PRO')
-        form_state = Agent.objects.get(user=self.request.user).form_state
-        messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
-        redirect_url = agent_form_redirect(form_state)
-        return HttpResponseRedirect(reverse(redirect_url))
