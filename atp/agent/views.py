@@ -76,30 +76,56 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 def agent_form_redirect(form_state):
     form_state = form_state
     print 'form_state', form_state
-    for k in form_state.items():
-        print 'cle', k[0]
-        if k[1] == 0:
-            print 'TROUVE CLE VIDE POUR REDIRECTION'
-            if k[0] == 'NOM_PRENOM':
-                redirect_url = 'users:update'
-                break
-            elif k[0] == 'AGENT':
-                redirect_url = 'agent:~agent'
-                break
-            elif k[0] == 'COORDONNEES':
-                redirect_url = 'agent:~agent_address'
-                break
-            elif k[0] == 'PAPIERS_IDENTITE':
-                redirect_url = 'agent:~agent_id_card'
-                break
-            elif k[0] == 'CARTE_PRO':
-                redirect_url = 'agent:~agent_pro_card'
-                break
-            elif k[0] == 'CERTIFICATIONS':
-                redirect_url = 'agent:~agent_certification'
-                break
-        else:
-            redirect_url = 'agent:~agent'
+    print 'form_sate.items() type', type(form_state)
+    dict = form_state.items()
+
+    for k,v in form_state.items():
+        print k
+        print v
+
+    if form_state['NOM_PRENOM'] == 0:
+        redirect_url = 'users:update'
+    elif form_state['AGENT'] == 0:
+        redirect_url = 'agent:~agent'
+    elif form_state['COORDONNEES'] == 0:
+        redirect_url = 'agent:~agent_address'
+    elif form_state['PAPIERS_IDENTITE'] == 0:
+        redirect_url = 'agent:~agent_id_card'
+    elif form_state['CARTE_PRO'] == 0:
+        redirect_url = 'agent:~agent_pro_card'
+    elif form_state['CERTIFICATIONS'] == 0:
+        redirect_url = 'agent:~agent_certification'
+    else:
+        redirect_url = 'agent:~agent'
+
+
+    #for k,v in form_state.items():
+        #print 'type ; ', type(k)
+        #print 'k', k
+        #print 'k1', k[1]
+        #print 'k0', k[0]
+        #if k[1] == 0:
+            #print 'TROUVE CLE VIDE POUR REDIRECTION'
+            #if k[0] == 'NOM_PRENOM':
+                #redirect_url = 'users:update'
+                #break
+            #elif k[0] == 'AGENT':
+                #redirect_url = 'agent:~agent'
+                #break
+            #elif k[0] == 'COORDONNEES':
+                #redirect_url = 'agent:~agent_address'
+                #break
+            #elif k[0] == 'PAPIERS_IDENTITE':
+                #redirect_url = 'agent:~agent_id_card'
+                #break
+            #elif k[0] == 'CARTE_PRO':
+                #redirect_url = 'agent:~agent_pro_card'
+                #break
+            #elif k[0] == 'CERTIFICATIONS':
+                #redirect_url = 'agent:~agent_certification'
+                #break
+        #else:
+            #redirect_url = 'agent:~agent'
 
     print 'AGENT_FORN_REDIRECT_URL', redirect_url
     return redirect_url
