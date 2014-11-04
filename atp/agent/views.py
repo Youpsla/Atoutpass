@@ -39,10 +39,6 @@ from django.contrib import messages
 from allauth.account.signals import user_logged_in
 from django.dispatch import receiver
 
-
-from messages_extends import constants
-
-
 @receiver(user_logged_in, dispatch_uid="some.unique.string.id.for.allauth.user_signed_up")
 def user_logged_in(request, user, **kwargs):
     print 'POST SIGNED UP SIGNAL RECEIVED'
@@ -77,11 +73,6 @@ def agent_form_redirect(form_state):
     form_state = form_state
     print 'form_state', form_state
     print 'form_sate.items() type', type(form_state)
-    dict = form_state.items()
-
-    for k,v in form_state.items():
-        print k
-        print v
 
     if form_state['NOM_PRENOM'] == 0:
         redirect_url = 'users:update'
@@ -98,46 +89,12 @@ def agent_form_redirect(form_state):
     else:
         redirect_url = 'agent:~agent'
 
-
-    #for k,v in form_state.items():
-        #print 'type ; ', type(k)
-        #print 'k', k
-        #print 'k1', k[1]
-        #print 'k0', k[0]
-        #if k[1] == 0:
-            #print 'TROUVE CLE VIDE POUR REDIRECTION'
-            #if k[0] == 'NOM_PRENOM':
-                #redirect_url = 'users:update'
-                #break
-            #elif k[0] == 'AGENT':
-                #redirect_url = 'agent:~agent'
-                #break
-            #elif k[0] == 'COORDONNEES':
-                #redirect_url = 'agent:~agent_address'
-                #break
-            #elif k[0] == 'PAPIERS_IDENTITE':
-                #redirect_url = 'agent:~agent_id_card'
-                #break
-            #elif k[0] == 'CARTE_PRO':
-                #redirect_url = 'agent:~agent_pro_card'
-                #break
-            #elif k[0] == 'CERTIFICATIONS':
-                #redirect_url = 'agent:~agent_certification'
-                #break
-        #else:
-            #redirect_url = 'agent:~agent'
-
-    print 'AGENT_FORN_REDIRECT_URL', redirect_url
     return redirect_url
 
 
 def agent_form_state_update(request, obj, state):
         AGENT_FORM_STATE = obj.form_state
         AGENT_FORM_STATE[state] = 1
-        if 0 in AGENT_FORM_STATE.values():
-            print 'ca passe dedans'
-        else:
-            pass
         Agent.objects.filter(user=request.user).update(form_state=AGENT_FORM_STATE)
 
 
@@ -159,6 +116,8 @@ class AgentFormValidMixin(LoginRequiredMixin, UpdateView):
         var = path.split('/')[2]
         print 'fffffff', var
 
+        if var == '~update':
+            FORM_STATE = 'NOM_PRENOM'
         if var == '~agent':
             FORM_STATE = 'AGENT'
         elif var == '~agent_address':
@@ -173,7 +132,7 @@ class AgentFormValidMixin(LoginRequiredMixin, UpdateView):
         # Save Form
         form.save()
 
-        # Update AGENT_FORM_STATE in database
+        # Update AGENT_FORM_STATE in database. Mandatory because Djqngo-jsonfield doesnt implement Postgresql direct key lookup
         obj = Agent.objects.get(user=self.request.user)
         agent_form_state_update(self.request, obj, FORM_STATE)
 
@@ -185,8 +144,10 @@ class AgentFormValidMixin(LoginRequiredMixin, UpdateView):
 
         # Check if agent form is complete
         if 0 in form_state.values():
+            print 'Le formulaire est INCOMPLET'
             messages.add_message(self.request, messages.ERROR, u'Votre Profil est incomplet. Veuillez renseigner les formulaires des onglets encore en rouge.')
         else:
+            print 'Le formulaire est COMPLET'
             messages.add_message(self.request, messages.SUCCESS, u'Merci. Votre profil va maintenant etre communiqué a un conseiller. Vous serez contacté dans les plus brefs délais')
 
         # Update messages
@@ -225,18 +186,23 @@ class AgentCertificationsCreateView(LoginRequiredMixin, ModelFormSetView):
         # Retrieve form_state from DB
         form_state = Agent.objects.get(user=self.request.user).form_state
 
-        # Check if agent form is complete
-        if 0 in form_state.values():
-            messages.add_message(self.request, messages.ERROR, u'Votre Profil est incomplet. Veuillez renseigner les formulaires des onglets encore en rouge.')
-        else:
-            messages.add_message(self.request, messages.SUCCESS, u'Merci. Votre profil va maintenant etre communiqué a un conseiller. Vous serez contacté dans les plus brefs délais')
+        # Retrieve form_state from DB
+        form_state = Agent.objects.get(user=self.request.user).form_state
+
+        # Set redirect_url by passing form_state to agent_form_redirect
+        redirect_url = agent_form_redirect(form_state)
 
         # Update messages
         messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
-        return HttpResponseRedirect(self.get_success_url())
+        # Check if agent form is complete
+        if 0 in form_state.values():
+            print 'Le formulaire est INCOMPLET'
+            messages.add_message(self.request, messages.ERROR, u'Votre Profil est incomplet. Veuillez renseigner les formulaires des onglets encore en rouge.')
+        else:
+            print 'Le formulaire est COMPLET'
+            messages.add_message(self.request, messages.SUCCESS, u'Merci. Votre profil va maintenant etre communiqué a un conseiller. Vous serez contacté dans les plus brefs délais')
 
-    def get_success_url(self):
-        return reverse("agent:~agent_certification",)
+        return HttpResponseRedirect(reverse(redirect_url))
 
 
 class AgentView(AgentFormValidMixin):
@@ -281,3 +247,102 @@ class AgentProCardView(AgentFormValidMixin):
     def get_object(self, queryset=None):
         obj, created = AgentProCard.objects.get_or_create(agent=self.request.user.agent)
         return obj
+
+
+
+import os
+from django.conf import settings
+from django.http import HttpResponse
+from django.template import Context
+from django.template.loader import get_template
+
+# Convert HTML URIs to absolute system paths so xhtml2pdf can access those resources
+def link_callback(uri, rel):
+    # use short variable names
+    sUrl = settings.STATIC_URL      # Typically /static/
+    sRoot = settings.STATIC_ROOT    # Typically /home/userX/project_static/
+    mUrl = settings.MEDIA_URL       # Typically /static/media/
+    mRoot = settings.MEDIA_ROOT     # Typically /home/userX/project_static/media/
+
+    # convert URIs to absolute system paths
+    if uri.startswith(mUrl):
+        path = os.path.join(mRoot, uri.replace(mUrl, ""))
+    elif uri.startswith(sUrl):
+        path = os.path.join(sRoot, uri.replace(sUrl, ""))
+
+    # make sure that file exists
+    if not os.path.isfile(path):
+            raise Exception(
+                    'media URI must start with %s or %s' % \
+                    (sUrl, mUrl))
+    return path
+
+#import StringIO
+#from cgi import escape
+#from xhtml2pdf import pisa
+#from django.http import HttpResponse
+#from django.template.response import TemplateResponse
+#from django.views.generic import TemplateView
+
+#class PDFTemplateResponse(TemplateResponse):
+
+    #def generate_pdf(self, retval):
+
+        #html = self.content
+
+        #result = StringIO.StringIO()
+        #rendering = pisa.pisaDocument(StringIO.StringIO(html.encode("utf-8")), result)
+
+        #if rendering.err:
+            #return HttpResponse('We had some errors<pre>%s</pre>' % escape(html))
+        #else:
+            #self.content = result.getvalue()
+
+    #def __init__(self, *args, **kwargs):
+        #super(PDFTemplateResponse, self).__init__(*args, mimetype='application/pdf', **kwargs)
+        #self.add_post_render_callback(self.generate_pdf)
+
+
+#class PDFTemplateView(TemplateView):
+    #response_class = PDFTemplateResponse
+
+#class HelloPDFView(PDFTemplateView):
+    #template_name = "agent/agent_pdf.html"
+
+from easy_pdf.views import PDFTemplateView
+
+class HelloPDFView(PDFTemplateView):
+    template_name = "agent/agent_pdf.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(HelloPDFView, self).get_context_data(
+            pagesize="A4",
+            title="Hi there!",
+            **kwargs
+        )
+        print self.request.user
+        agent = Agent.objects.get(user = self.request.user)
+        agent_id_card = AgentIdCard.objects.get(agent = agent)
+        context['id_card'] = agent_id_card
+        return context
+
+    #def generate_pdf(request, type):
+        ## Prepare context
+        #data = {}
+        #data['farmer'] = 'Old MacDonald'
+        #data['animals'] = [('Cow', 'Moo'), ('Goat', 'Baa'), ('Pig', 'Oink')]
+
+        ## Render html content through html template with context
+        #template = get_template('lyrics/oldmacdonald.html')
+        #html  = template.render(Context(data))
+
+        ## Write PDF to file
+        #file = open(os.join(settings.MEDIA_ROOT, 'test.pdf'), "w+b")
+        #pisaStatus = pisa.CreatePDF(html, dest=file,
+                #link_callback = link_callback)
+
+        ## Return PDF document through a Django HTTP response
+        #file.seek(0)
+        #pdf = file.read()
+        #file.close()            # Don't forget to close the file handle
+        #return HttpResponse(pdf, mimetype='application/pdf')

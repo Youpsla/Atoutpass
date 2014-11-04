@@ -33,18 +33,22 @@ class Common(Configuration):
         # 'django.contrib.humanize',
 
         # Admin
+        'suit',
         'django.contrib.admin',
     )
     THIRD_PARTY_APPS = (
+        'easy_pdf',
         'crispy_forms',  # Form layouts
         'avatar',  # for user avatars
         'allauth',  # registration
         'allauth.account',  # registration
         'allauth.socialaccount',  # registration
-        # 'ajaxuploader', # ajax uploader for images
         'ajax_upload',
         'messages_extends',
         'datetimewidget',
+        'django_fsm',
+        'fsm_admin',
+        'django_fsm_log'
     )
 
     # Apps specific for this project go here.
@@ -201,8 +205,8 @@ class Common(Configuration):
 
     # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
     STATICFILES_FINDERS = (
-        'django.contrib.staticfiles.finders.FileSystemFinder',
         'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+        'django.contrib.staticfiles.finders.FileSystemFinder',
     )
     # END STATIC FILE CONFIGURATION
 
@@ -250,14 +254,14 @@ class Common(Configuration):
     # Needed for Agent post login context update
     ACCOUNT_ADAPTER = 'users.accountadapter.AccountAdapter'
 
-    # Init of Agent state form.
-    AGENT_FORM_STATE = {
-        'AGENT': 0,
-        'COORDONNEES': 0,
-        'PAPIERS_IDENTITE': 0,
-        'CARTE_PRO': 0,
-        'CERTIFICATIONS': 0
-    }
+    SUIT_CONFIG = {
+            'ADMIN_NAME': 'Atout Pass',
+            'SHOW_REQUIRED_ASTERISK': True,
+            'CONFIRM_UNSAVED_CHANGES': True,
+            'MENU_OPEN_FIRST_CHILD': True
+
+
+            }
 
     # LOGGING CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
@@ -294,49 +298,4 @@ class Common(Configuration):
         }
     }
 
-
-#import sys
-
-#LOGGING = {
-    #'version': 1,
-    #'disable_existing_loggers': False,
-    #'formatters': {
-        #'verbose': {
-            #'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-        #},
-        #'simple': {
-            #'format': '%(levelname)s %(message)s'
-        #},
-    #},
-    #'handlers': {
-        #'console': {
-            #'level': 'DEBUG',
-            #'class': 'logging.StreamHandler',
-            #'formatter': 'verbose',
-            #},
-        #'file':{
-            #'level':'DEBUG',
-            #'formatter': 'verbose',
-            #'class':'logging.handlers.RotatingFileHandler',
-            ## 'filename': os.path.join(BASE_DIR, 'agent.log'),
-            #'filename': '/tmp/agent.log',
-            #'maxBytes': 1024*1024*15, # 15MB
-            #'backupCount': 10,
-        #},
-    #},
-    #'loggers': {
-        #'agent': {
-            #'handlers': ['console'],
-            #'level': 'DEBUG',
-            #'propagate': True,
-            #},
-            #},
-        #}
-
-#DEBUG = True
-
-#if DEBUG:
-    ## make all loggers use the console.
-    #for logger in LOGGING['loggers']:
-        #LOGGING['loggers'][logger]['handlers'] = ['console']
 

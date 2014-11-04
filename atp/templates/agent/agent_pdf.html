@@ -1,0 +1,31 @@
+{% extends "easy_pdf/base.html" %}
+
+
+{% block extra_style %}
+    <style type="text/css">
+        body {
+            font-family: "Lato", "Helvetica", "sans-serif";
+            color: #333333;
+        }
+    </style>
+
+
+
+{% endblock %}
+
+{%block page_header%}
+<p>Fiche candidat</p>
+{%endblock%}
+
+{% block content %}
+    <div id="content">
+        <h1>Hi there!</h1>
+        <p> {{id_card.id_card_validity_start_date}}</p>
+        <p> {{id_card.id_card_front.url}}</p>
+        <p> {{dede}}</p>
+        <p> {{current_agent__id_card_type}}</p>
+{{ id_card.id_card_front }}        
+<img src="{{id_card.id_card_front.url}}" height="300" width="300">        
+<img src="{{id_card.id_card_back.url}}" height="300" width="300">        
+    </div>
+{% endblock %}
