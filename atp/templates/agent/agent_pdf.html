@@ -2,30 +2,414 @@
 
 
 {% block extra_style %}
-    <style type="text/css">
-        body {
-            font-family: "Lato", "Helvetica", "sans-serif";
-            color: #333333;
-        }
-    </style>
-
-
-
 {% endblock %}
 
 {%block page_header%}
-<p>Fiche candidat</p>
+<div id="page-header">
+    <div>
+        
+<table width="100%" cellpadding="0" cellspacing="0">
+            <tbody>
+                <tr>
+                    <td width="100%" class='center'>
+                        <p><img src="/static/images/logo.gif" width='118px' height='143px'></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="100%" class='center'>
+                        <h1 class='vbig'>Dossier Candidat</h1>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 {%endblock%}
 
 {% block content %}
     <div id="content">
-        <h1>Hi there!</h1>
-        <p> {{id_card.id_card_validity_start_date}}</p>
-        <p> {{id_card.id_card_front.url}}</p>
-        <p> {{dede}}</p>
-        <p> {{current_agent__id_card_type}}</p>
-{{ id_card.id_card_front }}        
-<img src="{{id_card.id_card_front.url}}" height="300" width="300">        
-<img src="{{id_card.id_card_back.url}}" height="300" width="300">        
+    <table width="100%" cellpadding="0" cellspacing="0" align='center' border='1'>
+            <tbody>
+                <tr>
+                    <td colspan=2 align=center>
+                       Etat Civil 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        NOM:
+                    </td>
+                    <td >
+                        {{agent.firstname}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        PRENOM :
+                    </td>
+                    <td>
+                        <p> {{agent.lastname}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Date de naissance : 
+                    </td>
+                    <td>
+                        <p> {{agent.birthdate}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                      &nbsp; 
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 align=center>
+                       Coordonnées 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Numéro de téléphone fixe : 
+                    </td>
+                    <td>
+                        <p> {{address.fixephonenumber}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Numéro de téléphone mobile : 
+                    </td>
+                    <td>
+                        <p> {{address.mobilephonenumber}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Adresse Email : 
+                    </td>
+                    <td>
+                        <p> {{user.email}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Ville : 
+                    </td>
+                    <td>
+                        {{address.city}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Code Postal : 
+                    </td>
+                    <td>
+                        {{address.zipcode}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                      &nbsp; 
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 align=center>
+                       Qualifications 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Nom(s) : 
+                    </td>
+                    <td>
+                        {% for certification in agent.certifications.all %}
+                        {{certification.long_name}}<br>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                      &nbsp; 
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 align=center>
+                       Remarques 
+                    </td>
+                </tr>
+                <tr height="300px">
+                    <td colspan=2 >
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+<!-- switch page templates -->
+    <pdf:nexttemplate name="regular_template" />
+
+<div id="regular-header">
+        
+    <table width="100%" cellpadding="0" cellspacing="0">
+                <tbody>
+                    <tr>
+                        <td width="50%">
+                           Etat Civil 
+                        </td>
+                        <td width="50%">
+                            {{agent.firstname}} {{agent.lastname}} 
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
     </div>
+
+<div>
+    <table width="100%" cellpadding="0" cellspacing="0" align='center' border='1'>
+            <tbody>
+                <tr>
+                    <td colspan=2 align=center>
+                       Etat Civil 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        NOM:
+                    </td>
+                    <td >
+                        {{agent.firstname}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        PRENOM :
+                    </td>
+                    <td>
+                        <p> {{agent.lastname}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Nationalité : 
+                    </td>
+                    <td>
+                        Creer champs en base
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Date de naissance : 
+                    </td>
+                    <td>
+                        <p> {{agent.birthdate}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Lieu de naissance : 
+                    </td>
+                    <td>
+                        <p> {{agent.birthplace}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 class='center'>
+                      Moyens de contact 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Numéro de téléphone fixe : 
+                    </td>
+                    <td>
+                        <p> {{address.fixephonenumber}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Numéro de téléphone mobile : 
+                    </td>
+                    <td>
+                        <p> {{address.mobilephonenumber}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Adresse Email : 
+                    </td>
+                    <td>
+                        <p> {{user.email}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                      &nbsp; 
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 class='center'>
+                      Papiers identité 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Type de papier
+                    </td>
+                    <td>
+                        {{ id_card.id_card_type }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                       Date de début de validité 
+                    </td>
+                    <td>
+                        {{ id_card.id_card_validity_start_date }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                       Date de fin de validité 
+                    </td>
+                    <td>
+                        {{ id_card.id_card_validity_end_date }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 align=center>
+                       Visuels 
+                    </td>
+                </tr>
+                <tr height="300px">
+                    <td colspan=2 >
+<img src="{{id_card.id_card_front.url}}" height="150" width="300">
+<img src="{{id_card.id_card_back.url}}" height="150" width="300">
+                        <br> 
+                        <br> 
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+<pdf:nextpage>
+
+    <table width="100%" cellpadding="0" cellspacing="0" align='center' border='1'>
+            <tbody>
+                <tr>
+                    <td colspan=2 align=center>
+                       Coordonnées 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Addresse 1 : 
+                    </td>
+                    <td>
+                        <p> {{address.address1}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Addresse 2 : 
+                    </td>
+                    <td>
+                        <p> {{address.address2}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Code Postal : 
+                    </td>
+                    <td>
+                        <p> {{address.address2}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Ville : 
+                    </td>
+                    <td>
+                        <p> {{address.city}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 class='center'>
+                      Moyens de contact 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Numéro de téléphone fixe : 
+                    </td>
+                    <td>
+                        <p> {{address.fixephonenumber}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Numéro de téléphone mobile : 
+                    </td>
+                    <td>
+                        <p> {{address.mobilephonenumber}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Adresse Email : 
+                    </td>
+                    <td>
+                        <p> {{user.email}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                      &nbsp; 
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 align=center>
+                       Remarques 
+                    </td>
+                </tr>
+                <tr height="300px">
+                    <td colspan=2 >
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</div>
+    </div>
+
 {% endblock %}
