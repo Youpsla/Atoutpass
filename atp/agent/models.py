@@ -4,7 +4,7 @@ from config.common import Common
 from django.utils.translation import ugettext_lazy as _
 import datetime
 from jsonfield import JSONField
-import collections
+from collections import OrderedDict
 
 
 class Certification(models.Model):
@@ -15,17 +15,6 @@ class Certification(models.Model):
         return self.long_name
 
 
-# Init of Agent state form.
-#AGENT_FORM_STATE = {
-    #'NOM_PRENOM': 0,
-    #'AGENT': 0,
-    #'COORDONNEES': 0,
-    #'PAPIERS_IDENTITE': 0,
-    #'CARTE_PRO': 0,
-    #'CERTIFICATIONS': 0
-#}
-
-from collections import OrderedDict
 AGENT_FORM_STATE = OrderedDict([
     ('NOM_PRENOM', 0),
     ('AGENT', 0),
@@ -44,6 +33,8 @@ AGENT_GENRE_CHOICES = (
 
 class Agent(models.Model):
     user = models.OneToOneField(Common.AUTH_USER_MODEL, related_name='agent')
+    firstname = models.CharField(max_length=256, blank=True, null=True)
+    lastname = models.CharField(max_length=256, blank=True, null=True)
     genre = models.CharField(max_length=1, choices=AGENT_GENRE_CHOICES,
                              blank=True, null=True)
     birthdate = models.DateField('Date de naisance', blank=True, null=True)
@@ -64,15 +55,23 @@ class Agent(models.Model):
     picture = models.ImageField("Document officiel",
                                 blank=True, null=True)
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
-    form_state = JSONField(load_kwargs={'object_pairs_hook': collections.OrderedDict},
+    form_state = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
                            default=AGENT_FORM_STATE)
 
     def __unicode__(self):
-        return self.user.username
+        return '%s %s' % ((self.firstname), str(self.lastname))
 
     def save(self, *args, **kwargs):
         self.last_modified = datetime.datetime.today()
         return super(Agent, self).save(*args, **kwargs)
+
+
+class ProCardQualification(models.Model):
+    short_name = models.CharField('Nom court', max_length=24, blank=False)
+    long_name = models.CharField('Nom long', max_length=240, blank=False)
+
+    def __unicode__(self):
+        return self.long_name
 
 
 PROCARD_CHOICES = ((True, 'Titulaire'), (False, 'Pas titulaire'))
@@ -84,18 +83,20 @@ class AgentProCard(models.Model):
         _(u'Etes-vous titulaire de la carte professionnelle ?'),
         choices=PROCARD_CHOICES,
         blank=True, default=False)
-    pro_card_validity_start_date = models.DateTimeField(
+    pro_card_validity_start_date = models.DateField(
         _(u'Date de début de validité'), blank=True, null=True)
-    pro_card_validity_end_date = models.DateTimeField(
+    pro_card_validity_end_date = models.DateField(
         _(u'Date de fin de validité'), blank=True, null=True)
     pro_card_front = models.ImageField(
         _(u'Recto de votre carte professionnelle'), blank=True, null=True,
         upload_to='.')
-
+    qualifications = models.ManyToManyField(ProCardQualification, blank=True,
+                                            null=True,
+                                            through='AgentProCardQualification',)
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
 
     def __unicode__(self):
-        return unicode(self.id_card_type)
+        return unicode(self.pro_card)
 
     def save(self, *args, **kwargs):
         self.last_modified = datetime.datetime.today()
@@ -114,9 +115,9 @@ class AgentIdCard(models.Model):
     id_card_type = models.CharField(
         _('Type de papier'), max_length=120, choices=ID_CARD_TYPES, default=1,
         blank=True, null=True)
-    id_card_validity_start_date = models.DateTimeField(
+    id_card_validity_start_date = models.DateField(
         _(u'Date de début de validité'), blank=True, null=True)
-    id_card_validity_end_date = models.DateTimeField(
+    id_card_validity_end_date = models.DateField(
         _(u'Date de fin de validité'), blank=True, null=True)
     id_card_front = models.ImageField(
         _(u'Recto de votre pièce'), blank=True, null=True, upload_to='.')
@@ -163,7 +164,18 @@ class AgentCertification(models.Model):
     picture = models.ImageField("Document officiel", blank=True, null=True)
 
     def __unicode__(self):
-        return self.certification
+        return unicode(self.certification)
+
+
+class AgentProCardQualification(models.Model):
+    agentprocard = models.ForeignKey(AgentProCard, related_name="procard_qualification")
+    procardqualification = models.ForeignKey(ProCardQualification, blank=True, null=True,
+                                             default=None)
+    start_date = models.DateField(_(u'Date de début'), blank=True, null=True)
+    end_date = models.DateField(_(u'Date de fin'), blank=True, null=True)
+
+    def __unicode__(self):
+        return unicode(self.procardqualification)
 
 
 class Countries(models.Model):

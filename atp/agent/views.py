@@ -310,7 +310,7 @@ def link_callback(uri, rel):
     #template_name = "agent/agent_pdf.html"
 
 from easy_pdf.views import PDFTemplateView
-
+from eventlog.models import log
 class HelloPDFView(PDFTemplateView):
     template_name = "agent/agent_pdf.html"
 
@@ -320,10 +320,20 @@ class HelloPDFView(PDFTemplateView):
             title="Hi there!",
             **kwargs
         )
-        print self.request.user
-        agent = Agent.objects.get(user = self.request.user)
-        agent_id_card = AgentIdCard.objects.get(agent = agent)
+        agent = Agent.objects.get(user=self.request.user)
+        agent_id_card = AgentIdCard.objects.get(agent=agent)
+        address = AgentAddress.objects.get(agent=agent)
         context['id_card'] = agent_id_card
+        context['agent'] = agent
+        context['address'] = address
+        print agent.agentprocard_set.all()
+        log(
+                user=self.request.user,
+                action="EXPORT DU DOSSIER CANDIDAT",
+                extra={
+                    "Agent": agent.firstname,
+                }
+            )
         return context
 
     #def generate_pdf(request, type):

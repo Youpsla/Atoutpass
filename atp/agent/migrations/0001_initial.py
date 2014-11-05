@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import jsonfield.fields
 from django.conf import settings
 
 
@@ -16,26 +17,124 @@ class Migration(migrations.Migration):
             name='Agent',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('birthdate', models.DateField()),
-                ('address1', models.CharField(max_length=120, verbose_name=b'Adresse 1')),
-                ('address2', models.CharField(max_length=120, verbose_name=b'Adresse 2', blank=True)),
-                ('zipcode', models.CharField(max_length=5, verbose_name=b'Code Postal')),
-                ('city', models.CharField(max_length=120, verbose_name=b'Ville')),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+                ('genre', models.CharField(blank=True, max_length=1, null=True, choices=[(b'M', b'Homme'), (b'F', b'Femme')])),
+                ('birthdate', models.DateField(null=True, verbose_name=b'Date de naisance', blank=True)),
+                ('birthplace', models.CharField(max_length=120, null=True, verbose_name='Lieu de naissance', blank=True)),
+                ('nationality', models.CharField(max_length=120, null=True, verbose_name='Nationalite', blank=True)),
+                ('vital_card_validity_start_date', models.DateTimeField(null=True, blank=True)),
+                ('vital_card_validity_end_date', models.DateTimeField(null=True, blank=True)),
+                ('pole_emploi_start_date', models.DateTimeField(null=True, blank=True)),
+                ('pole_emploi_end_date', models.DateTimeField(null=True, blank=True)),
+                ('driver_license_type', models.CharField(max_length=120, null=True, blank=True)),
+                ('is_completed', models.BooleanField(default=False, verbose_name='Profil complet')),
+                ('picture', models.ImageField(upload_to=b'', null=True, verbose_name=b'Document officiel', blank=True)),
+                ('last_modified', models.DateTimeField(auto_now_add=True)),
+                ('form_state', jsonfield.fields.JSONField(default={b'NOM_PRENOM': 0, b'AGENT': 0, b'COORDONNEES': 0, b'PAPIERS_IDENTITE': 0, b'CARTE_PRO': 0, b'CERTIFICATIONS': 0})),
             ],
             options={
             },
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='PoleEmploi',
+            name='AgentAddress',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('pole_emploi', models.BooleanField(verbose_name=b'Pole_ Emploi')),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+                ('address1', models.CharField(max_length=120, verbose_name='Adresse 1', blank=True)),
+                ('address2', models.CharField(max_length=120, verbose_name='Adresse 2', blank=True)),
+                ('zipcode', models.CharField(max_length=5, verbose_name='Code Postal', blank=True)),
+                ('city', models.CharField(max_length=120, verbose_name='Ville', blank=True)),
+                ('mobilephonenumber', models.IntegerField(max_length=10, null=True, verbose_name='Mobile', blank=True)),
+                ('fixephonenumber', models.IntegerField(max_length=10, null=True, verbose_name='Fixe', blank=True)),
+                ('last_modified', models.DateTimeField(auto_now_add=True)),
+                ('agent', models.ForeignKey(to='agent.Agent')),
             ],
             options={
             },
             bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='AgentCertification',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('start_date', models.DateField(null=True, verbose_name='Date de d\xe9but', blank=True)),
+                ('end_date', models.DateField(null=True, verbose_name='Date de fin', blank=True)),
+                ('picture', models.ImageField(upload_to=b'', null=True, verbose_name=b'Document officiel', blank=True)),
+                ('agent', models.ForeignKey(related_name=b'agent_certifications', to='agent.Agent')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='AgentIdCard',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id_card_type', models.CharField(default=1, choices=[(b'CNI', b'Carte identite'), (b'PP', b'Passeport'), (b'CJ', b'Carte de sejour')], max_length=120, blank=True, null=True, verbose_name='Type de papier')),
+                ('id_card_validity_start_date', models.DateField(null=True, verbose_name='Date de d\xe9but de validit\xe9', blank=True)),
+                ('id_card_validity_end_date', models.DateField(null=True, verbose_name='Date de fin de validit\xe9', blank=True)),
+                ('id_card_front', models.ImageField(upload_to=b'.', null=True, verbose_name='Recto de votre pi\xe8ce', blank=True)),
+                ('id_card_back', models.ImageField(upload_to=b'.', null=True, verbose_name='Verso de votre pi\xe8ce', blank=True)),
+                ('last_modified', models.DateTimeField(auto_now_add=True)),
+                ('agent', models.ForeignKey(to='agent.Agent')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='AgentProCard',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('pro_card', models.BooleanField(default=False, verbose_name='Etes-vous titulaire de la carte professionnelle ?', choices=[(True, b'Titulaire'), (False, b'Pas titulaire')])),
+                ('pro_card_validity_start_date', models.DateField(null=True, verbose_name='Date de d\xe9but de validit\xe9', blank=True)),
+                ('pro_card_validity_end_date', models.DateField(null=True, verbose_name='Date de fin de validit\xe9', blank=True)),
+                ('pro_card_front', models.ImageField(upload_to=b'.', null=True, verbose_name='Recto de votre carte professionnelle', blank=True)),
+                ('last_modified', models.DateTimeField(auto_now_add=True)),
+                ('agent', models.ForeignKey(to='agent.Agent')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Certification',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('short_name', models.CharField(max_length=24, verbose_name=b'Nom court')),
+                ('long_name', models.CharField(max_length=240, verbose_name=b'Nom long')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Countries',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('alpha2', models.CharField(max_length=2, verbose_name=b'Code 2 lettre')),
+                ('alpha3', models.CharField(max_length=3, verbose_name=b'Code 3 lettres')),
+                ('name', models.CharField(max_length=128, verbose_name=b'Nom Pays')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.AddField(
+            model_name='agentcertification',
+            name='certification',
+            field=models.ForeignKey(default=None, blank=True, to='agent.Certification', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='agent',
+            name='certifications',
+            field=models.ManyToManyField(to='agent.Certification', null=True, through='agent.AgentCertification', blank=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='agent',
+            name='user',
+            field=models.OneToOneField(related_name=b'agent', to=settings.AUTH_USER_MODEL),
+            preserve_default=True,
         ),
     ]

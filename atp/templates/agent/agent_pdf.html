@@ -225,42 +225,17 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>
+                        Photo : 
+                        
+                    </td>
+                    <td>
+                        <img src="{{agent.picture.url}}" height="200" width="155">
+                    </td>
+                </tr>
+                <tr>
                     <td colspan=2>
                         &nbsp;
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan=2 class='center'>
-                      Moyens de contact 
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Numéro de téléphone fixe : 
-                    </td>
-                    <td>
-                        <p> {{address.fixephonenumber}}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Numéro de téléphone mobile : 
-                    </td>
-                    <td>
-                        <p> {{address.mobilephonenumber}}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Adresse Email : 
-                    </td>
-                    <td>
-                        <p> {{user.email}}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan=2>
-                      &nbsp; 
                     </td>
                 </tr>
                 <tr>
@@ -297,12 +272,12 @@
                        Visuels 
                     </td>
                 </tr>
-                <tr height="300px">
-                    <td colspan=2 >
-<img src="{{id_card.id_card_front.url}}" height="150" width="300">
-<img src="{{id_card.id_card_back.url}}" height="150" width="300">
-                        <br> 
-                        <br> 
+                <tr>
+                    <td class='center'>
+                        <img src="{{id_card.id_card_front.url}}" height="142" width="300">
+                    </td>
+                    <td class='center'> 
+                        <img src="{{id_card.id_card_back.url}}" height="142" width="300">
                     </td>
                 </tr>
             </tbody>
@@ -405,11 +380,98 @@
                         <br> 
                         <br> 
                         <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
                     </td>
                 </tr>
             </tbody>
         </table>
 </div>
     </div>
+
+<pdf:nextpage>
+
+    <table width="100%" cellpadding="0" cellspacing="0" align='center' border='1'>
+            <tbody>
+                <tr>
+                    <td colspan=2 align=center>
+                       Carte professionnelle 
+                    </td>
+                </tr>
+                        {% with agent.agentprocard_set.all|first as pro_card %}
+                <tr>
+                    <td>
+                        Date de début de validité : 
+                    </td>
+                    <td>
+                        {{pro_card.pro_card_validity_start_date}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Date de fin de validité : 
+                    </td>
+                    <td>
+                        {{pro_card.pro_card_validity_end_date}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Visuel : 
+                    </td>
+                    <td>
+                        <img src="{{pro_card.pro_card_front.url}}" height="300" width="150">
+                        
+                    </td>
+                </tr>
+                        {% endwith %}
+                <tr>
+                    <td>
+                        Code Postal : 
+                    </td>
+                    <td>
+                        <p> {{address.address2}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Ville : 
+                    </td>
+                    <td>
+                        <p> {{address.city}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                      &nbsp; 
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2 align=center>
+                       Remarques 
+                    </td>
+                </tr>
+                <tr height="300px">
+                    <td colspan=2 >
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                        <br> 
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
 {% endblock %}

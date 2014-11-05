@@ -2,6 +2,8 @@
 from django.conf.urls import patterns, url
 import views
 
+from .views import HelloPDFView
+
 urlpatterns = patterns('',
     # URL pattern for the AgentCreateView
     url(
@@ -32,5 +34,15 @@ urlpatterns = patterns('',
         regex=r'^~agent_pro_card/$',
         view=views.AgentProCardView.as_view(),
         name='~agent_pro_card'
+    ),
+    #url(
+        #regex=r'^~agent_pdf/$',
+        #view=HelloPDFView.as_view(),
+        #name='~agent_pdf'
+    #),
+    url(
+        regex=r'^~agent_pdf/$',
+        view=HelloPDFView.as_view(),
+        name='~agent_pdf'
     ),
 )

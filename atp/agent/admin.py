@@ -43,18 +43,6 @@ class CertificationsInline(admin.StackedInline):
     max_num = 3 
     extra =1 
 
-#from django.contrib.auth import get_user_model
-#class AgentUserInline(admin.StackedInline):
-    ## model = Common.AUTH_USER_MODEL
-    #model = User
-    ## model = get_user_model
-    #max_num = 1
-    #extra =0 
-    #suit_classes = 'suit-tab suit-tab-user'
-
-    #def has_delete_permission(self, request, obj=None):
-            #return False
-
 
 class AgentAddressInline(admin.StackedInline):
     model = AgentAddress
@@ -88,11 +76,17 @@ class AgentProCardInline(admin.StackedInline):
             return False
 
 
+class AgentAdminForm(forms.ModelForm):
+    class Meta:
+        model = Agent
+        widgets = {
+                'picture': AjaxClearableFileInput(),
+                }
+
+        
 class AgentAdmin(admin.ModelAdmin):
-    #inlines = (AgentUserInline, CertificationsInline, AgentIdCardInline, AgentAddressInline, AgentProCardInline)
     inlines = (CertificationsInline, AgentIdCardInline, AgentAddressInline, AgentProCardInline)
-
-
+    form = AgentAdminForm
 
     fieldsets =[
             #('Compte', {
@@ -101,7 +95,7 @@ class AgentAdmin(admin.ModelAdmin):
                 #}),
             ('Etat Civil', {
                 'classes': ('suit-tab', 'suit-tab-etat_civil'),
-                'fields': ['genre', 'nationality', 'birthdate', 'birthplace']
+                'fields': ['firstname', 'lastname', 'genre', 'nationality', 'birthdate', 'birthplace', 'picture']
                 }),
             ('Papiers identite', {
                 'classes': ('suit-tab', 'suit-tab-id_card'),
@@ -117,6 +111,7 @@ class AgentAdmin(admin.ModelAdmin):
                 }),
             ]
     suit_form_tabs = (('etat_civil', 'Etat civil'), ('id_card', 'Papiers identite'), ('address', 'Coordonnees'), ('pro_card', 'Carte Pro'), ('certifications', 'Certifications'))
+
 
     class Media:
         css ={ 
