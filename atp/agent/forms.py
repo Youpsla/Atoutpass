@@ -6,6 +6,7 @@ from .models import AgentIdCard
 from .models import AgentAddress
 from .models import AgentProCard
 from .models import AgentQualification
+from .models import AgentVarious
 from datetimewidget.widgets import DateWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
@@ -13,6 +14,7 @@ from crispy_forms.layout import Fieldset
 from crispy_forms.layout import Submit
 from django.core.urlresolvers import reverse
 from ajax_upload.widgets import AjaxClearableFileInput
+from crispy_forms.bootstrap import PrependedText
 
 
 class AgentIdCardForm(forms.ModelForm):
@@ -149,7 +151,6 @@ class AgentProCardForm(forms.ModelForm):
         super(AgentProCardForm, self).__init__(*args, **kwargs)
         self.fields['pro_card'].required = True
         self.helper = FormHelper()
-        self.helper.form_tag = False
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-3'
         self.helper.field_class = 'col-lg-3'
@@ -206,3 +207,54 @@ class AgentCertificationsForm(forms.ModelForm):
             'end_date': DateWidget(usel10n=True, bootstrap_version=3),
             'picture': AjaxClearableFileInput
         }
+
+        
+class AgentVariousForm(forms.ModelForm):
+
+
+    class Meta:
+        model = AgentVarious
+        exclude = ('agent',)
+        widgets = {
+            'car_license_start_date': DateWidget(usel10n=True, bootstrap_version=3),
+            'car_license_end_date': DateWidget(usel10n=True, bootstrap_version=3),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(AgentVariousForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.fields['has_car'].required = True
+        self.fields['has_car'].label = 'Possédez-vous une voiture ?'
+        self.fields['has_motorbike'].required = True
+        self.fields['has_motorbike'].label = 'Possédez-vous une moto, un scooter ?'
+        self.fields['has_car_license'].required = True
+        self.fields['has_car_license'].label = 'Possédez-vous un permis de conduire voiture valide ?'
+        self.fields['car_license_type'].label = 'Indiquez le type de permis de conduire voiture ici'
+        self.fields['car_license_start_date'].label = 'Indiquez la date de délivrance de votre permis de conduire voiture'
+        self.fields['car_license_end_date'].label = 'Indiquez la date de fin de validité de votre permis de conduire voiture'
+        self.fields['has_motorbike_license'].required = True
+        self.fields['has_motorbike_license'].label = 'Possédez-vous un permis moto valide ?'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-3'
+        self.helper.field_class = 'col-lg-7'
+        self.helper.form_method = 'post'
+        self.helper.form_action = reverse('agent:~agent_various')
+        self.helper.layout = Layout(
+            Fieldset(
+                u'1) Possédez-vous une voiture, une moto, un scooter ? ',
+                'has_car',
+                'has_motorbike',
+            ),
+            Fieldset(
+                u'2) Permis voiture',
+                'has_car_license',
+                'car_license_type',
+                'car_license_start_date',
+                'car_license_end_date'
+            ),
+            Fieldset(
+                u'3) Permis moto',
+                'has_motorbike_license',
+            ),
+        )
+        self.helper.layout.append(Submit('save', 'Valider'))

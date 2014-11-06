@@ -30,7 +30,8 @@ AGENT_FORM_STATE = OrderedDict([
     ('PAPIERS_IDENTITE', 0),
     ('CARTE_PRO', 0),
     ('QUALIFICATIONS', 0),
-    ('CERTIFICATIONS', 0)
+    ('CERTIFICATIONS', 0),
+    ('DIVERS', 0)
     ])
 
 
@@ -177,6 +178,41 @@ class AgentAddress(models.Model):
     def save(self, *args, **kwargs):
         self.last_modified = datetime.datetime.today()
         return super(AgentAddress, self).save(*args, **kwargs)
+
+
+CAR_LICENSE_TYPE = (
+    ('B', 'Permis B'),
+    ('C', 'Permis C'),
+    ('D', 'Permis D'),
+    ('E', 'Permis E'),
+)
+
+CAR_CHOICES = ((True, 'Oui'), (False, 'Non'))
+
+class AgentVarious(models.Model):
+    agent = models.ForeignKey(Agent)
+    english = models.BooleanField(choices=CAR_CHOICES, blank=True, default=False)
+    german = models.BooleanField(choices=CAR_CHOICES, blank=True, default=False)
+    spanish = models.BooleanField(choices=CAR_CHOICES, blank=True, default=False)
+    has_car = models.BooleanField(choices=CAR_CHOICES, blank=True, default=False)
+    has_motorbike = models.BooleanField(choices=CAR_CHOICES, blank=True, default=False)
+    has_car_license = models.BooleanField(choices=CAR_CHOICES, blank=True, default=False)
+    has_motorbike_license = models.BooleanField(choices=CAR_CHOICES, blank=True, default=False)
+    car_license_type = models.CharField(max_length=1, choices=CAR_LICENSE_TYPE,
+                                        blank=True, null=True)
+    car_license_start_date = models.DateField(
+        blank=True, null=True)
+    car_license_end_date = models.DateField(
+        blank=True, null=True)
+
+    last_modified = models.DateTimeField(auto_now_add=True, blank=True)
+
+    def __unicode__(self):
+        return self.car_license_type
+
+    def save(self, *args, **kwargs):
+        self.last_modified = datetime.datetime.today()
+        return super(AgentVarious, self).save(*args, **kwargs)
 
 
 class Countries(models.Model):
