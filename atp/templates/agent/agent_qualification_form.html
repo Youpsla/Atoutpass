@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load tags %}
+
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-18">
+            {% include "agent/agent_form_tabs.html" %}
+            <div class="tab-content">
+            <form class="form-horizontal" method="post" action="{% url 'agent:~agent_pro_card_qualification' %}">
+                {% csrf_token %}
+                {% crispy formset helper %}
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

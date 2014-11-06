@@ -15,12 +15,21 @@ class Certification(models.Model):
         return self.long_name
 
 
+class Qualification(models.Model):
+    short_name = models.CharField('Nom court', max_length=24, blank=False)
+    long_name = models.CharField('Nom long', max_length=240, blank=False)
+
+    def __unicode__(self):
+        return self.long_name
+
+
 AGENT_FORM_STATE = OrderedDict([
     ('NOM_PRENOM', 0),
     ('AGENT', 0),
     ('COORDONNEES', 0),
     ('PAPIERS_IDENTITE', 0),
     ('CARTE_PRO', 0),
+    ('QUALIFICATIONS', 0),
     ('CERTIFICATIONS', 0)
     ])
 
@@ -51,6 +60,9 @@ class Agent(models.Model):
     certifications = models.ManyToManyField(Certification, blank=True,
                                             null=True,
                                             through='AgentCertification',)
+    qualifications = models.ManyToManyField(Qualification, blank=True,
+                                            null=True,
+                                            through='AgentQualification',)
     is_completed = models.BooleanField(_('Profil complet'), default=False,)
     picture = models.ImageField("Document officiel",
                                 blank=True, null=True)
@@ -66,12 +78,27 @@ class Agent(models.Model):
         return super(Agent, self).save(*args, **kwargs)
 
 
-class ProCardQualification(models.Model):
-    short_name = models.CharField('Nom court', max_length=24, blank=False)
-    long_name = models.CharField('Nom long', max_length=240, blank=False)
+class AgentCertification(models.Model):
+    agent = models.ForeignKey(Agent, related_name="agent_certifications")
+    certification = models.ForeignKey(Certification, blank=True, null=True,
+                                      default=None)
+    start_date = models.DateField(_(u'Date de début'), blank=True, null=True)
+    end_date = models.DateField(_(u'Date de fin'), blank=True, null=True)
+    picture = models.ImageField("Document officiel", blank=True, null=True)
 
     def __unicode__(self):
-        return self.long_name
+        return unicode(self.certification)
+
+
+class AgentQualification(models.Model):
+    agent = models.ForeignKey(Agent, related_name="agent_qualifications")
+    qualification = models.ForeignKey(Qualification, blank=True, null=True,
+                                      default=None)
+    start_date = models.DateField(_(u'Date de début'), blank=True, null=True)
+    end_date = models.DateField(_(u'Date de fin'), blank=True, null=True)
+
+    def __unicode__(self):
+        return unicode(self.qualification)
 
 
 PROCARD_CHOICES = ((True, 'Titulaire'), (False, 'Pas titulaire'))
@@ -90,9 +117,6 @@ class AgentProCard(models.Model):
     pro_card_front = models.ImageField(
         _(u'Recto de votre carte professionnelle'), blank=True, null=True,
         upload_to='.')
-    qualifications = models.ManyToManyField(ProCardQualification, blank=True,
-                                            null=True,
-                                            through='AgentProCardQualification',)
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
 
     def __unicode__(self):
@@ -153,29 +177,6 @@ class AgentAddress(models.Model):
     def save(self, *args, **kwargs):
         self.last_modified = datetime.datetime.today()
         return super(AgentAddress, self).save(*args, **kwargs)
-
-
-class AgentCertification(models.Model):
-    agent = models.ForeignKey(Agent, related_name="agent_certifications")
-    certification = models.ForeignKey(Certification, blank=True, null=True,
-                                      default=None)
-    start_date = models.DateField(_(u'Date de début'), blank=True, null=True)
-    end_date = models.DateField(_(u'Date de fin'), blank=True, null=True)
-    picture = models.ImageField("Document officiel", blank=True, null=True)
-
-    def __unicode__(self):
-        return unicode(self.certification)
-
-
-class AgentProCardQualification(models.Model):
-    agentprocard = models.ForeignKey(AgentProCard, related_name="procard_qualification")
-    procardqualification = models.ForeignKey(ProCardQualification, blank=True, null=True,
-                                             default=None)
-    start_date = models.DateField(_(u'Date de début'), blank=True, null=True)
-    end_date = models.DateField(_(u'Date de fin'), blank=True, null=True)
-
-    def __unicode__(self):
-        return unicode(self.procardqualification)
 
 
 class Countries(models.Model):

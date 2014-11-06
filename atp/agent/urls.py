@@ -35,11 +35,12 @@ urlpatterns = patterns('',
         view=views.AgentProCardView.as_view(),
         name='~agent_pro_card'
     ),
-    #url(
-        #regex=r'^~agent_pdf/$',
-        #view=HelloPDFView.as_view(),
-        #name='~agent_pdf'
-    #),
+    # URL pattern for the AgentCertificationsCreateView
+    url(
+        regex=r'^~agent_pro_card_qualification/$',
+        view=views.AgentQualificationCreateView.as_view(),
+        name='~agent_pro_card_qualification'
+    ),
     url(
         regex=r'^~agent_pdf/$',
         view=HelloPDFView.as_view(),

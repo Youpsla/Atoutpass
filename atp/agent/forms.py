@@ -5,6 +5,7 @@ from .models import AgentCertification
 from .models import AgentIdCard
 from .models import AgentAddress
 from .models import AgentProCard
+from .models import AgentQualification
 from datetimewidget.widgets import DateWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
@@ -59,7 +60,7 @@ class AgentForm(forms.ModelForm):
         # Set this form to use the User model.
         model = Agent
 
-        exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date', 'certifications', 'form_state')
+        exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date', 'certifications', 'form_state', 'qualifications')
         widgets = {
             'birthdate': DateWidget(usel10n=True, bootstrap_version=3),
             'id_card_validity_start_date': DateWidget(usel10n=True, bootstrap_version=3),
@@ -89,17 +90,15 @@ class AgentForm(forms.ModelForm):
         self.helper.form_action = reverse('agent:~agent')
         self.helper.layout = Layout(
             Fieldset(u'1) Genre: Indiquez si vous êtes une femme ou un homme.',
-                     'genre','firstname', 'lastname'),
+                     'genre', 'firstname', 'lastname'),
             Fieldset('2) Naissance: Indiquez votre date de naissance puis votre lieu de naissance',
                      'birthdate',
                      'birthplace'),
             Fieldset('3) Carte vitale',
                      'vital_card_validity_start_date',
-                     'vital_card_validity_end_date',
-                    ),
+                     'vital_card_validity_end_date',),
             Fieldset('4) Photo identite',
-                     'picture',
-            ),
+                     'picture',),
         )
         self.helper.layout.append(Submit('save', 'Valider'))
 
@@ -122,15 +121,14 @@ class AgentAddressForm(forms.ModelForm):
         self.helper.form_method = 'post'
         self.helper.form_action = reverse('agent:~agent_address')
         self.helper.layout = Layout(
-                Fieldset('1) Adresse',
-                    'address1',
-                    'address2',
-                    'zipcode',
-                    'city',),
-                Fieldset(u'2) Téléphone',
-                    'mobilephonenumber',
-                    'fixephonenumber',
-                    ),
+            Fieldset('1) Adresse',
+                     'address1',
+                     'address2',
+                     'zipcode',
+                     'city',),
+            Fieldset(u'2) Téléphone',
+                     'mobilephonenumber',
+                     'fixephonenumber',),
         )
         self.helper.layout.append(Submit('save', 'Valider'))
 
@@ -141,16 +139,17 @@ class AgentProCardForm(forms.ModelForm):
         model = AgentProCard
         exclude = ('agent',)
         widgets = {
-            'pro_card_validity_start_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'pro_card_validity_end_date': DateWidget(usel10n = True, bootstrap_version=3),
-            'pro_card_front' : AjaxClearableFileInput,
-            'pro_card' : forms.RadioSelect
+            'pro_card_validity_start_date': DateWidget(usel10n=True, bootstrap_version=3),
+            'pro_card_validity_end_date': DateWidget(usel10n=True, bootstrap_version=3),
+            'pro_card_front': AjaxClearableFileInput,
+            'pro_card': forms.RadioSelect
         }
 
     def __init__(self, *args, **kwargs):
         super(AgentProCardForm, self).__init__(*args, **kwargs)
         self.fields['pro_card'].required = True
         self.helper = FormHelper()
+        self.helper.form_tag = False
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-3'
         self.helper.field_class = 'col-lg-3'
@@ -158,20 +157,39 @@ class AgentProCardForm(forms.ModelForm):
         self.helper.form_action = reverse('agent:~agent_pro_card')
         self.helper.layout = Layout(
             Fieldset(u'Precisez si vous etes titulaire de la carte professionnelle',
-                'pro_card',
-                'pro_card_validity_start_date',
-                'pro_card_validity_end_date',
-                'pro_card_front',
-            ),
+                     'pro_card',
+                     'pro_card_validity_start_date',
+                     'pro_card_validity_end_date',
+                     'pro_card_front',
+                     ),
         )
         self.helper.layout.append(Submit('save', 'Valider'))
+
+
+class AgentQualificationsFormHelper(FormHelper):
+
+    def __init__(self, *args, **kwargs):
+        super(AgentQualificationsFormHelper, self).__init__(*args, **kwargs)
+        self.template = 'agent/crispy/table_inline_formset.html'
+        self.add_input(Submit('save', 'Valider'))
+
+
+class AgentQualificationsForm(forms.ModelForm):
+
+    class Meta:
+        model = AgentQualification
+
+        widgets = {
+            'qualification': forms.Select(attrs={'data-width': 'auto'}),
+            'start_date': DateWidget(usel10n=True, bootstrap_version=3),
+            'end_date': DateWidget(usel10n=True, bootstrap_version=3),
+        }
 
 
 class CertificationsFormHelper(FormHelper):
 
     def __init__(self, *args, **kwargs):
         super(CertificationsFormHelper, self).__init__(*args, **kwargs)
-        # self.template = 'bootstrap3/table_inline_formset.html'
         self.template = 'agent/crispy/table_inline_formset.html'
         self.add_input(Submit('save', 'Valider'))
 
