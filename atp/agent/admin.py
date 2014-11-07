@@ -4,12 +4,12 @@ from agent.forms import *
 from django import forms
 from ajax_upload.widgets import AjaxClearableFileInput
 from suit.widgets import SuitDateWidget
-from config.common import Common
 
 # Register your models here.
-from users.models import User
 
-
+##
+# Agent Id Card
+##
 class AgentIdCardInlineForm(forms.ModelForm):
     class Meta:
         model = AgentIdCard
@@ -19,39 +19,6 @@ class AgentIdCardInlineForm(forms.ModelForm):
                 'id_card_validity_start_date': SuitDateWidget,
                 'id_card_validity_end_date': SuitDateWidget,
                 }
-
-
-class AgentProCardInlineForm(forms.ModelForm):
-    class Meta:
-        model = AgentProCard
-        widgets = {
-                'pro_card_front': AjaxClearableFileInput(),
-                }
-
-
-class AgentCertificationInlineForm(forms.ModelForm):
-    class Meta:
-        model = AgentCertification
-        widgets = {
-                'picture': AjaxClearableFileInput(),
-                }
-
-
-class CertificationsInline(admin.StackedInline):
-    model = AgentCertification
-    suit_classes = 'suit-tab suit-tab-certifications'
-    max_num = 3 
-    extra =1 
-
-
-class AgentAddressInline(admin.StackedInline):
-    model = AgentAddress
-    max_num = 1
-    extra = 0
-    suit_classes = 'suit-tab suit-tab-address'
-
-    def has_delete_permission(self, request, obj=None):
-            return False
 
 
 class AgentIdCardInline(admin.StackedInline):
@@ -65,12 +32,54 @@ class AgentIdCardInline(admin.StackedInline):
             return False
 
 
+##
+# Agent Pro Card
+##
+class AgentProCardInlineForm(forms.ModelForm):
+    class Meta:
+        model = AgentProCard
+        widgets = {
+                'pro_card_front': AjaxClearableFileInput(),
+                }
+
+
 class AgentProCardInline(admin.StackedInline):
     model = AgentProCard
     max_num = 1
     extra = 0
     suit_classes = 'suit-tab suit-tab-pro_card'
     form = AgentProCardInlineForm
+
+    def has_delete_permission(self, request, obj=None):
+            return False
+
+
+##
+# Agent Certification 
+##
+class AgentCertificationInlineForm(forms.ModelForm):
+    class Meta:
+        model = AgentCertification
+        widgets = {
+                'picture': AjaxClearableFileInput(),
+                }
+
+
+class CertificationsInline(admin.StackedInline):
+    model = AgentCertification
+    suit_classes = 'suit-tab suit-tab-certifications'
+    max_num = 3
+    extra = 1
+
+
+##
+# Agent Address
+##
+class AgentAddressInline(admin.StackedInline):
+    model = AgentAddress
+    max_num = 1
+    extra = 0
+    suit_classes = 'suit-tab suit-tab-address'
 
     def has_delete_permission(self, request, obj=None):
             return False
@@ -83,50 +92,48 @@ class AgentAdminForm(forms.ModelForm):
                 'picture': AjaxClearableFileInput(),
                 }
 
-        
+
+##
+# Agent Qualification 
+##
+class AgentQualificationInline(admin.StackedInline):
+    model = AgentQualification
+    suit_classes = 'suit-tab suit-tab-qualifications'
+    max_num = 5
+    extra = 1
+
+    def has_delete_permission(self, request, obj=None):
+            return False
+
+
+##
+# Agent
+##
 class AgentAdmin(admin.ModelAdmin):
-    inlines = (CertificationsInline, AgentIdCardInline, AgentAddressInline, AgentProCardInline)
+    inlines = (CertificationsInline, AgentIdCardInline, AgentAddressInline, AgentProCardInline, AgentQualificationInline)
     form = AgentAdminForm
 
-    fieldsets =[
-            #('Compte', {
-                #'classes': ('suit-tab', 'suit-tab-user'),
-                #'fields': ['user', 'first_name']
-                #}),
-            ('Etat Civil', {
-                'classes': ('suit-tab', 'suit-tab-etat_civil'),
-                'fields': ['firstname', 'lastname', 'genre', 'nationality', 'birthdate', 'birthplace', 'picture']
-                }),
-            ('Papiers identite', {
-                'classes': ('suit-tab', 'suit-tab-id_card'),
-                'fields': ['user']
-                }),
-            ('Adresse', {
-                'classes': ('suit-tab', 'suit-tab-address'),
-                'fields': ['birthplace']
-                }),
-            ('Carte Pro', {
-                'classes': ('suit-tab', 'suit-tab-pro_card'),
-                'fields': ['user']
-                }),
-            ]
-    suit_form_tabs = (('etat_civil', 'Etat civil'), ('id_card', 'Papiers identite'), ('address', 'Coordonnees'), ('pro_card', 'Carte Pro'), ('certifications', 'Certifications'))
-
+    fieldsets = [
+        ('Etat Civil', {
+            'classes': ('suit-tab', 'suit-tab-etat_civil'),
+            'fields': ['firstname', 'lastname', 'genre', 'nationality', 'birthdate', 'birthplace', 'picture']
+            }),
+        ]
+    suit_form_tabs = (('etat_civil', 'Etat civil'), ('id_card', 'Papiers identite'), ('address', 'Coordonnees'), ('pro_card', 'Carte Pro'), ('qualifications', 'Qualifications'), ('certifications', 'Certifications'))
 
     class Media:
-        css ={ 
-                'all':('ajax_upload/css/ajax-upload-widget.css',)
-                }
-        js =[ 
-                'ajax_upload/js/ajax-upload-widget.js',
-                'ajax_upload/js/jquery.iframe-transport.js',
-                'js/project.js',
-               ]
+        css = {
+            'all': ('ajax_upload/css/ajax-upload-widget.css',)
+            }
+        js = [
+            'ajax_upload/js/ajax-upload-widget.js',
+            'ajax_upload/js/jquery.iframe-transport.js',
+            'js/project.js',
+        ]
 
 
 class CertificationAdmin(admin.ModelAdmin):
     pass
-
 
 
 admin.site.register(Agent,AgentAdmin)
