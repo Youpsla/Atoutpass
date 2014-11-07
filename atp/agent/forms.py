@@ -62,11 +62,9 @@ class AgentForm(forms.ModelForm):
         # Set this form to use the User model.
         model = Agent
 
-        exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date', 'certifications', 'form_state', 'qualifications')
+        exclude = ('user', 'pole_emploi_start_date', 'pole_emploi_end_date', 'certifications', 'form_state', 'qualifications', 'vital_card_vitality_start_date', 'vital_card_vitality_end_date')
         widgets = {
             'birthdate': DateWidget(usel10n=True, bootstrap_version=3),
-            'id_card_validity_start_date': DateWidget(usel10n=True, bootstrap_version=3),
-            'id_card_validity_end_date': DateWidget(usel10n=True, bootstrap_version=3),
             'vital_card_validity_start_date': DateWidget(usel10n=True, bootstrap_version=3),
             'vital_card_validity_end_date': DateWidget(usel10n=True, bootstrap_version=3),
             'pro_card_validity_start_date': DateWidget(usel10n=True, bootstrap_version=3),
@@ -81,8 +79,6 @@ class AgentForm(forms.ModelForm):
         self.fields['lastname'].required = True
         self.fields['birthdate'].required = True
         self.fields['birthplace'].required = True
-        self.fields['vital_card_validity_end_date'].required = True
-        self.fields['vital_card_validity_start_date'].required = True
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal'
         self.helper.form = 'AGENT'
@@ -91,14 +87,11 @@ class AgentForm(forms.ModelForm):
         self.helper.form_method = 'post'
         self.helper.form_action = reverse('agent:~agent')
         self.helper.layout = Layout(
-            Fieldset(u'1) Genre: Indiquez si vous êtes une femme ou un homme.',
+            Fieldset(u'1) Indiquez votre genre, votre nom et votre prénom',
                      'genre', 'firstname', 'lastname'),
-            Fieldset('2) Naissance: Indiquez votre date de naissance puis votre lieu de naissance',
+            Fieldset('2) Indiquez votre date de naissance puis votre lieu de naissance',
                      'birthdate',
                      'birthplace'),
-            Fieldset('3) Carte vitale',
-                     'vital_card_validity_start_date',
-                     'vital_card_validity_end_date',),
             Fieldset('4) Photo identite',
                      'picture',),
         )

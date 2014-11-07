@@ -43,21 +43,19 @@ AGENT_GENRE_CHOICES = (
 
 class Agent(models.Model):
     user = models.OneToOneField(Common.AUTH_USER_MODEL, related_name='agent')
-    firstname = models.CharField(max_length=256, blank=True, null=True)
-    lastname = models.CharField(max_length=256, blank=True, null=True)
-    genre = models.CharField(max_length=1, choices=AGENT_GENRE_CHOICES,
+    firstname = models.CharField(_('Nom'), max_length=256, blank=True, null=True)
+    lastname = models.CharField(_(u'Prénom'), max_length=256, blank=True, null=True)
+    genre = models.CharField(_(u'Genre'), max_length=1, choices=AGENT_GENRE_CHOICES,
                              blank=True, null=True)
-    birthdate = models.DateField('Date de naisance', blank=True, null=True)
+    birthdate = models.DateField(_(u'Date de naisance'), blank=True, null=True)
     birthplace = models.CharField(
-        _('Lieu de naissance'), max_length=120, blank=True, null=True)
+        _(u'Lieu de naissance'), max_length=120, blank=True, null=True)
     nationality = models.CharField(
-        _('Nationalite'), max_length=120, blank=True, null=True)
+        _(u'Nationalité'), max_length=120, blank=True, null=True)
     vital_card_validity_start_date = models.DateTimeField(blank=True, null=True)
     vital_card_validity_end_date = models.DateTimeField(blank=True, null=True)
     pole_emploi_start_date = models.DateTimeField(blank=True, null=True)
     pole_emploi_end_date = models.DateTimeField(blank=True, null=True)
-    driver_license_type = models.CharField(max_length=120, blank=True,
-                                           null=True)
     certifications = models.ManyToManyField(Certification, blank=True,
                                             null=True,
                                             through='AgentCertification',)
@@ -65,7 +63,7 @@ class Agent(models.Model):
                                             null=True,
                                             through='AgentQualification',)
     is_completed = models.BooleanField(_('Profil complet'), default=False,)
-    picture = models.ImageField("Document officiel",
+    picture = models.ImageField(_(u'Photo identité'),
                                 blank=True, null=True)
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
     form_state = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
@@ -166,9 +164,9 @@ class AgentAddress(models.Model):
     zipcode = models.CharField(_('Code Postal'), max_length=5, blank=True)
     city = models.CharField(_('Ville'), max_length=120, blank=True)
     mobilephonenumber = models.IntegerField(
-        _('Mobile'), max_length=10, blank=True, null=True)
+        _(u'Téléphone mobile'), max_length=10, blank=True, null=True)
     fixephonenumber = models.IntegerField(
-        _('Fixe'), max_length=10, blank=True, null=True)
+        _(u'Téléphone fixe'), max_length=10, blank=True, null=True)
 
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
 
