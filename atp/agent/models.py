@@ -54,6 +54,7 @@ class Agent(models.Model):
         _(u'Nationalité'), max_length=120, blank=True, null=True)
     vital_card_validity_start_date = models.DateTimeField(blank=True, null=True)
     vital_card_validity_end_date = models.DateTimeField(blank=True, null=True)
+    vital_card_number = models.CharField(_(u'Numéro de carte vitale'), max_length='20', blank=True, null=True)
     pole_emploi_start_date = models.DateTimeField(blank=True, null=True)
     pole_emploi_end_date = models.DateTimeField(blank=True, null=True)
     certifications = models.ManyToManyField(Certification, blank=True,
@@ -118,6 +119,7 @@ class AgentProCard(models.Model):
     pro_card_front = models.ImageField(
         _(u'Recto de votre carte professionnelle'), blank=True, null=True,
         upload_to='.')
+    pro_card_number = models.CharField(_(u'Numéro'), max_length='15', blank=True, null=True)
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
 
     def __unicode__(self):
