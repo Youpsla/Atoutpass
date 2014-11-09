@@ -58,10 +58,12 @@ class Agent(models.Model):
     pole_emploi_end_date = models.DateTimeField(blank=True, null=True)
     certifications = models.ManyToManyField(Certification, blank=True,
                                             null=True,
-                                            through='AgentCertification',)
+                                            through='AgentCertification',
+                                            related_name='agentcertifications')
     qualifications = models.ManyToManyField(Qualification, blank=True,
                                             null=True,
-                                            through='AgentQualification',)
+                                            through='AgentQualification',
+                                            related_name='agentqualifications')
     is_completed = models.BooleanField(_('Profil complet'), default=False,)
     picture = models.ImageField(_(u'Photo identité'),
                                 blank=True, null=True)
@@ -158,14 +160,14 @@ class AgentIdCard(models.Model):
 
 
 class AgentAddress(models.Model):
-    agent = models.ForeignKey(Agent)
+    agent = models.ForeignKey(Agent, related_name='agent_address')
     address1 = models.CharField(_('Adresse 1'), max_length=120, blank=True)
     address2 = models.CharField(_('Adresse 2'), max_length=120, blank=True)
     zipcode = models.CharField(_('Code Postal'), max_length=5, blank=True)
     city = models.CharField(_('Ville'), max_length=120, blank=True)
-    mobilephonenumber = models.IntegerField(
+    mobilephonenumber = models.CharField(
         _(u'Téléphone mobile'), max_length=10, blank=True, null=True)
-    fixephonenumber = models.IntegerField(
+    fixephonenumber = models.CharField(
         _(u'Téléphone fixe'), max_length=10, blank=True, null=True)
 
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
