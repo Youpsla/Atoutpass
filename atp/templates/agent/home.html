@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load tags %}
+
+
+{% block content %}
+
+
+{% if current_agent.state == 'new' %}
+    <div class="jumbotron well">
+                <h2>
+                Bonjour {{ current_agent.firstname }} {{ current_agent.lastname }}
+                </h2>
+                <p>
+                    <b>Votre compte est maintenant validé.</b>
+                    <br>
+                    Afin de pouvoir traiter votre dossier dans les plus brefs délais, nous allons vous demander de nous communiquer un certains nombre d'informations.<br><br>
+                    Il vous faudra entre 15 et 30 minutes pour remplir votre profil.<br><br>
+                    Une fois complet, ce dernier sera transmis a notre responsable recrutement qui prendra contact avec vous dans les plus brefs délais.<br><br>
+                    Lorsque vous etes pret, cliquer sur le bouton "Suivant' ci-dessous:<br><br>
+                    <a class="btn btn-primary btn-large" href="#">Suivant</a>
+                </p>
+    </div>
+
+{% elif current_agent.state == 'agent_form_ok'%}
+    <div class="jumbotron well">
+                <h2>
+                    Votre profil est maintenant complet. 
+                </h2>
+                <p>
+                Cliquez sur le bouton ci-dessous pour le transmettre a notre responsable du recrutement. Une fois transmis, vous ne pourrez plus modifier votre profil et vous allez etre contacté dans les meilleurs délais pour convenir d'un rendez-vous.<br>
+                Pour ce rendez-vous, vous devrez avoir en votre possession impérativement les documents suivants:
+                <ul>
+                    <li>L'original de votre pièce d'identité ou de votre carte de séjour</li>
+                    <li>2 photos d'identité</li>
+                    <li>Un justificatif de domicile</li>
+                    <li>Votre carte professionnelle</li>
+                    <li>Vos diplômes et certifications dans les métiers de la sécurité</li>
+                    <li>Permis de conduire</li>
+                    <li>Un CV</li>
+                    
+                </ul>
+                    <a class="btn btn-primary btn-large" href="#">Transmettre mon profil au responsable du recrutement</a>
+                    <br>
+                    <br>
+
+
+                    Si vous souhaitez le modifier, cliquer sur le bouton " Modifier mon profil".<br>
+                    <a class="btn btn-primary btn-large" href="{% url 'agent:~agent' %}">Modifier mon profil</a>
+                </p>
+    </div>
+
+{% elif current_agent.state == 'ok_pour_instruction'%}
+    <div class="jumbotron well">
+                <h2>
+                    Votre dossier est en cours de premier examen par nos équipes. 
+                </h2>
+                <p>
+                Vous allez etre contacté rapidement pour convenir d'un rendez-vous.<br>
+                Pour ce rendez-vous, vous devrez avoir en votre possession impérativement les documents suivants:
+               <ul>
+                    <li>L'original de votre pièce d'identité ou de votre carte de séjour</li>
+                    <li>2 photos d'identité</li>
+                    <li>Un justificatif de domicile</li>
+                    <li>Votre carte professionnelle</li>
+                    <li>Vos diplômes et certifications dans les métiers de la sécurité</li>
+                    <li>Permis de conduire</li>
+                    <li>Un CV</li>
+                </ul>
+                </p>
+    </div>
+{% elif current_agent.state == 'rdv_instruction_pris'%}
+    <div class="jumbotron well">
+                <h2>
+                    Votre rendez-vous a été fixé. Nous comptons sur votre ponctulité
+                </h2>
+                <p>
+                Merci de vous présenter le XX Décembre à xxHxx dans nos locaux.
+                Vous serez recu par Monsieur Barbier.
+                </p>
+                <p>
+                Si vous avez le moindre empechement, merci de nous contacter au plus vite au XX XX XX XX XX.
+                <br>
+                <br>
+                Lieu de votre rendez-vous:<br><br>
+                Agence Atout Pass<br>
+                175 rue Notre Dame de Nazareth<br>
+                75003 PARIS<br>
+                <br>
+                Métro : Réaumur Sébastopol
+                </p>
+    </div>
+{% endif %}
+{% endblock %}
