@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 import datetime
 from jsonfield import JSONField
 from collections import OrderedDict
+from django_fsm import FSMKeyField, transition
 
 
 class Certification(models.Model):
@@ -21,6 +22,14 @@ class Qualification(models.Model):
 
     def __unicode__(self):
         return self.long_name
+
+
+class States(models.Model):
+    id = models.CharField(primary_key=True, max_length=50)
+    label = models.CharField(max_length=255)
+
+    def __unicode__(self):
+        return self.label
 
 
 AGENT_FORM_STATE = OrderedDict([
@@ -71,6 +80,7 @@ class Agent(models.Model):
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
     form_state = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
                            default=AGENT_FORM_STATE)
+    state = FSMKeyField(States, default='new', protected=True)
 
     def __unicode__(self):
         return '%s %s' % ((self.firstname), str(self.lastname))
@@ -78,6 +88,34 @@ class Agent(models.Model):
     def save(self, *args, **kwargs):
         self.last_modified = datetime.datetime.today()
         return super(Agent, self).save(*args, **kwargs)
+
+    @transition(field=state, source='new', target='agent_form_ok')
+    def agent_saisie_formulaire(self):
+        pass
+
+    @transition(field=state, source='agent_form_ok', target='ok_pour_instruction')
+    def agent_formulaire_valide(self):
+        pass
+
+    @transition(field=state, source='ok_pour_instruction', target='rdv_instruction_pris')
+    def rdv_instruction_pris(self):
+        pass
+
+    @transition(field=state, source='rdv_instruction_pris', target='rdv_instruction_fait')
+    def rdv_fait(self):
+        pass
+
+    @transition(field=state, source='rdv_instruction_fait', target='dossier_valide')
+    def dossier_valide(self):
+        pass
+
+    @transition(field=state, source='dossier_valide', target='diad')
+    def integration_diad(self):
+        pass
+
+    @transition(field=state, source='diad', target='en_poste')
+    def en_poste(self):
+        pass
 
 
 class AgentCertification(models.Model):
