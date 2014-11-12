@@ -16,16 +16,18 @@
 
     {% block css %}
         <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+        <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
 
         <!-- Optional theme -->
-        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+        <link href="{% static 'css/bootstrap-theme.css' %}" rel="stylesheet">
 
         <!-- Your stuff: Third-party css libraries go here -->
 
         <!-- This file store project specific CSS -->
         <link href="{% static 'css/project.css' %}" rel="stylesheet">
-        <!--<link href="{% static 'css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">-->
+        <link href="{% static 'css/progress_bar.css' %}" rel="stylesheet">
+        <link href="{% static 'css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+        <link href="{{ STATIC_URL }}ajax_upload/css/ajax-upload-widget.css" rel="stylesheet" type="text/css"/>
     {% endblock %}
 
     <!-- Le javascript
@@ -33,18 +35,15 @@
     <!-- Placed at the end of the document so the pages load faster -->
     {% block javascript %}
         <!-- Latest JQuery -->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-
-        <!-- Latest compiled and minified JavaScript -->
-        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="{{ STATIC_URL }}js/jquery.js"></script>
+        <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
 
         <!-- Your stuff: Third-party javascript libraries go here -->
     
         <!-- place project specific Javascript in this file -->
         <script src="{% static 'js/project.js' %}"></script>
 
-        <!-- Init of django-ipload-ajax-widget  -->
-        <link href="{{ STATIC_URL }}ajax_upload/css/ajax-upload-widget.css" rel="stylesheet" type="text/css"/>
+        <!-- Init of django-upload-ajax-widget  -->
         <script src="{{ STATIC_URL }}ajax_upload/js/jquery.iframe-transport.js"></script>
         <script src="{{ STATIC_URL }}ajax_upload/js/ajax-upload-widget.js"></script>
 
@@ -54,10 +53,6 @@
             });
         </script>
     {% endblock javascript %}
-
-    {% block angular %}
-      <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
-    {% endblock %}
 
     <!--Mandatory for the django-datetime-widget-->
     {% if form %}
@@ -81,7 +76,8 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">AtoutPass: Espace Candidat</a>
+      <a class="navbar-brand" href="#">Espace Candidat</a>
+        
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -93,21 +89,26 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mon compte<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                     <li><a href="{% url 'account_email' %}">E-Mail</a></li>
-                    <li><a href="{% url 'avatar_change' %}">Avatar</a></li>
                     <li><a href="{% url 'account_change_password' %}">Mot de passe</a></li>
                 </ul>
                 </li>
-                <li><a href="#">Mes recherches</a></li>
                 <li class="dropdown {% active request "/agent/~agent" %}">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mon profil<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="{% url 'users:update' %}">Nom et prénom</a></li>
                     <li><a href="{% url 'agent:~agent' %}">{% trans "Etat Civil" %}</a></li>
                     <li><a href="{% url 'agent:~agent_address' %}">{% trans "Coordonnées" %}</a></li>
                     <li><a href="{% url 'agent:~agent_id_card' %}">{% trans "Carte identité" %}</a></li>
                     <li class="divider"></li>
                     <li><a href="{% url 'agent:~agent_pro_card' %}">{% trans "Carte profesionnelle" %}</a></li>
+                    <li><a href="{% url 'agent:~agent_pro_card_qualification' %}">{% trans "Qualifications" %}</a></li>
                     <li><a href="{% url 'agent:~agent_certification' %}">{% trans "Certifications" %}</a></li>
+                </ul>
+                </li>
+                <li class="dropdown {% active request "/agent/~agent" %}">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mon parcours professionnelle<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="{% url 'agent:~agent' %}">{% trans "Mes expériences" %}</a></li>
+                    <li><a href="{% url 'agent:~agent_address' %}">{% trans "Ma recherche" %}</a></li>
                 </ul>
                 </li>
             {% else %}
@@ -125,21 +126,8 @@
   </div><!-- /.container-fluid -->
 </nav>
     <div class="container">
-      <!--{% if messages %}-->
-          <!--{% for message in messages %}-->
-              <!--<div class="alert {% if message.tags %}alert-{{ message.tags }}"{% endif %}>{{ message }}</div>-->
-          <!--{% endfor %}-->
-      <!--{% endif %}-->
 
-{% for message in messages %}
-    <div class="alert {% if message.tags %} alert-{{ message.tags }} {% endif %}">
-        {# close-href is used because href is used by bootstrap to closing other divs #}
-        {{ message }}
-    </div>
-{% endfor %}
-
-
-    <!--{% include "messages_extends/includes/alerts_bootstrap.html" %}-->
+    {% include "messages_extends/includes/alerts_bootstrap.html" %}
       {% block content %}
         <p>Use this document as a way to quick start any new project.</p>
       {% endblock content %}
