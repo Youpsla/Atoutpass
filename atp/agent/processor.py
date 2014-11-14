@@ -9,18 +9,23 @@ import logging
 # logger = logging.getLogger(__name__)
 logger = logging.getLogger('agent')
 
+
 def AddAgentContextProcessor(request):
     try:
-        # current_user = User.object.get_current()
         user = request.user
         print('User trouve dans le contexte : %s' % (user))
         try:
-            current_agent = Agent.objects.get(user_id = user.id)
+            current_agent = Agent.objects.get(user_id=user.id)
             print('Agent trouve dans le contexte : %s' % (current_agent))
-            return {'current_agent' : current_agent}
+            # Check if agent form is complete
+            if 0 in current_agent.form_state.values():
+                agent_form_completed = False
+            else:
+                agent_form_completed = True
+            return {'current_agent': current_agent, 'agent_form_completed': agent_form_completed}
         except Agent.DoesNotExist:
             print "Agent non trouve"
-            return {'Agent' : None}
+            return {'Agent': None}
     except User.DoesNotExist:
         print "User non trouve"
         return {'User_processor': 'Pas de user'}
