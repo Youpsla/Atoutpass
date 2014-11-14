@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>
+                Votre profil
+            </h2>
+            <div class="row">
+                <table class="table table-condensed table-bordered">
+                <tr>
+                    <td colspan='2' align='center'>
+                        <strong>Etat Civil</strong>
+                    </td>
+                <tr>
+                    <td>
+                        <strong>Nom :</strong>
+                    </td>
+                    <td>
+                        {{current_agent.firstname}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Prénom :</strong>
+                    </td>
+                    <td>
+                        {{current_agent.lastname}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Nationalité :</strong>
+                    </td>
+                    <td>
+                        A mettre em base
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Date de naissance :</strong>
+                    </td>
+                    <td>
+                        {{current_agent.birthdate}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan='2' align='center'>
+                        <strong>Coordonnés</strong>
+                    </td>
+                <tr>
+                {% for i in current_agent.address.all %}
+                <tr>
+                    <td>
+                        <strong>Adresse 1 :</strong>
+                    </td>
+                    <td>
+                        {{i.address1}}
+                    </td>
+                <tr>
+                    <td>
+                        <strong>Adresse 2 :</strong>
+                    </td>
+                    <td>
+                        {{i.address2}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Code postal :</strong>
+                    </td>
+                    <td>
+                        {{i.zipcode}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Ville :</strong>
+                    </td>
+                    <td>
+                        {{i.city}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Téléphone fixe :</strong>
+                    </td>
+                    <td>
+                        {{i.fixedphonenumber}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Téléphone mobile :</strong>
+                    </td>
+                    <td>
+                        {{i.mobilephonenumber}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan='2' align='center'>
+                        <strong>Papiers d'identité</strong>
+                    </td>
+                <tr>
+                {% endfor %}
+                {% for i in current_agent.idcard.all %}
+                <tr>
+                    <td>
+                        <strong>Type de papier :</strong>
+                    </td>
+                    <td>
+                        {{i.id_card_type}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Date de début de validité :</strong>
+                    </td>
+                    <td>
+                        {{i.id_card_validity_start_date}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Fin de début de validité :</strong>
+                    </td>
+                    <td>
+                        {{i.id_card_validity_end_date}}
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan='2' align='center'>
+                        <strong>Carte professionnelle</strong>
+                    </td>
+                <tr>
+                {% for i in current_agent.procard.all %}
+                <tr>
+                    <td>
+                        <strong> Titulaire de la carte professionnelle:</strong>
+                    </td>
+                    <td>
+                        {{i.pro_card}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Date de début de validité :</strong>
+                    </td>
+                    <td>
+                        {{i.pro_card_validity_start_date}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Fin de début de validité :</strong>
+                    </td>
+                    <td>
+                        {{i.pro_card_validity_end_date}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan='2' align='center'>
+                        <strong>Qualifications</strong>
+                    </td>
+                <tr>
+                {% endfor %}
+                {% for i in qual %}
+                <tr>
+                    <td>
+                        <strong> Qualifications:</strong>
+                    </td>
+                    <td>
+                        {{i.qualification}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Date de début de validité :</strong>
+                    </td>
+                    <td>
+                        {{i.start_date}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Fin de début de validité :</strong>
+                    </td>
+                    <td>
+                        {{i.end_date}}
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan='2' align='center'>
+                        <strong>Certifications</strong>
+                    </td>
+                <tr>
+                {% for i in cert %}
+                <tr>
+                    <td>
+                        <strong> Certifications:</strong>
+                    </td>
+                    <td>
+                        {{i.certification}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Date de début de validité :</strong>
+                    </td>
+                    <td>
+                        {{i.start_date}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Fin de début de validité :</strong>
+                    </td>
+                    <td>
+                        {{i.end_date}}
+                    </td>
+                </tr>
+                {% endfor %}
+                
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
