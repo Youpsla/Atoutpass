@@ -84,7 +84,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
             {% if request.user.is_authenticated %}
-                <li><a href="#">Tableau de bord</a></li>
+                <li><a href="{% url 'agent:~agent_home' %}">{% trans "Accueil" %}</a></li>
                 <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mon compte<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
@@ -92,6 +92,10 @@
                     <li><a href="{% url 'account_change_password' %}">Mot de passe</a></li>
                 </ul>
                 </li>
+
+                {% if agent_form_completed == True %}
+                    <li><a href="{% url 'agent:~agent_profile_readonly' %}">{% trans "Mon profil" %}</a></li>
+                {% else %}
                 <li class="dropdown {% active request "/agent/~agent" %}">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mon profil<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
@@ -104,6 +108,7 @@
                     <li><a href="{% url 'agent:~agent_certification' %}">{% trans "Certifications" %}</a></li>
                 </ul>
                 </li>
+                {% endif %}
                 <li class="dropdown {% active request "/agent/~agent" %}">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mon parcours professionnelle<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
@@ -117,7 +122,7 @@
             {% endif %}
         </ul>
         {% if request.user.is_authenticated %}
-        <p class="navbar-text navbar-right"><b>Utilisateur connecté : {{ user.username }}</b></p>
+        <p class="navbar-text navbar-right"><b>{{ current_agent.firstname }} {{ current_agent.lastname }}</b></p>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="{% url 'account_logout' %}">{% trans "Déconnexion" %}</a></li>
             </ul>
