@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 # view imports
 from django.views.generic import RedirectView
 from django.views.generic import UpdateView
+from django.views.generic.base import TemplateView
 
 
 # Only authenticated users can access views using this.
@@ -74,8 +75,6 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 def agent_form_redirect(form_state):
     form_state = form_state
-    print 'form_state', form_state
-    print 'form_sate.items() type', type(form_state)
 
     if form_state['NOM_PRENOM'] == 0:
         redirect_url = 'users:update'
@@ -92,7 +91,7 @@ def agent_form_redirect(form_state):
     elif form_state['DIVERS'] == 0:
         redirect_url = 'agent:~agent_various'
     else:
-        redirect_url = 'agent:~agent'
+        redirect_url = 'agent:~agent_home'
 
     return redirect_url
 
@@ -101,10 +100,6 @@ def agent_form_state_update(request, obj, state):
         AGENT_FORM_STATE = obj.form_state
         AGENT_FORM_STATE[state] = 1
         Agent.objects.filter(user=request.user).update(form_state=AGENT_FORM_STATE)
-
-
-def agent_get_current_form(path_info):
-    pass
 
 
 class AgentFormValidMixin(LoginRequiredMixin, UpdateView):
@@ -140,12 +135,14 @@ class AgentFormValidMixin(LoginRequiredMixin, UpdateView):
         # Save Form
         form.save()
 
-        # Update AGENT_FORM_STATE in database. Mandatory because Djqngo-jsonfield doesnt implement Postgresql direct key lookup
+        # Update AGENT_FORM_STATE in database. Mandatory because Django-jsonfield doesnt implement Postgresql direct key lookup
         obj = Agent.objects.get(user=self.request.user)
         agent_form_state_update(self.request, obj, FORM_STATE)
 
         # Retrieve form_state from DB
         form_state = Agent.objects.get(user=self.request.user).form_state
+        agent_state = Agent.objects.get(user=self.request.user).state
+        print 'Agent State : ', agent_state
 
         # Set redirect_url by passing form_state to agent_form_redirect
         redirect_url = agent_form_redirect(form_state)
@@ -158,11 +155,28 @@ class AgentFormValidMixin(LoginRequiredMixin, UpdateView):
             print 'Le formulaire est COMPLET'
             messages.add_message(self.request, messages.SUCCESS, u'Merci. Votre profil va maintenant etre communiqué a un conseiller. Vous serez contacté dans les plus brefs délais')
 
+
         # Update messages
         messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
 
         # Redirect to redirect_url
         return HttpResponseRedirect(reverse(redirect_url))
+
+
+class AgentHomeView(LoginRequiredMixin, TemplateView):
+    template_name = 'agent/home.html'
+
+
+class AgentProfileReadonlyView(LoginRequiredMixin, TemplateView):
+    template_name = 'agent/profile_readonly.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(AgentProfileReadonlyView, self).get_context_data(**kwargs)
+        cert = AgentCertification.objects.filter(agent=self.request.user.agent)
+        qual = AgentQualification.objects.filter(agent=self.request.user.agent)
+        context['cert'] = cert
+        context['qual'] = qual
+        return context
 
 
 class AgentCertificationsCreateView(LoginRequiredMixin, ModelFormSetView):
@@ -175,7 +189,7 @@ class AgentCertificationsCreateView(LoginRequiredMixin, ModelFormSetView):
     form_class = AgentCertificationsForm
 
     def get_queryset(self):
-        queryset = AgentCertification.objects.filter(agent=self.request.user.agent)
+        queryset = AgentCertification.objects.filter(agent=self.request.user.users_agent)
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -228,7 +242,7 @@ class AgentIdCardView(AgentFormValidMixin):
     template_name = 'agent/profile.html'
 
     def get_object(self, queryset=None):
-        obj, created = AgentIdCard.objects.get_or_create(agent=self.request.user.agent)
+        obj, created = AgentIdCard.objects.get_or_create(agent=self.request.user.users_agent)
         return obj
 
 
@@ -239,7 +253,7 @@ class AgentAddressView(AgentFormValidMixin):
     template_name = 'agent/profile.html'
 
     def get_object(self, queryset=None):
-        obj, created = AgentAddress.objects.get_or_create(agent=self.request.user.agent)
+        obj, created = AgentAddress.objects.get_or_create(agent=self.request.user.users_agent)
         return obj
 
 
@@ -253,7 +267,7 @@ class AgentQualificationCreateView(LoginRequiredMixin, ModelFormSetView):
     form_class = AgentQualificationsForm
 
     def get_queryset(self):
-        queryset = AgentQualification.objects.filter(agent=self.request.user.agent)
+        queryset = AgentQualification.objects.filter(agent=self.request.user.users_agent)
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -294,7 +308,7 @@ class AgentProCardView(AgentFormValidMixin):
     template_name = 'agent/profile.html'
 
     def get_object(self, queryset=None):
-        obj, created = AgentProCard.objects.get_or_create(agent=self.request.user.agent)
+        obj, created = AgentProCard.objects.get_or_create(agent=self.request.user.users_agent)
         return obj
 
 
@@ -306,7 +320,7 @@ class AgentVariousView(AgentFormValidMixin):
     template_name = 'agent/profile.html'
 
     def get_object(self, queryset=None):
-        obj, created = AgentVarious.objects.get_or_create(agent=self.request.user.agent)
+        obj, created = AgentVarious.objects.get_or_create(agent=self.request.user.users_agent)
         return obj
 
 

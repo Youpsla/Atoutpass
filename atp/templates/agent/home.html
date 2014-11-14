@@ -72,7 +72,7 @@
 {% elif current_agent.state == 'rdv_instruction_pris'%}
     <div class="jumbotron well">
                 <h2>
-                    Votre rendez-vous a été fixé. Nous comptons sur votre ponctulité
+                    Votre rendez-vous a été fixé. Nous comptons sur votre ponctualité
                 </h2>
                 <p>
                 Merci de vous présenter le XX Décembre à xxHxx dans nos locaux.
@@ -88,6 +88,35 @@
                 75003 PARIS<br>
                 <br>
                 Métro : Réaumur Sébastopol
+                </p>
+    </div>
+{% elif current_agent.state == 'dossier_valide'%}
+    <div class="jumbotron well">
+                <h2>
+                    Les pièces de votre dossier sont en cours d'examen.
+                </h2>
+                <p>
+                Vous serez informé par Email dès que votre dossier sera intégré au fichier des Dossies Instruits des Agents Disponibles (DIAD).
+                </p>
+    </div>
+{% elif current_agent.state == 'diad'%}
+    <div class="jumbotron well">
+                <h2>
+                   Votre dossier est maintenant intégré au DIAD. 
+                </h2>
+                <p>
+                Les employeurs ont maintenant accès à votre dossier.
+                </p>
+    </div>
+{% elif current_agent.state == 'en_poste'%}
+    <div class="jumbotron well">
+                <h2>
+                   Vous etes actuellement en poste.
+                </h2>
+                <p>
+                Votre dossier n'est donc plus accessible aux employeurs.<br>
+                Mettez à jour votre situation dés qu'elle évolue afin que nous vous réintégrions au DIAD.<br>
+                Pour Mettre à jour votre situation, cliquez sur le bouton ci-dessous:
                 </p>
     </div>
 {% endif %}

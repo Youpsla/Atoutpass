@@ -1,22 +1,18 @@
-{% extends "base.html" %}
+{% extends "agent/base.html" %}
 {% load crispy_forms_tags %}
 {% load tags %}
 
 
 {% block content %}
-<img src="/static/images/logo.gif" height="300" width="300">        
 <div class="container">
     <div class="row">
-        <div class="col-lg-18">
+        <div class="col-lg-11">
             {% include "agent/agent_form_tabs.html" %}
             <div class="tab-content">
-                        {% csrf_token %}
                         {% crispy form %}
             </div>
         </div>
     </div>
 </div>
 
-{% block dede %}
-{% endblock %}
 {% endblock %}

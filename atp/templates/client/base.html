@@ -1,0 +1,143 @@
+{% load staticfiles i18n %}<!DOCTYPE html>
+{% load tags %}
+
+<html lang="en" ng-app>
+  <head>
+    <meta charset="utf-8">
+    <title>{% block title %}atoutpass{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    {% block css %}
+        <!-- Latest compiled and minified CSS -->
+        <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+
+        <!-- Optional theme -->
+        <link href="{% static 'css/bootstrap-theme.css' %}" rel="stylesheet">
+
+        <!-- Your stuff: Third-party css libraries go here -->
+
+        <!-- This file store project specific CSS -->
+        <link href="{% static 'css/project.css' %}" rel="stylesheet">
+        <link href="{% static 'css/progress_bar.css' %}" rel="stylesheet">
+        <link href="{% static 'css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+        <link href="{{ STATIC_URL }}ajax_upload/css/ajax-upload-widget.css" rel="stylesheet" type="text/css"/>
+    {% endblock %}
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    {% block javascript %}
+        <!-- Latest JQuery -->
+        <script src="{{ STATIC_URL }}js/jquery.js"></script>
+        <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
+
+        <!-- Your stuff: Third-party javascript libraries go here -->
+    
+        <!-- place project specific Javascript in this file -->
+        <script src="{% static 'js/project.js' %}"></script>
+
+        <!-- Init of django-upload-ajax-widget  -->
+        <script src="{{ STATIC_URL }}ajax_upload/js/jquery.iframe-transport.js"></script>
+        <script src="{{ STATIC_URL }}ajax_upload/js/ajax-upload-widget.js"></script>
+
+        <script>
+            $(function() {
+                AjaxUploadWidget.autoDiscover();
+            });
+        </script>
+    {% endblock javascript %}
+
+    <!--Mandatory for the django-datetime-widget-->
+    {% if form %}
+    {{ form.media }}
+    {% endif %}
+    {% if formset %}
+    {{ formset.media }}
+    {% endif %}
+  </head>
+
+  <body>
+
+
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Espace Candidat</a>
+        
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+            {% if request.user.is_authenticated %}
+                <li><a href="{% url 'agent:~agent_home' %}">{% trans "Accueil" %}</a></li>
+                <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mon compte<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="{% url 'account_email' %}">E-Mail</a></li>
+                    <li><a href="{% url 'account_change_password' %}">Mot de passe</a></li>
+                </ul>
+                </li>
+
+                {% if agent_form_completed == True %}
+                    <li><a href="{% url 'agent:~agent_profile_readonly' %}">{% trans "Mon profil" %}</a></li>
+                {% else %}
+                <li class="dropdown {% active request "/agent/~agent" %}">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mon profil<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="{% url 'agent:~agent' %}">{% trans "Etat Civil" %}</a></li>
+                    <li><a href="{% url 'agent:~agent_address' %}">{% trans "Coordonnées" %}</a></li>
+                    <li><a href="{% url 'agent:~agent_id_card' %}">{% trans "Carte identité" %}</a></li>
+                    <li class="divider"></li>
+                    <li><a href="{% url 'agent:~agent_pro_card' %}">{% trans "Carte profesionnelle" %}</a></li>
+                    <li><a href="{% url 'agent:~agent_pro_card_qualification' %}">{% trans "Qualifications" %}</a></li>
+                    <li><a href="{% url 'agent:~agent_certification' %}">{% trans "Certifications" %}</a></li>
+                </ul>
+                </li>
+                {% endif %}
+                <li class="dropdown {% active request "/agent/~agent" %}">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mon parcours professionnelle<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="{% url 'agent:~agent' %}">{% trans "Mes expériences" %}</a></li>
+                    <li><a href="{% url 'agent:~agent_address' %}">{% trans "Ma recherche" %}</a></li>
+                </ul>
+                </li>
+            {% else %}
+                <li><a href="{% url 'account_signup' %}">{% trans "Inscription" %}</a></li>
+                <li><a href="{% url 'account_login' %}">{% trans "Connexion" %}</a></li>
+            {% endif %}
+        </ul>
+        {% if request.user.is_authenticated %}
+        <p class="navbar-text navbar-right"><b>{{ current_agent.firstname }} {{ current_agent.lastname }}</b></p>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'account_logout' %}">{% trans "Déconnexion" %}</a></li>
+            </ul>
+        {% endif %}
+        </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+    <div class="container">
+
+    {% include "messages_extends/includes/alerts_bootstrap.html" %}
+      {% block content %}
+        <p>Use this document as a way to quick start any new project.</p>
+      {% endblock content %}
+    </div> <!-- /container -->
+    {% block modal %}{% endblock modal %}
+  </body>
+</html>
+ 
