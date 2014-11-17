@@ -14,7 +14,6 @@ from crispy_forms.layout import Fieldset
 from crispy_forms.layout import Submit
 from django.core.urlresolvers import reverse
 from ajax_upload.widgets import AjaxClearableFileInput
-from crispy_forms.bootstrap import PrependedText
 
 
 class AgentIdCardForm(forms.ModelForm):

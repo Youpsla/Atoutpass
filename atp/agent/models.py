@@ -51,8 +51,8 @@ AGENT_GENRE_CHOICES = (
 
 
 class Agent(models.Model):
-    user = models.OneToOneField(Common.AUTH_USER_MODEL, related_name='agent')
-    firstname = models.CharField(_('Nom'), max_length=256, blank=True, null=True)
+    user = models.OneToOneField(Common.AUTH_USER_MODEL, related_name='users_agent')
+    firstname = models.CharField(_(u'Nom'), max_length=256, blank=True, null=True)
     lastname = models.CharField(_(u'Prénom'), max_length=256, blank=True, null=True)
     genre = models.CharField(_(u'Genre'), max_length=1, choices=AGENT_GENRE_CHOICES,
                              blank=True, null=True)
@@ -145,7 +145,7 @@ PROCARD_CHOICES = ((True, 'Titulaire'), (False, 'Pas titulaire'))
 
 
 class AgentProCard(models.Model):
-    agent = models.ForeignKey(Agent)
+    agent = models.ForeignKey(Agent, related_name='procard')
     pro_card = models.BooleanField(
         _(u'Etes-vous titulaire de la carte professionnelle ?'),
         choices=PROCARD_CHOICES,
@@ -176,7 +176,7 @@ class AgentIdCard(models.Model):
         ('CJ', 'Carte de sejour'),
     )
 
-    agent = models.ForeignKey(Agent)
+    agent = models.ForeignKey(Agent, related_name='idcard')
     id_card_type = models.CharField(
         _('Type de papier'), max_length=120, choices=ID_CARD_TYPES, default=1,
         blank=True, null=True)
@@ -200,7 +200,7 @@ class AgentIdCard(models.Model):
 
 
 class AgentAddress(models.Model):
-    agent = models.ForeignKey(Agent, related_name='agent_address')
+    agent = models.ForeignKey(Agent, related_name='address')
     address1 = models.CharField(_('Adresse 1'), max_length=120, blank=True)
     address2 = models.CharField(_('Adresse 2'), max_length=120, blank=True)
     zipcode = models.CharField(_('Code Postal'), max_length=5, blank=True)

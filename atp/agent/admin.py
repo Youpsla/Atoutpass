@@ -4,6 +4,7 @@ from agent.forms import *
 from django import forms
 from ajax_upload.widgets import AjaxClearableFileInput
 from suit.widgets import SuitDateWidget
+from fsm_admin.mixins import FSMTransitionMixin
 
 # Register your models here.
 
@@ -109,9 +110,11 @@ class AgentQualificationInline(admin.StackedInline):
 ##
 # Agent
 ##
-class AgentAdmin(admin.ModelAdmin):
+class AgentAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = (CertificationsInline, AgentIdCardInline, AgentAddressInline, AgentProCardInline, AgentQualificationInline)
     form = AgentAdminForm
+    list_filter = ('birthdate', 'birthplace', 'qualifications', 'certifications', 'last_modified',)
+    filter_vertical = ()
 
     fieldsets = [
         ('Etat Civil', {
