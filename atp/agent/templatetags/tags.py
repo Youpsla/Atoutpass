@@ -14,8 +14,7 @@ def active(request, pattern):
 
 @register.simple_tag
 def switch_state(request, pattern):
-    print request.user.agent.form_state[pattern]
-    if request.user.agent.form_state[pattern] == 1:
-        return 'bg-success'
+    if request.user.users_agent.form_state[pattern] == 1:
+        return 'bg-success progtrckr-done'
     else:
-        return 'bg-danger'
+        return 'bg-danger progtrckr-todo'

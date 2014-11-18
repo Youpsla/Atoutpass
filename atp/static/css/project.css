@@ -42,3 +42,7 @@
 .nav-tabs > li > a.completed {
     background-color: #000000;
 }
+
+.nav-tabs > li {
+    width:14.28%;
+}

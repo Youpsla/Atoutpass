@@ -13,6 +13,9 @@ admin.autodiscover()
 from ajaxuploader.views import AjaxFileUploader
 uploader = AjaxFileUploader()
 
+# Django-notifications
+# import notifications
+
 
 urlpatterns = patterns('',
     url(r'^$',  # noqa
@@ -35,12 +38,14 @@ urlpatterns = patterns('',
     # Your stuff: custom urls go here
     url(r'^agent/', include("agent.urls", namespace="agent")),
 
-    # url(r'^helper/ajax-upload/$', uploader, name="ajax_uploader"),
+    # Your stuff: custom urls go here
+    url(r'^client/', include("clients.urls", namespace="clients")),
 
     # Django-ajax-ipload-widget urls
     (r'^ajax-upload/', include('ajax_upload.urls')),
 
     # Django-messages-extends urls
     (r'^messages/', include('messages_extends.urls')),
+
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

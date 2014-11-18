@@ -30,3 +30,9 @@ node_modules/
 
 # Campass
 .sass-cache
+
+.git/
+atp/agent/migrations
+atp/clients/migrations
+atp/media
+

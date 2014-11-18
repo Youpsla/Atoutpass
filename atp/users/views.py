@@ -25,6 +25,7 @@ from django.contrib import messages
 
 from django.http import HttpResponseRedirect
 
+from agent.views import agent_form_redirect 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
@@ -56,16 +57,28 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         form.save()
-        obj = Agent.objects.get(user=self.request.user)
-        AGENT_FORM_STATE = obj.form_state
-        AGENT_FORM_STATE['NOM_PRENOM'] = 1
-        Agent.objects.filter(user=self.request.user).update(form_state=AGENT_FORM_STATE)
-        messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
         return HttpResponseRedirect(self.get_success_url())
+
 
     # send the user back to their own page after a successful update
     def get_success_url(self):
-        return reverse("users:update",)
+        # Retrieve form_state from DB
+        form_state = Agent.objects.get(user=self.request.user).form_state
+
+        # Set redirect_url by passing form_state to agent_form_redirect
+        redirect_url = agent_form_redirect(form_state)
+        
+        # Check if agent form is complete
+        if 0 in form_state.values():
+            print 'Le formulaire est INCOMPLET'
+            messages.add_message(self.request, messages.ERROR, u'Votre Profil est incomplet. Veuillez renseigner les formulaires des onglets encore en rouge.')
+        else:
+            print 'Le formulaire est COMPLET'
+            messages.add_message(self.request, messages.SUCCESS, u'Merci. Votre profil va maintenant etre communiqué a un conseiller. Vous serez contacté dans les plus brefs délais')
+
+        # Update messages
+        messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
+        return reverse(redirect_url)
 
 
 class UserListView(LoginRequiredMixin, ListView):

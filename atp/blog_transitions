@@ -1,0 +1,8 @@
+digraph {
+	subgraph cluster_agent_Agent {
+		graph [label="agent.Agent"]
+			"agent.agent.state.agent_form_ok" [label=agent_form_ok]
+			"agent.agent.state.new" [label=new]
+				"agent.agent.state.new" -> "agent.agent.state.agent_form_ok"
+	}
+}
