@@ -135,9 +135,20 @@ class AgentAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ]
 
 
+class QualificationAdmin(admin.ModelAdmin):
+    pass
+
+
 class CertificationAdmin(admin.ModelAdmin):
     pass
 
 
+class StatesAdmin(admin.ModelAdmin):
+    pass
+
+
 admin.site.register(Agent,AgentAdmin)
+admin.site.register(Certification,CertificationAdmin)
+admin.site.register(Qualification,QualificationAdmin)
+admin.site.register(States,StatesAdmin)
 # admin.site.register(Certification,CertificationAdmin)
