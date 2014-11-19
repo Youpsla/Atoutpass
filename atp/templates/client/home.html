@@ -2,9 +2,15 @@
 {% load crispy_forms_tags %}
 {% load tags %}
 
+
 {% block content %}
-                <p class="text-center">
+
+
+    <div class="jumbotron well">
+                <p>
                     <a class="btn btn-primary btn-large" href="{% url 'agent:~agent' %}">Espace candidat</a>
-                    <a class="btn btn-primary btn-large" href="{% url 'clients:~client_home' %}">Espace entreprise</a>
+                    <a class="btn btn-primary btn-large" href="{% url 'agent:~agent' %}">Espace entreprise</a>
                 </p>
+    </div>
+
 {% endblock %}
