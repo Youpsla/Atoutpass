@@ -27,6 +27,18 @@ from django.http import HttpResponseRedirect
 
 from agent.views import agent_form_redirect 
 
+from django.dispatch import receiver
+from allauth.account.signals import user_signed_up
+
+# Decorator for setting the user type : agent or client
+@receiver(user_signed_up)
+def set_type(sender, **kwargs):
+    user = kwargs.pop('user')
+    if type == 'client': # because the default is agent.
+        user.type = 'client'
+    user.save()
+
+
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
     # These next two lines tell the view to index lookups by username
@@ -86,3 +98,5 @@ class UserListView(LoginRequiredMixin, ListView):
     # These next two lines tell the view to index lookups by username
     slug_field = "username"
     slug_url_kwarg = "username"
+
+

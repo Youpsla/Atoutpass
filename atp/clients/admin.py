@@ -1,3 +1,12 @@
-from django.contrib import admin
+from django.contrib import admin 
+from clients.models import *
 
-# Register your models here.
+class SelectionAdmin(admin.ModelAdmin):
+    pass
+
+class ClientAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(Selection, SelectionAdmin)
+admin.site.register(Client, ClientAdmin)

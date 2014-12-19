@@ -54,6 +54,13 @@ def user_logged_in(request, user, **kwargs):
     # user signed up now send email
     # send email part - do your self
 
+from phantom_pdf import render_to_pdf
+from django.http import HttpResponse
+
+
+def testpdf(request):
+    basename = 'dedede'
+    return render_to_pdf(request, basename)
 
 def AddAgentContextProcessor(self, request):
     try:
@@ -165,6 +172,15 @@ class AgentFormValidMixin(LoginRequiredMixin, UpdateView):
 
 class AgentHomeView(LoginRequiredMixin, TemplateView):
     template_name = 'agent/home.html'
+
+
+class AgentLandingView(TemplateView):
+    template_name = 'agent/landing.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(AgentLandingView, self).get_context_data(**kwargs)
+        context['type'] = 'agent'
+        return context
 
 
 class AgentProfileReadonlyView(LoginRequiredMixin, TemplateView):

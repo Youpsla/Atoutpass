@@ -5,6 +5,18 @@ import views
 from .views import HelloPDFView
 
 urlpatterns = patterns('',
+    # URL pattern for the TEST
+    url(
+        r'^~agent/testpdf$',
+        views.testpdf,
+        name='~agent_testpdf'
+    ),
+    # URL pattern for the AgentLandingView
+    url(
+        regex=r'^~agent/landing$',
+        view=views.AgentLandingView.as_view(),
+        name='~agent_landing'
+    ),
     # URL pattern for the AgentHomeView
     url(
         regex=r'^~agent/home$',

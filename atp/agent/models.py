@@ -15,6 +15,9 @@ class Certification(models.Model):
     def __unicode__(self):
         return self.long_name
 
+    class Meta:
+        verbose_name = 'dede verbose_name'
+
 
 class Qualification(models.Model):
     short_name = models.CharField('Nom court', max_length=24, blank=False)
@@ -116,6 +119,14 @@ class Agent(models.Model):
     @transition(field=state, source='diad', target='en_poste')
     def en_poste(self):
         pass
+
+    def get_id(self):
+        # return "<b>%s</b>" % self.id
+        # return """<input id="clickMe" type="button" value="click id %s " onclick="doFunction();" />""" % self.id
+        return """<button class="btn btn-default" value="%s"/>Ajouter</button>""" % self.id
+        # return "<a href='dada'>%s</a>" % self.id
+        # return '<b>',self.id,'</b>'
+        # return self.id
 
 
 class AgentCertification(models.Model):

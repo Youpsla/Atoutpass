@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 
 
 class UserForm(forms.ModelForm):
+    # first_name = forms.CharField(max_length=30, label='Nom')
 
     class Meta:
         # Set this form to use the User model.

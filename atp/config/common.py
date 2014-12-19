@@ -16,7 +16,6 @@ from configurations import Configuration, values
 
 BASE_DIR = dirname(dirname(__file__))
 
-
 class Common(Configuration):
 
     # APP CONFIGURATION
@@ -49,7 +48,9 @@ class Common(Configuration):
         'eventlog',
         'django_fsm',
         'fsm_admin',
-        'django_fsm_log'
+        'django_fsm_log',
+        'phantom_pdf',
+        'datatableview'
     )
 
     # Apps specific for this project go here.
@@ -107,13 +108,17 @@ class Common(Configuration):
     )
     # END FIXTURE CONFIGURATION
 
+    PHANTOMJS_BIN = '/usr/local/lib/node_modules/phantomjs/bin/phantomjs'
+    
     # EMAIL CONFIGURATION
-    EMAIL_BACKEND = values.Value('django.core.mail.backends.smtp.EmailBackend')
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_PASSWORD = 'ab372010'
-    EMAIL_HOST_USER = 'webmaster.atoutpass@gmail.com'
-    EMAIL_PORT = 587
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = 'youpsla@gmail.com'
+    EMAIL_HOST_PASSWORD = 'Axle372010'
+    DEFAULT_FROM_EMAIL = 'recrutement@atoutpass.fr'
+    SERVER_EMAIL = 'youpsla@gmail.com'
     # END EMAIL CONFIGURATION
 
     # MANAGER CONFIGURATION
@@ -177,6 +182,7 @@ class Common(Configuration):
         'django.core.context_processors.request',
         # Your stuff: custom template context processers go here
         'agent.processor.AddAgentContextProcessor',
+        'clients.processor.AddClientContextProcessor',
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
@@ -234,10 +240,13 @@ class Common(Configuration):
     )
 
     # Some really nice defaults
-    ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+    ACCOUNT_AUTHENTICATION_METHOD = "email"
     ACCOUNT_EMAIL_REQUIRED = True
+    ACCOUNT_UNIQUE_EMAIL = True
+    ACCOUNT_USERNAME_REQUIRED = False
     ACCOUNT_EMAIL_VERIFICATION = "mandatory"
     # END AUTHENTICATION CONFIGURATION
+    # ACCOUNT_SIGNUP_FORM_CLASS = 'users.forms.UserForm'
 
     # Custom user app defaults
     # Select the correct user model
@@ -258,13 +267,11 @@ class Common(Configuration):
     ACCOUNT_ADAPTER = 'users.accountadapter.AccountAdapter'
 
     SUIT_CONFIG = {
-            'ADMIN_NAME': 'Atout Pass',
-            'SHOW_REQUIRED_ASTERISK': True,
-            'CONFIRM_UNSAVED_CHANGES': True,
-            'MENU_OPEN_FIRST_CHILD': True
-
-
-            }
+        'ADMIN_NAME': 'Atout Pass',
+        'SHOW_REQUIRED_ASTERISK': True,
+        'CONFIRM_UNSAVED_CHANGES': True,
+        'MENU_OPEN_FIRST_CHILD': True
+        }
 
     # LOGGING CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
