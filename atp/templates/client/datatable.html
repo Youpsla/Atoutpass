@@ -1,0 +1,103 @@
+
+<!doctype html>
+<html>
+<head>
+    <title>{% block title %}{% endblock title %}</title>
+    {% block static %}
+        {# jQuery #}
+        <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/jquery-2.0.3.min.js"></script>
+
+        {# datatables.js #}
+        <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/jquery.datatables.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery.dataTables.css">
+
+        {# Bootstrap #}
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap.css">
+        <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/bootstrap.js"></script>
+
+        {# django-datatable-view #}
+        <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/datatableview.js"></script>
+
+        {# code highlighting #}
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/shCore.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/shThemeDefault.css">
+        <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/shCore.js"></script>
+        <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/shAutoloader.js"></script>
+        <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/shBrushPython.js"></script>
+
+        <script type="text/javascript">
+
+
+
+
+
+
+        </script>
+        {# test_project helpers #}
+        <style type="text/css">
+            .nav.sidebar a {
+                border-right: 1px solid white;
+                padding: 5px 10px;
+            }
+            .nav.sidebar a.active {
+                font-weight: bold;
+                background-color: #f0f0f0;
+                border-color: #428bca;
+            }
+            .nav.sidebar li.divider {
+                margin: 0.5em;
+                border-top: 1px solid #dfdfdf;
+            }
+        </style>
+        <script type="text/javascript">
+            $(function(){
+                SyntaxHighlighter.all();
+                var path = window.location.pathname;
+                $('.nav.sidebar > li > a[href="'+path+'"]').addClass("active");
+            });
+
+        </script>
+    {% endblock static %}
+</head>
+<body>
+<div class="container">
+    <div class="col-xs-12 col-sm-9">
+                {{ datatable }}
+                {% block content %}{% endblock content %}
+    </div>
+    <div class="col-xs-6 col-sm-3">
+        Liste des agents selectionnes<br>
+        <ul id='selection'>
+        </ul>
+    </div>
+</div>
+</body>
+        <script type="text/javascript">
+
+$(document).ready( function () {
+  
+  addtoselection = function(x){
+    agentid = $(this).attr("data-agentid");
+    $.get('/client/add_agent_to_selection/', {agentid: x}, function(payload){
+        if (payload["duplicate"] == 'ok') {
+            alert('Agent déjà présent dans la selection');
+        } else {
+            $("#selection").append($('<li id=agentid'+x+ '>'+x+'<input type="button" class="bouton" value="Supprimer" data-agentid='+x+' id='+x+' onclick="removefromselection('+x+')"></li>'));
+            console.log('Agent ajoute a selection : ' + x);
+        }
+    });
+  }
+  
+  
+  removefromselection = function(x){
+    agentid = $(this).attr("data-agentid");
+    $.get('/client/remove_agent_from_selection/', {agentid: x}, function(){
+    console.log('Agent supprime de la selection : ' + x);
+        $("#selection #agentid"+x).remove();
+        });
+  }
+} );
+
+
+        </script>
+</html>

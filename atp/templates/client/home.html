@@ -4,13 +4,13 @@
 
 
 {% block content %}
-
-
-    <div class="jumbotron well">
-                <p>
-                    <a class="btn btn-primary btn-large" href="{% url 'agent:~agent' %}">Espace candidat</a>
-                    <a class="btn btn-primary btn-large" href="{% url 'agent:~agent' %}">Espace entreprise</a>
-                </p>
+<div class="container">
+   <a href="{% url 'clients:~selection' %}">Créer une sélection</a> 
     </div>
-
+    <div>
+        {% for s in current_client.selection_client.all %}
+        {{s.name}}
+        <br>
+        {% endfor %}
+    </div>
 {% endblock %}
