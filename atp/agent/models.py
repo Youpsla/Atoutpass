@@ -121,9 +121,8 @@ class Agent(models.Model):
         pass
 
     def get_id(self):
-        # return "<b>%s</b>" % self.id
-        # return """<input id="clickMe" type="button" value="click id %s " onclick="doFunction();" />""" % self.id
-        return """<button class="btn btn-default" value="%s"/>Ajouter</button>""" % self.id
+        return """<input type="button" class="btn btn-default bouton" value="Ajouter" data-agentid="%s" onclick="addtoselection('%s')">""" % (self.id,self.id)
+        #return """<button class="btn btn-default" value="%s"/>Ajouter</button>""" % self.id
         # return "<a href='dada'>%s</a>" % self.id
         # return '<b>',self.id,'</b>'
         # return self.id
