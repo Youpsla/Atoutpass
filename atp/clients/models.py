@@ -47,9 +47,13 @@ class Selection(models.Model):
     client = models.ForeignKey(Client, related_name='selection_client')
     start_date = models.DateTimeField(blank=True, null=True)
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
-    state = FSMKeyField(States, default='new', protected=True)
+    state = FSMKeyField(States, default='new', protected=True, blank=True, null=True)
     name = models.CharField(_('Nom'), max_length=120, blank=True, null=True)
     description = models.CharField(_('Description'), max_length=220, blank=True, null=True)
+    agents = models.ManyToManyField(Agent, blank=True,
+                                            null=True,
+                                            through='SelectionAgentsRelationship',
+                                            related_name='selectionagents')
 
 
     def save(self, *args, **kwargs):
@@ -65,10 +69,13 @@ class Selection(models.Model):
         pass
 
 
-class SelectionAgents(models.Model):
+class SelectionAgentsRelationship(models.Model):
     agent = models.ForeignKey(Agent, related_name="selection_agents")
     selection = models.ForeignKey(Selection, blank=True, null=True,
                                       default=None)
    
     def __unicode__(self):
         return unicode(self.selection)
+
+    class Meta():
+        auto_created=True

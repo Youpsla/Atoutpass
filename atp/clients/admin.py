@@ -8,5 +8,10 @@ class ClientAdmin(admin.ModelAdmin):
     pass
 
 
+class StatesAdmin(admin.ModelAdmin):
+    pass
+
+
 admin.site.register(Selection, SelectionAdmin)
+admin.site.register(States, StatesAdmin)
 admin.site.register(Client, ClientAdmin)

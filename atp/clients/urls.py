@@ -12,7 +12,7 @@ urlpatterns = patterns('',
     ),
     url(
         regex=r'^~client/data$',
-        view=views.DDataTableView.as_view(),
+        view=views.DataTableView.as_view(),
         name='~client_datatable'
     ),
     url(
@@ -20,4 +20,6 @@ urlpatterns = patterns('',
         view=views.SelectionView.as_view(),
         name='~selection'
     ),
+    url(r'^add_agent_to_selection/$', views.add_agent_to_selection, name='add_agent'),
+    url(r'^remove_agent_from_selection/$', views.remove_agent_from_selection, name='remove_agent'),
 )
