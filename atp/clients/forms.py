@@ -28,7 +28,7 @@ class SelectionForm(forms.ModelForm):
         self.helper.label_class = 'col-lg-3'
         self.helper.field_class = 'col-lg-7'
         self.helper.form_method = 'post'
-        self.helper.form_action = reverse('clients:~selection')
+        self.helper.form_action = reverse('clients:~add_selection')
         self.helper.layout = Layout(
             Fieldset(u'1) Indiquez le nom et la description de votre selection',
                      'name', 'description'),

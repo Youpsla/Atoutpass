@@ -43,11 +43,25 @@ class States(models.Model):
         return self.label
 
 
+from django.middleware import csrf
+def get_or_create_csrf_token(request):
+    token = request.META.get('CSRF_COOKIE', None)
+    if token is None:
+        token = csrf._get_new_csrf_key()
+        request.META['CSRF_COOKIE'] = token
+    request.META['CSRF_COOKIE_USED'] = True
+    return token
+
+
+
+
+
+from django.db.models.signals import post_save
 class Selection(models.Model):
     client = models.ForeignKey(Client, related_name='selection_client')
     start_date = models.DateTimeField(blank=True, null=True)
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
-    state = FSMKeyField(States, default='new', protected=True, blank=True, null=True)
+    state = FSMKeyField(States, default='new', protected=True, blank=True, null=True, related_name='selection_state')
     name = models.CharField(_('Nom'), max_length=120, blank=True, null=True)
     description = models.CharField(_('Description'), max_length=220, blank=True, null=True)
     agents = models.ManyToManyField(Agent, blank=True,
@@ -55,19 +69,30 @@ class Selection(models.Model):
                                             through='SelectionAgentsRelationship',
                                             related_name='selectionagents')
 
-
     def save(self, *args, **kwargs):
         self.last_modified = datetime.datetime.today()
         return super(Selection, self).save(*args, **kwargs)
-
+    
     @transition(field=state, source='new', target='created')
     def create(self):
+        print "Selection state update to created"
         pass
 
-    @transition(field=state, source='created', target='pending')
-    def fill(self):
+    @transition(field=state, source='created', target='validated')
+    def validate(self):
         pass
 
+    @transition(field=state, source='validated', target='exported')
+    def export(self):
+        pass
+    
+    def add_action_button(self, **kwargs):
+        if self.state == 'created':
+            return """<a class='btn' href="/client/~client/data?selectionid=%s">""" % (self.id)
+        else:
+            return """bloque"""
+
+post_save.connect(Selection().create, Selection, dispatch_uid="Selection_created")
 
 class SelectionAgentsRelationship(models.Model):
     agent = models.ForeignKey(Agent, related_name="selection_agents")

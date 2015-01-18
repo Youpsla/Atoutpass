@@ -24,6 +24,9 @@
         <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/shCore.js"></script>
         <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/shAutoloader.js"></script>
         <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/shBrushPython.js"></script>
+        {# datatable-bootstrap #}
+         <link href="//cdn.datatables.net/plug-ins/be7019ee387/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet" /> 
+ <script src="//cdn.datatables.net/plug-ins/be7019ee387/integration/bootstrap/3/dataTables.bootstrap.js"></script> 
 
         <script type="text/javascript">
 
@@ -66,34 +69,94 @@
                 {% block content %}{% endblock content %}
     </div>
     <div class="col-xs-6 col-sm-3">
-        Liste des agents selectionnes<br>
-        <ul id='selection'>
+        
+        <ul id='selection' class="list-group">
+            <li class="list-group-item">
+                <span class="badge" id="selectionagentcounter">0</span>
+                Liste des agents selectionnes
+            </li>
         </ul>
     </div>
 </div>
+{{agents}}
 </body>
-        <script type="text/javascript">
+<script type="text/javascript">
 
+datatableview.auto_initialize = false;
 $(document).ready( function () {
-  
+    datatableview.initialize($(".datatable"), {
+        initComplete: function(){
+            var api = this.api();
+            api.columns().indexes().flatten().each( function ( i ) {
+                var column = api.column( i );
+                console.log( $(column.footer()));
+                var select = $('<select><option value=""></option></select>')
+                    .appendTo( $(column.footer()).empty() )
+                    .on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+                        column
+                            .search( val ? '^'+val+'$' : '', true, false )
+                            .draw();
+                    } );
+                column.data().unique().sort().each( function ( d, j ) {
+                    select.append( '<option value="'+d+'">'+d+'</option>' )
+                } );
+            } );
+        }
+    } );
+
+
+    updateSelectionAgentCounter = function(x){
+        counter = parseInt($('#selection #selectionagentcounter').html());
+        if (x == 1){
+            counter += 1;
+            } else if (x == 0){
+            counter -= 1;
+            } else {
+            counter = x;
+            }
+
+        $('#selection #selectionagentcounter').text(counter);
+        console.log('counter ' + counter);
+        };
+
+    jsagents = {{agents|safe}};
+    initSelectionHtml = function(jsagents) {
+        for (i = 0; i < jsagents.length; i++) {
+        agentid = jsagents[i].id;
+        firstname = jsagents[i].firstname;
+        lastname = jsagents[i].lastname;
+            $("#selection").append($('<li id='+agentid+' class="list-group-item"><button id='+agentid+' type="button" class="btn btn-default btn-xs" onclick="removefromselection('+agentid+')"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button> '+firstname+' '+lastname+'</li>'));
+        counter = jsagents.length;
+        updateSelectionAgentCounter(counter);
+            }
+            };
+
+initSelectionHtml(jsagents);
+
   addtoselection = function(x){
-    agentid = $(this).attr("data-agentid");
-    $.get('/client/add_agent_to_selection/', {agentid: x}, function(payload){
-        if (payload["duplicate"] == 'ok') {
+    $.get('/client/add_agent_to_selection/', {'agentid': x, 'selectionid': {{selectionid}} }, function(data){
+        if (data["duplicate"] == 'ok') {
             alert('Agent déjà présent dans la selection');
         } else {
-            $("#selection").append($('<li id=agentid'+x+ '>'+x+'<input type="button" class="bouton" value="Supprimer" data-agentid='+x+' id='+x+' onclick="removefromselection('+x+')"></li>'));
-            console.log('Agent ajoute a selection : ' + x);
+        agentid = x;
+        firstname = data['firstname'];
+        lastname = data['lastname'];
+        $("#selection").append($('<li id='+agentid+' class="list-group-item"><button id='+agentid+' type="button" class="btn btn-default btn-xs" onclick="removefromselection('+agentid+')"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button> '+firstname+' '+lastname+'</li>'));
+        updateSelectionAgentCounter(1);
+        console.log('Agent ajoute a selection : ' + x);
         }
     });
   }
   
   
   removefromselection = function(x){
-    agentid = $(this).attr("data-agentid");
-    $.get('/client/remove_agent_from_selection/', {agentid: x}, function(){
+    $.get('/client/remove_agent_from_selection/', {'agentid': x, 'selectionid': {{selectionid}} }, function(){
     console.log('Agent supprime de la selection : ' + x);
-        $("#selection #agentid"+x).remove();
+        $("#selection #"+x).remove();
+        updateSelectionAgentCounter(0);
         });
   }
 } );
