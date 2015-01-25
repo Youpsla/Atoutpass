@@ -15,6 +15,7 @@
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap.css">
         <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/bootstrap.js"></script>
 
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/project.css">
         {# django-datatable-view #}
         <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/datatableview.js"></script>
 
@@ -62,8 +63,21 @@
         </script>
     {% endblock static %}
 </head>
+
+
+
 <body>
 <div class="container">
+    <!-- Modal --> <div class="modal fade modal-wide" id="idmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">{% include 'agent/agent_detail_modal.html' %} </div><!-- /.modal --> 
+
+<input type="button" class="btn btn-default bouton" value="Details" onclick="showagentdetailmodal(5)">
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#idmodal" onclick="showagentdetailmodal(5)">Large modal</button>
+
+
+    <a class="fa fa-pencil" data-toggle="modal" href="{% url 'clients:~agent_detail_modal' pk=5 %}" data-target="#idmodal" title="edit item">dededede</a> 
+
+
     <div class="col-xs-12 col-sm-9">
                 {{ datatable }}
                 {% block content %}{% endblock content %}
@@ -78,6 +92,10 @@
         </ul>
     </div>
 </div>
+			<h3>
+				h3. Lorem ipsum dolor sit amet.
+			</h3>
+<hr>
 {{agents}}
 </body>
 <script type="text/javascript">
@@ -159,6 +177,28 @@ initSelectionHtml(jsagents);
         updateSelectionAgentCounter(0);
         });
   }
+
+
+    showagentdetailmodal= function(x){
+        $.get('/client/~client/selection/agent/detail/modal/'+x, {}, function(data){
+            console.log('showagentdetailmodal : ' + x);
+            agentid = x;
+            console.log(agentid);
+            var obj = jQuery.parseJSON( data );
+            var agent = obj[0]['fields'];
+            for(var index in agent) {
+                $('#'+index).text(agent[index]);
+                console.log(index + ": " + agent[index]);
+            }
+            names = agent['firstname'] + " " + agent['lastname'];
+            $('#names').text(names);
+            $("#idmodal").modal('show');
+            console.log(agent['picture']);
+            d = new Date();
+            $("#picture").attr("src",{{MEDIA_URL}} + agent['picture'].slice(1)+"?"+d.getTime());
+        });
+  }
+
 } );
 
 

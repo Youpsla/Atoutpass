@@ -40,6 +40,7 @@ class Local(Common):
             'debug_toolbar.panels.redirects.RedirectsPanel',
         ],
         'SHOW_TEMPLATE_CONTEXT': True,
+        'JQUERY_URL': '/static/js/jquery-2.0.3.min.js', 
     }
     # end django-debug-toolbar
 

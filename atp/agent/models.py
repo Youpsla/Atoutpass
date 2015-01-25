@@ -122,10 +122,10 @@ class Agent(models.Model):
 
     def get_id(self):
         return """<input type="button" class="btn btn-default bouton" value="Ajouter" data-agentid="%s" onclick="addtoselection('%s')">""" % (self.id,self.id)
-        #return """<button class="btn btn-default" value="%s"/>Ajouter</button>""" % self.id
-        # return "<a href='dada'>%s</a>" % self.id
-        # return '<b>',self.id,'</b>'
-        # return self.id
+
+
+    def show_details(self):
+        return """<input type="button" class="btn btn-default bouton" value="Details" data-agentid="%s" onclick="showagentdetailmodal('%s')">""" % (self.id, self.id)
 
 
 class AgentCertification(models.Model):
@@ -210,7 +210,7 @@ class AgentIdCard(models.Model):
 
 
 class AgentAddress(models.Model):
-    agent = models.ForeignKey(Agent, related_name='address')
+    agent = models.ForeignKey(Agent)
     address1 = models.CharField(_('Adresse 1'), max_length=120, blank=True)
     address2 = models.CharField(_('Adresse 2'), max_length=120, blank=True)
     zipcode = models.CharField(_('Code Postal'), max_length=5, blank=True)

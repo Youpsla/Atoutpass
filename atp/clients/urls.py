@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
 import views
+from agent.views import AgentDetailModal
 
 
 urlpatterns = patterns('',
@@ -20,6 +21,11 @@ urlpatterns = patterns('',
         regex=r'^~client/selection/add$',
         view=views.SelectionView.as_view(),
         name='~add_selection'
+    ),
+    url(
+        regex=r'^~client/selection/agent/detail/modal/(?P<pk>\d+)/$',
+        view=AgentDetailModal.as_view(),
+        name='~agent_detail_modal'
     ),
     url(
         regex=r'^~client/selection/list$',

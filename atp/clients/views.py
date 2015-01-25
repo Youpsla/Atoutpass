@@ -62,7 +62,8 @@ class DataTableView(DatatableView):
             'firstname',
             'lastname',
             ("Certification", 'agent__certifications', 'get_agent_certifications'),
-            ("Id", 'get_id'),
+            ("Ajouter", 'get_id'),
+            ("Details", 'show_details'),
         ]
         }
 

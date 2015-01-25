@@ -46,3 +46,9 @@
 .nav-tabs > li {
     width:14.28%;
 }
+
+.modal-wide .modal-dialog {
+    width: 90%; /* respsonsive width */
+    margin-left:5%; /* width/2) */ 
+}
+

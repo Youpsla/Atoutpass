@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 # view imports
 from django.views.generic import RedirectView
 from django.views.generic import UpdateView
+from django.views.generic import DetailView
 from django.views.generic.base import TemplateView
 
 
@@ -35,6 +36,7 @@ from .models import AgentVarious
 # Various imports
 from django.http import HttpResponseRedirect
 from extra_views import ModelFormSetView
+from django.shortcuts import get_object_or_404
 
 # import messages
 from django.contrib import messages
@@ -369,3 +371,57 @@ class HelloPDFView(PDFTemplateView):
                 }
             )
         return context
+
+import json
+from django.core import serializers
+from django.http import JsonResponse
+class AgentDetailModal(LoginRequiredMixin, DetailView):
+    template_name = 'agent/agent_detail_modal.html'
+    model = Agent
+
+
+    def render_to_response(self, context, **response_kwargs):
+        agent = Agent.objects.prefetch_related('agentaddress_set').filter(pk=self.kwargs['pk'])
+        # print agent.__dict__
+        # print Agent.objects.all().prefetch_related('agentaddress_set').query
+        # print Agent.objects.prefetch_related('agentaddress_set').get(pk=6).__dict__
+        # print Agent.objects.prefetch_related('agentaddress_set').get(pk=6).__class__
+        # print Agent.objects.prefetch_related('agentaddress_set').filter(pk=self.kwargs['pk']).__class__
+        # dede= Agent.objects.filter(pk=self.kwargs['pk']).prefetch_related('agentaddress_set').values
+        # print dede
+        print agent.query
+        agent_serialized = serializers.serialize('json', agent)
+        print agent_serialized
+        # print agent_serialized
+        # print agent['address1']
+        from django.db import connection
+        print connection.queries
+        return JsonResponse(agent_serialized, safe=False)
+        # return HttpResponse(dapa, **response_kwargs)
+
+
+    #def get_context_data(self, **kwargs):
+        #agent = kwargs['object']
+        #context = super(AgentDetailModal, self).get_context_data(**kwargs)
+        #context['agent'] = agent
+        #return context
+
+    #def get_object(self, queryset=None):
+        ##agent = get_object_or_404(Agent, pk=self.kwargs['pk'])
+        #if queryset is None:
+            #queryset = self.get_queryset()
+        #pk = self.kwargs.get(self.pk_url_kwarg, None)
+        #if pk is not None:
+            #queryset = queryset.filter(pk=pk)
+        #obj = queryset.get()
+        #print 'OBJOBJOBJ', obj
+        ## print 'AGENTAGENTAGENT', agent
+        #return obj
+
+    #def get_queryset(self):
+
+
+    #def get(self):
+        #object = super(AgentDetailModal, self).get_object()
+        #return render_to_response(
+
