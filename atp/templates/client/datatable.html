@@ -181,21 +181,29 @@ initSelectionHtml(jsagents);
 
     showagentdetailmodal= function(x){
         $.get('/client/~client/selection/agent/detail/modal/'+x, {}, function(data){
-            console.log('showagentdetailmodal : ' + x);
-            agentid = x;
-            console.log(agentid);
-            var obj = jQuery.parseJSON( data );
-            var agent = obj[0]['fields'];
-            for(var index in agent) {
-                $('#'+index).text(agent[index]);
-                console.log(index + ": " + agent[index]);
-            }
-            names = agent['firstname'] + " " + agent['lastname'];
+            console.log('showagentdetailmodal : ' + x)
+            console.log(data);
+            var agent_data = {};
+            $.each(data, function(i,j) {
+                console.log('ID : ' + i);
+                tmp = jQuery.parseJSON( j );
+                console.log(tmp);
+                if (tmp.length > 0) {
+                    console.log('on prend');
+                    $.each(tmp[0]['fields'], function(key,value) {
+                        if (value){
+                            agent_data[key] = value;
+                            console.log(key + ' : ' + value);
+                             $('#'+key).text(value);
+                             }
+                    });
+                }
+                    });
+            names = agent_data['firstname'] + " " + agent_data['lastname'];
             $('#names').text(names);
             $("#idmodal").modal('show');
-            console.log(agent['picture']);
             d = new Date();
-            $("#picture").attr("src",{{MEDIA_URL}} + agent['picture'].slice(1)+"?"+d.getTime());
+            $("#picture").attr("src",{{MEDIA_URL}} + agent_data['picture'].slice(1)+"?"+d.getTime());
         });
   }
 

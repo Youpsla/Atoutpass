@@ -373,55 +373,77 @@ class HelloPDFView(PDFTemplateView):
         return context
 
 import json
+from django.db.models import Prefetch
 from django.core import serializers
 from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 class AgentDetailModal(LoginRequiredMixin, DetailView):
     template_name = 'agent/agent_detail_modal.html'
     model = Agent
 
 
     def render_to_response(self, context, **response_kwargs):
-        agent = Agent.objects.prefetch_related('agentaddress_set').filter(pk=self.kwargs['pk'])
-        # print agent.__dict__
-        # print Agent.objects.all().prefetch_related('agentaddress_set').query
-        # print Agent.objects.prefetch_related('agentaddress_set').get(pk=6).__dict__
-        # print Agent.objects.prefetch_related('agentaddress_set').get(pk=6).__class__
-        # print Agent.objects.prefetch_related('agentaddress_set').filter(pk=self.kwargs['pk']).__class__
-        # dede= Agent.objects.filter(pk=self.kwargs['pk']).prefetch_related('agentaddress_set').values
-        # print dede
-        print agent.query
-        agent_serialized = serializers.serialize('json', agent)
-        print agent_serialized
+        #agent = Agent.objects.filter(pk=self.kwargs['pk']).prefetch_related(
+                #Prefetch('agentaddress_set', to_attr="dede"),
+                #Prefetch('agentvarious_set', to_attr="dodo"),
+                #Prefetch('idcard', to_attr="didi"))
+        #print agent[0].dede[0].address1
+        #print agent[0].didi[0].id_card_type
+        pk=self.kwargs['pk']
+        agent = Agent.objects.select_related(
+                'agentaddress',
+                'agentvarious',
+                'idcard',
+                'procard',
+                # ).filter(pk=pk)
+                ).get(pk=pk)
+        agent_js = serializers.serialize('json', [agent])
+        try:
+            aidcard = agent.idcard.get()
+            aidcard_js = serializers.serialize('json', [aidcard])
+        except ObjectDoesNotExist:
+            aidcard_js = json.dumps({})
+            aidcard = ''
+        try:
+            address = agent.agentaddress_set.get()
+            address_js = serializers.serialize('json', [address])
+        except ObjectDoesNotExist:
+            address_js = json.dumps({})
+            address = ''
+        try:
+            procard = agent.procard.get()
+            procard_js = serializers.serialize('json', [procard])
+        except ObjectDoesNotExist:
+            procard_js = json.dumps({})
+            procard = ''
+        try:
+            various = agent.agentvarious_set.get()
+            various_js = serializers.serialize('json', [various])
+        except ObjectDoesNotExist:
+            various_js = json.dumps({})
+            various = ''
+        dic = {'agent': agent_js,
+               'address': address_js,
+               'idcard': aidcard_js,
+               "procard": procard_js,
+               'various': various_js,
+               'idcard': aidcard_js}
+        print dic
+        print 'DEDE: ', json.dumps(dic, indent=4)
+
+        data = [agent_js, address_js, aidcard_js, procard_js, various_js]
+        #for i in data:
+            #j = serializers.serialize(i)
+            #data_json.append()
+        # agent_serialized = serializers.serialize('json', data)
         # print agent_serialized
-        # print agent['address1']
-        from django.db import connection
-        print connection.queries
-        return JsonResponse(agent_serialized, safe=False)
-        # return HttpResponse(dapa, **response_kwargs)
+        # return JsonResponse(agent_serialized, safe=False)
+        # return JsonResponse(json.dumps(data), safe=False)
+        return JsonResponse({'agent': agent_js,
+               'address': address_js,
+               'idcard': aidcard_js,
+               'procard': procard_js,
+               'various': various_js,
+               'idcard': aidcard_js}, safe=False)
 
-
-    #def get_context_data(self, **kwargs):
-        #agent = kwargs['object']
-        #context = super(AgentDetailModal, self).get_context_data(**kwargs)
-        #context['agent'] = agent
-        #return context
-
-    #def get_object(self, queryset=None):
-        ##agent = get_object_or_404(Agent, pk=self.kwargs['pk'])
-        #if queryset is None:
-            #queryset = self.get_queryset()
-        #pk = self.kwargs.get(self.pk_url_kwarg, None)
-        #if pk is not None:
-            #queryset = queryset.filter(pk=pk)
-        #obj = queryset.get()
-        #print 'OBJOBJOBJ', obj
-        ## print 'AGENTAGENTAGENT', agent
-        #return obj
-
-    #def get_queryset(self):
-
-
-    #def get(self):
-        #object = super(AgentDetailModal, self).get_object()
-        #return render_to_response(
 
