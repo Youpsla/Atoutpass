@@ -30,6 +30,7 @@ from .models import AgentIdCard
 from .models import AgentAddress
 from .models import AgentProCard
 from .models import AgentQualification
+from .models import Qualification
 from .models import AgentVarious
 
 
@@ -372,78 +373,20 @@ class HelloPDFView(PDFTemplateView):
             )
         return context
 
-import json
+
+from django.views.generic.base import View
+from django.shortcuts import render
 from django.db.models import Prefetch
-from django.core import serializers
-from django.http import JsonResponse
-from django.core.exceptions import ObjectDoesNotExist
-class AgentDetailModal(LoginRequiredMixin, DetailView):
-    template_name = 'agent/agent_detail_modal.html'
-    model = Agent
 
+class ModalView(View):
 
-    def render_to_response(self, context, **response_kwargs):
-        #agent = Agent.objects.filter(pk=self.kwargs['pk']).prefetch_related(
-                #Prefetch('agentaddress_set', to_attr="dede"),
-                #Prefetch('agentvarious_set', to_attr="dodo"),
-                #Prefetch('idcard', to_attr="didi"))
-        #print agent[0].dede[0].address1
-        #print agent[0].didi[0].id_card_type
-        pk=self.kwargs['pk']
+    def get(self, request, pk):
         agent = Agent.objects.select_related(
-                'agentaddress',
                 'agentvarious',
                 'idcard',
                 'procard',
-                # ).filter(pk=pk)
-                ).get(pk=pk)
-        agent_js = serializers.serialize('json', [agent])
-        try:
-            aidcard = agent.idcard.get()
-            aidcard_js = serializers.serialize('json', [aidcard])
-        except ObjectDoesNotExist:
-            aidcard_js = json.dumps({})
-            aidcard = ''
-        try:
-            address = agent.agentaddress_set.get()
-            address_js = serializers.serialize('json', [address])
-        except ObjectDoesNotExist:
-            address_js = json.dumps({})
-            address = ''
-        try:
-            procard = agent.procard.get()
-            procard_js = serializers.serialize('json', [procard])
-        except ObjectDoesNotExist:
-            procard_js = json.dumps({})
-            procard = ''
-        try:
-            various = agent.agentvarious_set.get()
-            various_js = serializers.serialize('json', [various])
-        except ObjectDoesNotExist:
-            various_js = json.dumps({})
-            various = ''
-        dic = {'agent': agent_js,
-               'address': address_js,
-               'idcard': aidcard_js,
-               "procard": procard_js,
-               'various': various_js,
-               'idcard': aidcard_js}
-        print dic
-        print 'DEDE: ', json.dumps(dic, indent=4)
-
-        data = [agent_js, address_js, aidcard_js, procard_js, various_js]
-        #for i in data:
-            #j = serializers.serialize(i)
-            #data_json.append()
-        # agent_serialized = serializers.serialize('json', data)
-        # print agent_serialized
-        # return JsonResponse(agent_serialized, safe=False)
-        # return JsonResponse(json.dumps(data), safe=False)
-        return JsonResponse({'agent': agent_js,
-               'address': address_js,
-               'idcard': aidcard_js,
-               'procard': procard_js,
-               'various': various_js,
-               'idcard': aidcard_js}, safe=False)
-
-
+                ).prefetch_related(Prefetch('agent_qualifications',queryset=AgentQualification.objects.filter(qualification__gt=0)),
+                                   'agent_certifications',
+                                   ).filter(pk=pk)
+        dic = {'agent': agent[0]}
+        return render(request,'agent/modal.html',dic)

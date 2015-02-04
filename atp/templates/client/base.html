@@ -1,35 +1,29 @@
-{% load staticfiles i18n %}<!DOCTYPE html>
-{% load tags %}
-
-<html lang="en" ng-app>
-  <head>
-    <meta charset="utf-8">
-    <title>{% block title %}atoutpass{% endblock title %}</title>
-    {% block static %}
-        {# jQuery #}
-        <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/jquery-2.0.3.min.js"></script>
-
-        {# datatables.js #}
-        <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/jquery.datatables.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery.dataTables.css">
-
-        {# Bootstrap #}
+<!doctype html>
+<html lang='fr'>
+    <head>
+        <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap.css">
-        <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/bootstrap.js"></script>
-
-        {# django-datatable-view #}
-        <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/datatableview.js"></script>
-
-        {# code highlighting #}
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery.dataTables.css">
+        <link href="//cdn.datatables.net/plug-ins/be7019ee387/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet" /> 
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}font-awesome/css/font-awesome.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/project.css">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/shCore.css">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/shThemeDefault.css">
-        <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/shCore.js"></script>
-        <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/shAutoloader.js"></script>
-        <script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/shBrushPython.js"></script>
+         <link href="//cdn.datatables.net/plug-ins/be7019ee387/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet" />
 
-        <script type="text/javascript">
+         {% block extracss %}{% endblock %}
 
-        </script>
+        <!-- Add custom CSS here -->
+        {% block customcss %}
+            <style>
+                body {padding-bottom: 40px;}
+            </style>
+        {% endblock %}
+
+
+        {% block extrahead %}{% endblock %}
+
+
         {# test_project helpers #}
         <style type="text/css">
             .nav.sidebar a {
@@ -46,19 +40,9 @@
                 border-top: 1px solid #dfdfdf;
             }
         </style>
-        <script type="text/javascript">
-            $(function(){
-                SyntaxHighlighter.all();
-                var path = window.location.pathname;
-                $('.nav.sidebar > li > a[href="'+path+'"]').addClass("active");
-            });
-        </script>
-    {% endblock static %}
-  </head>
+</head>
 
-  <body>
-
-
+<body>
 <nav class="navbar navbar-default" role="navigation">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
@@ -70,14 +54,13 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="#">Espace Client</a>
-        
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
             {% if request.user.is_authenticated %}
-                <li><a href="{% url 'clients:~client_home' %}">{% trans "Accueil" %}</a></li>
+                <li><a href="{% url 'clients:~client_home' %}">Accueil</a></li>
                 <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mon compte<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
@@ -89,31 +72,50 @@
                 <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mes sélections d'agents<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="{% url 'clients:~list_selection' %}">{% trans "Mes sélections" %}</a></li>
-                    <li><a href="{% url 'clients:~add_selection' %}">{% trans "Créer" %}</a></li>
+                    <li><a href="{% url 'clients:~list_selection' %}">Mes sélections</a></li>
+                    <li><a href="{% url 'clients:~add_selection' %}">Créer</a></li>
                 </ul>
                 </li>
             {% else %}
-                <li><a href="{% url 'account_signup' %}">{% trans "Inscription" %}</a></li>
-                <li><a href="{% url 'account_login' %}">{% trans "Connexion" %}</a></li>
+                <li><a href="{% url 'account_signup' %}">Inscription</a></li>
+                <li><a href="{% url 'account_login' %}">Connexion</a></li>
             {% endif %}
         </ul>
         {% if request.user.is_authenticated %}
-        <p class="navbar-text navbar-right"><b>{{ current_agent.firstname }} {{ current_agent.lastname }}</b></p>
+            <p class="navbar-text navbar-right"><b>{{ current_agent.firstname }} {{ current_agent.lastname }}</b></p>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="{% url 'account_logout' %}">{% trans "Déconnexion" %}</a></li>
+                <li><a href="{% url 'account_logout' %}">Déconnexion</a></li>
             </ul>
         {% endif %}
-        </div><!-- /.navbar-collapse -->
+    </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
+{% block rootcontainer %}
     <div class="container">
-
-    {% include "messages_extends/includes/alerts_bootstrap.html" %}
-      {% block content %}
-      {% endblock content %}
+        {% block modal %}{% endblock modal %}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-header">
+                    {% block heading %}{% endblock %}
+                </div>
+                {% block content %}{% endblock %}
+            </div>
+        </div>
     </div> <!-- /container -->
-    {% block modal %}{% endblock modal %}
-  </body>
+{% endblock %}
+
+{# jQuery #}
+<script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/jquery-2.0.3.min.js"></script>
+{# Bootstrap #}
+<script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/bootstrap.js"></script>
+{# code highlighting #}
+<script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/shCore.js"></script>
+<script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/shAutoloader.js"></script>
+<script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/shBrushPython.js"></script>
+
+{% block extrajs %}{% endblock %}
+
+
+</body>
 </html>
  

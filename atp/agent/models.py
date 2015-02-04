@@ -13,7 +13,7 @@ class Certification(models.Model):
     long_name = models.CharField('Nom long', max_length=240, blank=False)
 
     def __unicode__(self):
-        return self.long_name
+        return self.short_name
 
     class Meta:
         verbose_name = 'dede verbose_name'
@@ -24,7 +24,7 @@ class Qualification(models.Model):
     long_name = models.CharField('Nom long', max_length=240, blank=False)
 
     def __unicode__(self):
-        return self.long_name
+        return self.short_name
 
 
 class States(models.Model):
@@ -121,12 +121,12 @@ class Agent(models.Model):
         pass
 
     def get_id(self):
-        return """<input type="button" class="btn btn-default bouton" value="Ajouter" data-agentid="%s" onclick="addtoselection('%s')">""" % (self.id,self.id)
-
+        # return """<input type="button" class="btn btn-default" value="Ajouter" data-agentid="%s" onclick="addtoselection('%s')">""" % (self.id,self.id)
+        return """<button type="button" class="btn btn-primary" data-agentid="%s" onclick="addtoselection('%s')">Ajouter</button>""" % (self.id,self.id)
 
     def show_details(self):
-        return """<input type="button" class="btn btn-default bouton" value="Details" data-agentid="%s" onclick="showagentdetailmodal('%s')">""" % (self.id, self.id)
-
+        # return """<input type="button" class="btn btn-default bouton" value="Details" data-agentid="%s" >""" % (self.id)
+        return """<button type="button" class="btn btn-info bouton" data-agentid="%s" onclick="showdetailsmodal('%s') >Détails</button>""" % (self.id, self.id)
 
 class AgentCertification(models.Model):
     agent = models.ForeignKey(Agent, related_name="agent_certifications")
@@ -209,11 +209,23 @@ class AgentIdCard(models.Model):
         return super(AgentIdCard, self).save(*args, **kwargs)
 
 
+class AreaDepartment(models.Model):
+    num = models.CharField(max_length=3, blank=False)
+    name = models.CharField(max_length=128, blank=False)
+    name_cap = models.CharField(max_length=128, blank=False)
+    name_url = models.CharField(max_length=128, blank=False)
+    soundex = models.CharField(max_length=16, blank=False)
+
+    def __unicode__(self):
+        return self.name_cap
+
+
 class AgentAddress(models.Model):
     agent = models.ForeignKey(Agent)
     address1 = models.CharField(_('Adresse 1'), max_length=120, blank=True)
     address2 = models.CharField(_('Adresse 2'), max_length=120, blank=True)
     zipcode = models.CharField(_('Code Postal'), max_length=5, blank=True)
+    area_department = models.ForeignKey(AreaDepartment, null=True)
     city = models.CharField(_('Ville'), max_length=120, blank=True)
     mobilephonenumber = models.CharField(
         _(u'Téléphone mobile'), max_length=10, blank=True, null=True)

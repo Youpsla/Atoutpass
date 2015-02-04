@@ -1,0 +1,142 @@
+{% block content %}
+    <div class="modal-dialog custom-class">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row clearfix">
+                    <div class="col-md-8 column">
+                        <button type="button" class="btn btn-primary btn-lg btn-block" onclick="addtoselection({{agent.id}})">Ajouter a la selection</button>
+                        <h2 class="modal-title">
+                            {{agent}}
+                        </h2>
+                    </div>
+                    <div class="col-md-4 column">
+                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        {% for i in agent.procard.all %}
+                            {% if i.pro_card %}
+                                <button class="btn btn-success">
+                                Carte Pro
+                                <span class="glyphicon glyphicon-ok"></span>
+                                </button>
+                            {% else %}
+                                <button class="btn btn-danger">
+                                Carte Pro
+                                <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                            {% endif %}
+                        {% endfor %}
+                        {% for i in agent.agent_certifications.all %}
+                            <button class="btn btn-success">
+                                {{i.certification}}
+                            <span class="glyphicon glyphicon-ok"></span>
+                            </button>
+                        {% endfor %}
+                        <br>
+                        <br>
+                        {% for i in agent.agent_qualifications.all %}
+                            <button class="btn btn-warning">
+                                {{i.qualification}}
+                            <span class="glyphicon glyphicon-ok"></span>
+                            </button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+               <div class="row clearfix">
+                <div class="col-md-2 column">
+                    <img id='picture' src="{{MEDIA_URL}}{{agent.picture}}" class="img-responsive pull-left" />
+                </div>
+                <div class="col-md-10 column">
+                    <div class="row clearfix">
+                        <div class="col-md-6 column">
+                            <h3>Etat civil</h3>
+                            <dl class="dl-horizontal">
+                                <dt>Nom :</dt>
+                                <dd>{{agent.firstname}}</dd>
+                                <dt>Prénom :</dt>
+                                <dd>{{agent.lastname}}</dd>
+                                <dt>Nationalité :</dt>
+                                <dd>{{agent.nationality}}</dd>
+                                <dt>Date de naissance :</dt>
+                                <dd>{{agent.birthdate}}</dd>
+                                <dt>Lieu naissance :</dt>
+                                <dd>{{agent.birthplace}}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6 column">
+                            <h3>Contacts</h3>
+                        {% for i in agent.agentaddress_set.all %}
+                            <dl class="dl-horizontal">
+                                <dt>Téléphone mobile :</dt>
+                                <dd>{{i.mobilephonenumber}}</dd>
+                                <dt>Téléphone fixe :</dt>
+                                <dd>{{i.fixedphonenumber}}</dd>
+                                <dt>Email :</dt>
+                                <dd>{{agent.user.email}}</dd>
+                                <hr>
+                                <dt>Adresse :</dt>
+                                <dd>{{i.address1}}</dd>
+                                <dt>Code postal :</dt>
+                                <dd>{{agent.postalcode}}</dd>
+                                <dt>Ville :</dt>
+                                <dd>{{agent.city}}</dd>
+                            </dl>
+                        </div>
+                        {% endfor %}
+                    </div>
+                        <h3>Carte professionnelle</h3>
+                        {% for i in agent.procard.all %}
+                            <div class="row clearfix">
+                                <div class="col-md-12 column">
+                                    <dl class="dl-horizontal">
+                                        <dt>Date d'obtention :</dt>
+                                        <dd>{{i.pro_card_validity_start_date}}</dd>
+                                        <dt>Date de renouvellement :</dt>
+                                        <dd></dd>
+                                        <dt>Date de fin de validité :</dt>
+                                        <dd>{{i.pro_card_validity_end_date}}</dd>
+                                        <dt>Numéro :</dt>
+                                        <dd>{{i.pro_card_number}}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <h3>Certifications</h3>
+                        {% for i in agent.agent_certifications.all %}
+                            <div class="row clearfix">
+                                <div class="col-md-12 column">
+                                    <dl class="dl-horizontal">
+                                        <dt>Intitulé :</dt>
+                                        <dd>{{i.certification}}</d>
+                                        <dt>Date d'obtention :</dt>
+                                        <dd>{{i.pro_card_validity_start_date}}</dd>
+                                        <dt>Date de fin de validité :</dt>
+                                        <dd>{{i.pro_card_validity_end_date}}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <h3>Qualifications</h3>
+                        {% for i in agent.agent_qualifications.all %}
+                            <div class="row clearfix">
+                                <div class="col-md-12 column">
+                                    <dl class="dl-horizontal">
+                                        <dt>Intitulé :</dt>
+                                        <dd>{{i.qualification}}</d>
+                                        <dt>Date d'obtention :</dt>
+                                        <dd>{{i.start_date}}</dd>
+                                        <dt>Date de fin de validité :</dt>
+                                        <dd>{{i.end_date}}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+    </div>
+{% endblock content %} 
+

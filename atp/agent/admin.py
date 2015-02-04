@@ -106,12 +106,26 @@ class AgentQualificationInline(admin.StackedInline):
     def has_delete_permission(self, request, obj=None):
             return False
 
+##
+# Agent Various 
+##
+class AgentVariousInlineForm(forms.ModelForm):
+    class Meta:
+        model = AgentVarious
+
+
+class AgentVariousInline(admin.StackedInline):
+    model = AgentVarious
+    max_num =3 
+    extra = 3
+    suit_classes = 'suit-tab suit-tab-various'
+    form = AgentVariousInlineForm
 
 ##
 # Agent
 ##
 class AgentAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    inlines = (CertificationsInline, AgentIdCardInline, AgentAddressInline, AgentProCardInline, AgentQualificationInline)
+    inlines = (CertificationsInline, AgentIdCardInline, AgentAddressInline, AgentProCardInline, AgentQualificationInline, AgentVariousInline)
     form = AgentAdminForm
     list_filter = ('birthdate', 'birthplace', 'qualifications', 'certifications', 'last_modified',)
     filter_vertical = ()
@@ -122,7 +136,7 @@ class AgentAdmin(FSMTransitionMixin, admin.ModelAdmin):
             'fields': ['firstname', 'lastname', 'genre', 'nationality', 'birthdate', 'birthplace', 'picture']
             }),
         ]
-    suit_form_tabs = (('etat_civil', 'Etat civil'), ('id_card', 'Papiers identite'), ('address', 'Coordonnees'), ('pro_card', 'Carte Pro'), ('qualifications', 'Qualifications'), ('certifications', 'Certifications'))
+    suit_form_tabs = (('etat_civil', 'Etat civil'), ('various', 'VARIOUS'), ('id_card', 'Papiers identite'), ('address', 'Coordonnees'), ('pro_card', 'Carte Pro'), ('qualifications', 'Qualifications'), ('certifications', 'Certifications'))
 
     class Media:
         css = {
@@ -147,8 +161,13 @@ class StatesAdmin(admin.ModelAdmin):
     pass
 
 
+class AreaDepartmentAdmin(admin.ModelAdmin):
+    pass
+
+
 admin.site.register(Agent,AgentAdmin)
 admin.site.register(Certification,CertificationAdmin)
 admin.site.register(Qualification,QualificationAdmin)
 admin.site.register(States,StatesAdmin)
+admin.site.register(AreaDepartment,AreaDepartmentAdmin)
 # admin.site.register(Certification,CertificationAdmin)

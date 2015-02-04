@@ -1,5 +1,6 @@
 from agent.models import Agent
 from users.models import User
+from clients.models import Client
 
 
 # import the logging library
@@ -24,6 +25,13 @@ def AddAgentContextProcessor(request):
                 agent_form_completed = True
             return {'current_agent': current_agent, 'agent_form_completed': agent_form_completed}
         except Agent.DoesNotExist:
+            print "Agent non trouve"
+            return {'Agent': None}
+        try:
+            current_client = Client.objects.get(user_id=user.id)
+            print('Client trouve dans le contexte : %s' % (current_client))
+            return {'current_client': current_client}
+        except Client.DoesNotExist:
             print "Agent non trouve"
             return {'Agent': None}
     except User.DoesNotExist:

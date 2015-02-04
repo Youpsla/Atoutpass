@@ -53,12 +53,15 @@ def get_or_create_csrf_token(request):
     return token
 
 
-
+class SelectionQuerySet(models.QuerySet):
+    def for_user(self, user):
+        print "UUSSEERR :", user
+        return self.filter(client=user)
 
 
 from django.db.models.signals import post_save
 class Selection(models.Model):
-    client = models.ForeignKey(Client, related_name='selection_client')
+    client = models.ForeignKey(Client, related_name='client')
     start_date = models.DateTimeField(blank=True, null=True)
     last_modified = models.DateTimeField(auto_now_add=True, blank=True)
     state = FSMKeyField(States, default='new', protected=True, blank=True, null=True, related_name='selection_state')
@@ -67,7 +70,7 @@ class Selection(models.Model):
     agents = models.ManyToManyField(Agent, blank=True,
                                             null=True,
                                             through='SelectionAgentsRelationship',
-                                            related_name='selectionagents')
+                                            related_name='agents')
 
     def save(self, *args, **kwargs):
         self.last_modified = datetime.datetime.today()
@@ -92,12 +95,13 @@ class Selection(models.Model):
         else:
             return """bloque"""
 
+    objects = SelectionQuerySet.as_manager()
+
 post_save.connect(Selection().create, Selection, dispatch_uid="Selection_created")
 
 class SelectionAgentsRelationship(models.Model):
-    agent = models.ForeignKey(Agent, related_name="selection_agents")
-    selection = models.ForeignKey(Selection, blank=True, null=True,
-                                      default=None)
+    agent = models.ForeignKey(Agent, blank=True, null=True)
+    selection = models.ForeignKey(Selection, blank=True, null=True)
    
     def __unicode__(self):
         return unicode(self.selection)
