@@ -15,9 +15,9 @@ from django.core.urlresolvers import reverse
 import json
 from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django_datatables_view.base_datatable_view import BaseDatatableView
+from django.http import JsonResponse
 
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -59,14 +59,9 @@ def filter_view(request, **kwargs):
     The data is loaded by the AgentListJson view and rendered by the
     Datatables plugin via Javascript.
     """
-    selectionid = kwargs['selectionid']
-    form = AgentFilterForm()
-    data = reverse('clients:agent_list_json')
 
     if request.method == 'POST' and request.is_ajax:
-        # We need to create a copy of request.POST because it's immutable and
-        # we need to convert the content of the Value field to mg/dL if the
-        # user's glucose unit setting is set to mmol/L.
+        # We need to create a copy of request.POST because it's immutable
         params = request.POST.copy()
         
         # Create the URL query string and strip the last '&' at the end.
@@ -76,18 +71,19 @@ def filter_view(request, **kwargs):
 
         return HttpResponse(json.dumps(data), content_type='application/json')
 
+    if request.method == 'GET':
+        selectionid = kwargs['selectionid']
+        form = AgentFilterForm()
+        data = reverse('clients:agent_list_json')
+    # Create a list of agents associated vith the Selection Id. Returned necessary information for selection list init
+        selection_agent_list = SelectionAgentsRelationship.objects.filter(selection=selectionid).values('agent__firstname', 'agent__lastname', 'agent__id')
+        selection_agent_list = json.dumps(list(selection_agent_list), cls=DjangoJSONEncoder)
 
-    selection_agent_list = SelectionAgentsRelationship.objects.filter(selection=selectionid).values('agent__firstname', 'agent__lastname', 'agent__id')
-    for i in selection_agent_list:
-        print 'HHHHH : ', i
-    selection_agent_list = json.dumps(list(selection_agent_list), cls=DjangoJSONEncoder)
-
-    return render_to_response(
-        'client/datatable.html',
-        {'form': form, 'data': data, 'selectionid': selectionid, 'selection_agent_list': selection_agent_list},
-        context_instance=RequestContext(request),
-    )
-
+        return render(
+            request,
+            'client/datatable.html',
+            {'form': form, 'data': data, 'selectionid': selectionid, 'selection_agent_list': selection_agent_list},
+        )
 
 def retrieve_selection_agents(request):
     if request.method == 'GET':
@@ -102,14 +98,13 @@ def retrieve_selection_agents(request):
             payload = {'added': 'ok'}
             return HttpResponse(json.dumps(payload), content_type="application/json")
 
-from django.http import JsonResponse
 def add_agent_to_selection(request):
     agentid = None
     if request.method == 'GET':
         agentid = request.GET['agentid']
         selectionid = request.GET['selectionid']
         a = Agent.objects.get(id=agentid)
-        s = Selection.objects.get(id=selectionid)
+        s = Selection.objects.get(pk=selectionid)
 
         # Check if agent is already in selection.
         if SelectionAgentsRelationship.objects.filter(agent=a, selection=s).exists():
@@ -162,13 +157,6 @@ class AgentListJson(LoginRequiredMixin, BaseDatatableView):
         else:
             return super(AgentListJson, self).render_column(row, column)
 
-    def get_value_cell_style(self, url, value, color=None):
-        style = '''<center><a href="%s">%s</a></center>''' % (url, value)
-        if color:
-            style = '''<center><a href="%s"><font color="%s">%s</font></a>
-                </center>''' % (url, color, value)
-
-        return style
 
     def get_initial_queryset(self):
         """

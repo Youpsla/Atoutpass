@@ -54,6 +54,7 @@ class AgentFilterForm(forms.Form):
 
     AREA_DEPARTMENT_CHOICES = AreaDepartment.objects.filter().values_list('id','name')
 
+
     qualifications = forms.ModelChoiceField(
             queryset=Qualification.objects.all(), required=False,
             # widget=forms.CheckboxSelectMultiple(),
@@ -69,7 +70,8 @@ class AgentFilterForm(forms.Form):
             choices=AREA_DEPARTMENT_CHOICES,
             widget=forms.Select(),
             required=False,
-            label=u'Département')
+            label=u'Département',
+            initial=76)
 
     def __init__(self, *args, **kwargs):
         super(AgentFilterForm, self).__init__(*args, **kwargs)

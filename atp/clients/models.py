@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from agent.models import Agent
 from django_fsm import FSMKeyField, transition
 import datetime
+from django.db.models.signals import post_save
 
 
 # Create your models here.
@@ -59,7 +60,6 @@ class SelectionQuerySet(models.QuerySet):
         return self.filter(client=user)
 
 
-from django.db.models.signals import post_save
 class Selection(models.Model):
     client = models.ForeignKey(Client, related_name='client')
     start_date = models.DateTimeField(blank=True, null=True)
@@ -76,16 +76,20 @@ class Selection(models.Model):
         self.last_modified = datetime.datetime.today()
         return super(Selection, self).save(*args, **kwargs)
     
-    @transition(field=state, source='new', target='created')
-    def create(self):
+    @transition(field=state, source='new', target='validated')
+    def validate(self):
         print "Selection state update to created"
         pass
 
-    @transition(field=state, source='created', target='validated')
-    def validate(self):
+    @transition(field=state, source='validated', target='payed')
+    def payed(self):
         pass
-
-    @transition(field=state, source='validated', target='exported')
+    
+    @transition(field=state, source='payed', target='pdf_generated')
+    def generate_pdf(self):
+        pass
+    
+    @transition(field=state, source='pdf_generated', target='exported')
     def export(self):
         pass
     
@@ -97,7 +101,7 @@ class Selection(models.Model):
 
     objects = SelectionQuerySet.as_manager()
 
-post_save.connect(Selection().create, Selection, dispatch_uid="Selection_created")
+post_save.connect(Selection().validate, Selection, dispatch_uid="Selection_validated")
 
 class SelectionAgentsRelationship(models.Model):
     agent = models.ForeignKey(Agent, blank=True, null=True)

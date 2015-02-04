@@ -7,7 +7,6 @@ class SelectionAdmin(admin.ModelAdmin):
 class ClientAdmin(admin.ModelAdmin):
     pass
 
-
 class StatesAdmin(admin.ModelAdmin):
     pass
 
