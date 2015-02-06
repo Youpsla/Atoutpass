@@ -13,11 +13,12 @@ from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 import json
-from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.db.models import Count
 
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -43,47 +44,50 @@ class SelectionView(LoginRequiredMixin, CreateView):
         return HttpResponseRedirect(reverse('clients:~list_selection'))
 
 
-class SelectionListView(LoginRequiredMixin, ListView):
-    model = Selection
-    queryset = Selection.objects.for_user(2)
-    print "HHHHHHHHHHHHHHHHHHHHH", queryset
-
-
-
 @login_required
-# def filter_view(request, selectionid):
-def filter_view(request, **kwargs):
-    user=request.user
+def selection_list_view(request, **kwargs):
+
     """
-    Displays the agent data table with filter options.
-    The data is loaded by the AgentListJson view and rendered by the
+    Displays the selection list table.
+    The data is loaded by the CLientListJsonView and rendered by the
     Datatables plugin via Javascript.
     """
 
     if request.method == 'POST' and request.is_ajax:
         # We need to create a copy of request.POST because it's immutable
         params = request.POST.copy()
-        
         # Create the URL query string and strip the last '&' at the end.
-        data = ('%s?%s' % (reverse('clients:agent_list_json'), ''.join(
+        data = ('%s?%s' % (reverse('clients:~agent_list_json'), ''.join(
             ['%s=%s&' % (k, v) for k, v in params.iteritems()])))\
             .rstrip('&')
-
         return HttpResponse(json.dumps(data), content_type='application/json')
 
     if request.method == 'GET':
-        selectionid = kwargs['selectionid']
-        form = AgentFilterForm()
-        data = reverse('clients:agent_list_json')
-    # Create a list of agents associated vith the Selection Id. Returned necessary information for selection list init
-        selection_agent_list = SelectionAgentsRelationship.objects.filter(selection=selectionid).values('agent__firstname', 'agent__lastname', 'agent__id')
-        selection_agent_list = json.dumps(list(selection_agent_list), cls=DjangoJSONEncoder)
+        data = reverse('clients:~selection_list_json')
+        form = SelectionForm()
 
         return render(
             request,
-            'client/datatable.html',
-            {'form': form, 'data': data, 'selectionid': selectionid, 'selection_agent_list': selection_agent_list},
+            'client/selection_list.html',
+            {'data': data, 'form': form},
         )
+
+
+class SelectionListJsonView(LoginRequiredMixin, BaseDatatableView):
+    model = Selection
+    columns = ['state', 'pk', 'description', 'nb_agents']
+    order_columns = ['state', '', '', '', '']
+
+    def render_column(self, row, column):
+        return super(SelectionListJsonView, self).render_column(row, column)
+
+    def filter_queryset(self, qs):
+        user = self.request.user
+        if user:
+            qs = qs.filter(client=user.client).annotate(nb_agents=Count('agents'))
+        return qs
+
+
 
 def retrieve_selection_agents(request):
     if request.method == 'GET':
@@ -132,30 +136,63 @@ def remove_agent_from_selection(request):
     return HttpResponse()
 
 
-class AgentListJson(LoginRequiredMixin, BaseDatatableView):
+@login_required
+def filter_view(request, **kwargs):
+
+    """
+    Displays the agent data table with filter options.
+    The data is loaded by the AgentListJson view and rendered by the
+    Datatables plugin via Javascript.
+    """
+
+    client = Client.objects.get(user=request.user)
+    selectionid = kwargs['selectionid']
+    get_object_or_404(Selection, client=client, pk=selectionid)
+
+    if request.method == 'POST' and request.is_ajax:
+        # We need to create a copy of request.POST because it's immutable
+        params = request.POST.copy()
+        # Create the URL query string and strip the last '&' at the end.
+        data = ('%s?%s' % (reverse('clients:~agent_list_json'), ''.join(
+            ['%s=%s&' % (k, v) for k, v in params.iteritems()])))\
+            .rstrip('&')
+        return HttpResponse(json.dumps(data), content_type='application/json')
+
+    if request.method == 'GET':
+        form = AgentFilterForm()
+        data = reverse('clients:~agent_list_json')
+        # Create a list of agents associated vith the Selection Id. Returned necessary information for selection list init
+        selection_agent_list = SelectionAgentsRelationship.objects.filter(selection=selectionid).values('agent__firstname', 'agent__lastname', 'agent__id')
+        selection_agent_list = json.dumps(list(selection_agent_list), cls=DjangoJSONEncoder)
+
+        return render(
+            request,
+            'client/datatable.html',
+            {'form': form, 'data': data, 'selectionid': selectionid, 'selection_agent_list': selection_agent_list},
+        )
+
+
+class AgentListJsonView(LoginRequiredMixin, BaseDatatableView):
     model = Agent
 
-    columns = [ 'id', 'firstname', 'lastname','area_department', 'actions']
-    order_columns = ['id', '', '', '','' ]
+    columns = ['id', 'firstname', 'lastname', 'area_department', 'actions']
+    order_columns = ['id', '', '', '', '']
     max_display_length = 500
 
     def render_column(self, row, column):
-        user = self.request.user
         if column == 'area_department':
-            # return '%s' % row.agentaddress_set.address1
             qs = AreaDepartment.objects.filter(agentaddress__agent=row.id).values('num')
             if qs:
                 for i in qs:
                     return i['num']
             else:
-                print "NONONONONO"
                 return 0 
         elif column == 'actions':
             return """<button type="button" class="btn btn-info btn-sm bouton" data-agentid="%s" onclick="showagentdetailmodal('%s')" >Details</button>
                 <button type="button" class="btn btn-primary btn-sm" data-agentid="%s" onclick="addtoselection('%s')">Ajouter</button>
         """ % (row.id, row.id, row.id, row.id)
         else:
-            return super(AgentListJson, self).render_column(row, column)
+            return super(AgentListJsonView, self).render_column(row, column)
 
 
     def get_initial_queryset(self):
@@ -180,5 +217,4 @@ class AgentListJson(LoginRequiredMixin, BaseDatatableView):
         if area_department:
             qs = qs.filter(agentaddress__area_department=area_department)
 
-        # print "queryset :", qs
         return qs

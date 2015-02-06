@@ -17,7 +17,7 @@ CLIENT_GENRE_CHOICES = (
 
 
 class Client(models.Model):
-    user = models.OneToOneField(Common.AUTH_USER_MODEL, related_name='users_client')
+    user = models.OneToOneField(Common.AUTH_USER_MODEL, related_name='client')
     firstname = models.CharField(_(u'Nom'), max_length=256, blank=True, null=True)
     lastname = models.CharField(_(u'Prénom'), max_length=256, blank=True, null=True)
     genre = models.CharField(_(u'Genre'), max_length=1, choices=CLIENT_GENRE_CHOICES,
