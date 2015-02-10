@@ -21,7 +21,7 @@ class SelectionForm(forms.ModelForm):
         # Set this form to use the User model.
         model = Selection
 
-        exclude = ('client', 'start_date', 'last_modified', 'state')
+        exclude = ('owner', 'start_date', 'last_modified', 'state')
 
     def __init__(self, *args, **kwargs):
         super(SelectionForm, self).__init__(*args, **kwargs)

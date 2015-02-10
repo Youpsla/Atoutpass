@@ -32,10 +32,13 @@
                                     <table id="selection_table" class="display responsive" width="100%">
                                         <thead>
                                             <tr>
+                                                <th class="all">Numéro</th>
                                                 <th class="all"><center>Statut</center></th>
-                                                <th class="all">Id</th>
-                                                <th class="all">Description</th>
+                                                <th class="all">Crée le</th>
+                                                <th class="all">Nom</th>
+                                                <th class="none">Description</th>
                                                 <th class="all">Nb agents</th>
+                                                <th class="all">Action</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -75,10 +78,11 @@ $(document).ready(function() {
         "iDisplayLength": 15,
         "bProcessing": true,
         "bServerSide": true,
+        "order": [[0, "desc"]],
         "sAjaxSource": "{{ data }}",
         // "aaSorting": [ [0,'desc'], [1,'desc']],
         // Disable sorting for the Actions column.
-        "aoColumnDefs": [ { "bSortable": false, "aTargets": [ 2, ] } ]
+        "aoColumnDefs": [ { "bSortable": false, "aTargets": [ 5, ] } ]
     });
     // Submit the filter form and refresh the table data
     var frm = $('#filter_form');

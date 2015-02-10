@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load tags %}
+
+
+{% block content %}
+
+
+    <div class="jumbotron well">
+                <h2>
+                Espace entreprises 
+                </h2>
+                <p class="text-center">
+                    <a class="btn btn-primary btn-large" href="{% url 'account_signup' %}">Créer un compte</a>
+                    <a class="btn btn-primary btn-large" href="{% url 'account_login' %}">Connexion à votre espace</a>
+                </p>
+    </div>
+
+{% endblock %}

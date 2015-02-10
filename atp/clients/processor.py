@@ -1,5 +1,7 @@
-from .models import Client
+# -*- coding: utf8 -*-
+from .models import Company
 from users.models import User
+from django.contrib import messages
 
 
 # Create your views here.
@@ -8,14 +10,15 @@ def AddClientContextProcessor(request):
     try:
         user = request.user
         print('User trouve dans le contexte : %s' % (user))
-        try:
-            current_client = Client.objects.get(user_id=user.id)
-            print('Client trouve dans le contexte : %s' % (current_client))
-            # Check if agent form is complete
-            return {'current_client': current_client}
-        except Client.DoesNotExist:
-            print "Client non trouve dans le contexte"
-            return {'Client': None}
+        if user.type == 'CL':
+            try:
+                company = Company.objects.get(user=user.id)
+                return {'client': company}
+            except Company.DoesNotExist:
+                messages.add_message(request, messages.WARNING, """Votre profil n'est pas complet, <b>vous ne pouvez pas créer de sélection ni passer de commande</b>. Cliquez ici pour le compléter""")
+                return {'Client': None}
+        else:
+            return {'User_processor': 'Pas de user'}
     except User.DoesNotExist:
-        print "User non trouve"
+        #print "User non trouve"
         return {'User_processor': 'Pas de user'}

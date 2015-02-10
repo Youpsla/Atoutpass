@@ -6,34 +6,30 @@ from agent.models import Agent
 from django_fsm import FSMKeyField, transition
 import datetime
 from django.db.models.signals import post_save
+from django.utils.formats import date_format
+from django.core.validators import RegexValidator
 
 
-# Create your models here.
-
-CLIENT_GENRE_CHOICES = (
-    ('M', 'Homme'),
-    ('F', 'Femme')
-)
-
-
-class Client(models.Model):
-    user = models.OneToOneField(Common.AUTH_USER_MODEL, related_name='client')
-    firstname = models.CharField(_(u'Nom'), max_length=256, blank=True, null=True)
-    lastname = models.CharField(_(u'Prénom'), max_length=256, blank=True, null=True)
-    genre = models.CharField(_(u'Genre'), max_length=1, choices=CLIENT_GENRE_CHOICES,
-                             blank=True, null=True)
-    company = models.CharField(_(u'Entreprise'), max_length=256, blank=True, null=True)
-    mobilephonenumber = models.CharField(
-        _(u'Téléphone mobile'), max_length=10, blank=True, null=True)
+class Company(models.Model):
+    user = models.ForeignKey(Common.AUTH_USER_MODEL, related_name='company')
+    name = models.CharField(_(u'Nom'), max_length=256, null=True)
     phonenumber = models.CharField(
-        _(u'Téléphone fixe'), max_length=10, blank=True, null=True)
+        _(u'Téléphone fixe'), max_length=10, null=True)
+    faxnumber = models.CharField(
+        _(u'Téléphone fixe'), max_length=10, null=True)
+    ape = models.CharField(_(u'Code APE'), max_length=256, blank=True, null=True)
+    siret = models.CharField(_(u'Code APE'), max_length=256, blank=True, null=True)
+    vat_number = models.CharField(_('Numero de TVA'), validators=[RegexValidator(regex='^.{11}$', message='Exactement 11 caracteres', code='nomatch')], max_length=11, blank=True)
     address1 = models.CharField(_('Adresse 1'), max_length=120, blank=True)
     address2 = models.CharField(_('Adresse 2'), max_length=120, blank=True)
     zipcode = models.CharField(_('Code Postal'), max_length=5, blank=True)
     city = models.CharField(_('Ville'), max_length=120, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
 
     def __unicode__(self):
-        return '%s %s - %s' % (self.firstname, self.lastname, self.company)
+        return self.name
 
 
 class States(models.Model):
@@ -61,16 +57,16 @@ class SelectionQuerySet(models.QuerySet):
 
 
 class Selection(models.Model):
-    client = models.ForeignKey(Client, related_name='client')
-    start_date = models.DateTimeField(blank=True, null=True)
-    last_modified = models.DateTimeField(auto_now_add=True, blank=True)
+    owner = models.ForeignKey(Common.AUTH_USER_MODEL, related_name='selection')
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     state = FSMKeyField(States, default='new', protected=True, blank=True, null=True, related_name='selection_state')
     name = models.CharField(_('Nom'), max_length=120, blank=True, null=True)
     description = models.CharField(_('Description'), max_length=220, blank=True, null=True)
     agents = models.ManyToManyField(Agent, blank=True,
-                                            null=True,
-                                            through='SelectionAgentsRelationship',
-                                            related_name='agents')
+                                    null=True,
+                                    through='SelectionAgentsRelationship',
+                                    related_name='agents')
 
     def save(self, *args, **kwargs):
         self.last_modified = datetime.datetime.today()
@@ -93,6 +89,14 @@ class Selection(models.Model):
     def export(self):
         pass
     
+    @property   
+    def get_created_date_formated(self):
+        return date_format(self.created, "SHORT_DATE_FORMAT") 
+
+    @property   
+    def get_updated_date_formated(self):
+        return date_format(self.updated, "SHORT_DATETIME_FORMAT") 
+
     def add_action_button(self, **kwargs):
         if self.state == 'created':
             return """<a class='btn' href="/client/~client/data?selectionid=%s">""" % (self.id)
@@ -103,6 +107,7 @@ class Selection(models.Model):
 
 post_save.connect(Selection().validate, Selection, dispatch_uid="Selection_validated")
 
+
 class SelectionAgentsRelationship(models.Model):
     agent = models.ForeignKey(Agent, blank=True, null=True)
     selection = models.ForeignKey(Selection, blank=True, null=True)
@@ -111,4 +116,4 @@ class SelectionAgentsRelationship(models.Model):
         return unicode(self.selection)
 
     class Meta():
-        auto_created=True
+        auto_created = True

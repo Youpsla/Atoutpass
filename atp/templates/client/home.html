@@ -2,12 +2,10 @@
 
 {% block content %}
 <div class="container">
+    {% if client %}
    <a href="{% url 'clients:~add_selection' %}">Créer une sélection</a> 
-    </div>
-    <div>
-        {% for s in current_client.selection_client.all %}
-        {{s.name}}
-        <br>
-        {% endfor %}
+    {% endif %}
+   <a href="{% url 'clients:~add_selection' %}">Parcourir le DIAD</a> 
+   <br><a href="{% url 'clients:~add_selection' %}">Créer mon profil</a> 
     </div>
 {% endblock %}

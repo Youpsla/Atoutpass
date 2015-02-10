@@ -28,4 +28,10 @@ urlpatterns = patterns('',
         view=views.UserUpdateView.as_view(),
         name='update'
     ),
+    # URL pattern for the user type choice 
+    #url(
+        #regex=r'^~type/$',
+        #view=views.UserTypeView.as_view(),
+        #name='update'
+    #),
 )

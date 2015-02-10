@@ -4,7 +4,7 @@ from clients.models import *
 class SelectionAdmin(admin.ModelAdmin):
     pass
 
-class ClientAdmin(admin.ModelAdmin):
+class CompanyAdmin(admin.ModelAdmin):
     pass
 
 class StatesAdmin(admin.ModelAdmin):
@@ -13,4 +13,4 @@ class StatesAdmin(admin.ModelAdmin):
 
 admin.site.register(Selection, SelectionAdmin)
 admin.site.register(States, StatesAdmin)
-admin.site.register(Client, ClientAdmin)
+admin.site.register(Company, CompanyAdmin)

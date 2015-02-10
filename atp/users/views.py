@@ -33,10 +33,25 @@ from allauth.account.signals import user_signed_up
 # Decorator for setting the user type : agent or client
 @receiver(user_signed_up)
 def set_type(sender, **kwargs):
+    print kwargs['request']
     user = kwargs.pop('user')
-    if type == 'client': # because the default is agent.
+    print "USER SIGN UP SIGNAL : ", user.__dict__
+    if type == 'client':
+        # because the default is agent.
         user.type = 'client'
     user.save()
+
+from allauth.account.views import SignupView
+class LocalSignupView(SignupView):
+
+    def form_valid(self, form):
+
+        url = self.request.path
+        print "UUURRRLLL : ", url
+        # form = form.save(commit=False)
+        # form.type = self.request
+        form.save()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):

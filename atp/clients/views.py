@@ -1,14 +1,18 @@
+# -*- coding: utf-8 -*-
 from django.views.generic.base import TemplateView
-
+from config.common import Common
+from users.models import User
 from agent.models import Agent
 from agent.models import AreaDepartment
-from .models import Client
+from .models import States 
 from .models import SelectionAgentsRelationship
 from .models import Selection
+from .models import Company 
 from .forms import SelectionForm
 from .forms import AgentFilterForm
 from braces.views import LoginRequiredMixin
 from django.views.generic import CreateView
+from django.views.generic import DeleteView
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
@@ -23,25 +27,73 @@ from django.db.models import Count
 from django.core.serializers.json import DjangoJSONEncoder
 
 
+class CompanyAddView(LoginRequiredMixin, CreateView):
+    model = Company
+    template_name = 'client/client/add'
+    form_class = 'ClientAddForm'
+
+
 # Create your views here.
+class ClientLandingView(TemplateView):
+    template_name = 'client/landing.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ClientLandingView, self).get_context_data(**kwargs)
+        context['type'] = 'CL'
+        return context
+
+
 class ClientHomeView(LoginRequiredMixin, TemplateView):
     template_name = 'client/home.html'
 
 
-class SelectionView(LoginRequiredMixin, CreateView):
+class SelectionAddView(LoginRequiredMixin, CreateView):
     form_class = SelectionForm
     model = Selection
     template_name = 'client/add_selection.html'
 
-    def form_valid(self, request):
-        form.instance.client = Client.objects.get(user=self.request.user)
-        # Create an instance for updating state field later
-        new_selection = form.save(commit=False)
-        new_selection.save()
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.owner = self.request.user
+        self.object.save()
         # Change selection state to "created"
-        new_selection.create()
-        new_selection.save()
-        return HttpResponseRedirect(reverse('clients:~list_selection'))
+        return HttpResponseRedirect(reverse('clients:~selection_list_view'))
+
+
+class SelectionDeleteView(LoginRequiredMixin, DeleteView):
+    model = Selection
+    template_name = 'client/delete_selection.html'
+    success_url = '/client/~client/selection/list'
+
+    def get_object(self, queryset=None):
+        obj = Selection.objects.get(owner=self.request.user, pk=self.kwargs['selectionid'])
+        return obj
+
+    def get_context_data(self, **kwargs):
+        context = super(SelectionDeleteView, self).get_context_data()
+        context['selectionid'] = self.kwargs['selectionid']
+        return context
+
+
+def selection_add_view(request):
+    form = Selection(request.POST or None)
+    if form.is_valid():
+        selection = form.save(commif=False)
+        selection.client = request.user.client
+        selection.save()
+        print "SEELLEECCTTIIONNN ID : ", selection.id
+        form = AgentFilterForm()
+        data = reverse('clients:~agent_list_json')
+        # Create a list of agents associated vith the Selection Id. Returned necessary information for selection list init
+        selection_agent_list = SelectionAgentsRelationship.objects.filter(selection=selection.id).values('agent__firstname', 'agent__lastname', 'agent__id')
+        selection_agent_list = json.dumps(list(selection_agent_list), cls=DjangoJSONEncoder)
+
+        return render(
+            request,
+            'client/datatable.html',
+            {'form': form, 'data': data, 'selectionid': selection.id, 'selection_agent_list': selection_agent_list},
+        )
+
 
 
 @login_required
@@ -75,32 +127,31 @@ def selection_list_view(request, **kwargs):
 
 class SelectionListJsonView(LoginRequiredMixin, BaseDatatableView):
     model = Selection
-    columns = ['state', 'pk', 'description', 'nb_agents']
-    order_columns = ['state', '', '', '', '']
+    columns = ['pk', 'state', 'created', 'name', 'description', 'nb_agents', 'action']
+    order_columns = ['pk', 'state', 'created', 'name', 'description', 'nb_agents', 'action']
 
     def render_column(self, row, column):
-        return super(SelectionListJsonView, self).render_column(row, column)
+        if column == 'action':
+            return """<a class="btn btn-primary btn-sm" href="%s">Agents</a>
+                      <a class="btn btn-danger btn-sm" href="%s">Supprimer</a>""" % (reverse('clients:~agent_filter_view', kwargs={'selectionid': row.id}), reverse('clients:~selection_delete_view', kwargs={'selectionid': row.id}))
+        elif column == 'state':
+            state = States.objects.get(pk=row.state)
+            return state.label
+        elif column == 'created':
+            return row.get_created_date_formated
+        elif column == 'updated':
+            return row.get_updated_date_formated
+        else:
+            return super(SelectionListJsonView, self).render_column(row, column)
 
-    def filter_queryset(self, qs):
+    def get_initial_queryset(self):
         user = self.request.user
-        if user:
-            qs = qs.filter(client=user.client).annotate(nb_agents=Count('agents'))
+        """
+        Return all Agents.
+        """
+        qs = Selection.objects.filter(owner=user).annotate(nb_agents=Count('agents'))
         return qs
 
-
-
-def retrieve_selection_agents(request):
-    if request.method == 'GET':
-        s = Selection.objects.get(id=14)
-        if SelectionAgentsRelationship.objects.filter(agent=a, selection=s).exists():
-            print "Agent %s already in selection %s" % (a.id, s.id)
-            payload = {'duplicate': 'ok'}
-            return HttpResponse(json.dumps(payload), content_type="application/json")
-        else:
-            s.agents.add(a)
-            print "Agent %s added to selection %s" % (a.id, s.id)
-            payload = {'added': 'ok'}
-            return HttpResponse(json.dumps(payload), content_type="application/json")
 
 def add_agent_to_selection(request):
     agentid = None
@@ -137,7 +188,7 @@ def remove_agent_from_selection(request):
 
 
 @login_required
-def filter_view(request, **kwargs):
+def agent_filter_view(request, **kwargs):
 
     """
     Displays the agent data table with filter options.
@@ -145,9 +196,8 @@ def filter_view(request, **kwargs):
     Datatables plugin via Javascript.
     """
 
-    client = Client.objects.get(user=request.user)
     selectionid = kwargs['selectionid']
-    get_object_or_404(Selection, client=client, pk=selectionid)
+    get_object_or_404(Selection, owner=request.user, pk=selectionid)
 
     if request.method == 'POST' and request.is_ajax:
         # We need to create a copy of request.POST because it's immutable
