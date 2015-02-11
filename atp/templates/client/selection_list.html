@@ -1,4 +1,4 @@
-{% extends "client/base.html" %}
+{% extends "base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
 {% block heading %}
@@ -82,7 +82,7 @@ $(document).ready(function() {
         "sAjaxSource": "{{ data }}",
         // "aaSorting": [ [0,'desc'], [1,'desc']],
         // Disable sorting for the Actions column.
-        "aoColumnDefs": [ { "bSortable": false, "aTargets": [ 5, ] } ]
+        "aoColumnDefs": [ { "bSortable": false, "aTargets": [ 6, ] } ]
     });
     // Submit the filter form and refresh the table data
     var frm = $('#filter_form');
