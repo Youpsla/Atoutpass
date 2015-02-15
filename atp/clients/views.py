@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 from django.views.generic.base import TemplateView
-from config.common import Common
-from users.models import User
 from agent.models import Agent
 from agent.models import AreaDepartment
-from .models import States 
+from .models import States
 from .models import SelectionAgentsRelationship
 from .models import Selection
-from .models import Company 
+from .models import Company
 from .forms import SelectionForm
 from .forms import AgentFilterForm
+from .forms import CompanyForm
 from braces.views import LoginRequiredMixin
 from django.views.generic import CreateView
+from django.views.generic import UpdateView
 from django.views.generic import DeleteView
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
@@ -25,12 +25,30 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Count
 
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.urlresolvers import reverse_lazy
+from django.contrib.messages.views import SuccessMessageMixin
+from django.template import RequestContext
 
-
-class CompanyAddView(LoginRequiredMixin, CreateView):
+class CompanyAddView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Company
-    template_name = 'client/client/add'
-    form_class = 'ClientAddForm'
+    template_name = 'client/company_add.html'
+    form_class = CompanyForm
+    success_url = reverse_lazy('clients:~client_home')
+    success_message = "Les coordonnees de l'entreprise %(name)s ont bien ete creees"
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.save()
+        return HttpResponseRedirect(reverse('clients:~client_home'))
+
+
+class CompanyUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = Company
+    template_name = 'client/company_add.html'
+    form_class = CompanyForm
+    success_url = reverse_lazy('clients:~client_home')
+    success_message = "Les coordonnees de %(name)s ont bien ete mises a jour"
 
 
 # Create your views here.
@@ -75,13 +93,34 @@ class SelectionDeleteView(LoginRequiredMixin, DeleteView):
         return context
 
 
+#def selection_validate_view(request, pk):
+    #print "PK : ", pk
+    #selection = Selection.objects.get(id=pk)
+    #selection.validate()
+    #selection.save()
+    #context_instance = RequestContext(request)
+    ## if context_instance['company']:
+
+
+
+class SelectionValidateView(LoginRequiredMixin, TemplateView):
+    template_name = "client/selection_validate.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(SelectionValidateView, self).get_context_data(**kwargs)
+        #context['selectionid'] = self.kwargs.get('pk', None)
+        selectionqs = Selection.objects.filter(pk=self.kwargs.get('pk', None)).prefetch_related('agents').annotate(num_agents=Count('agents'))
+        context['selectionqs'] = selectionqs
+        print selectionqs
+        return context
+
+
 def selection_add_view(request):
     form = Selection(request.POST or None)
     if form.is_valid():
         selection = form.save(commif=False)
         selection.client = request.user.client
         selection.save()
-        print "SEELLEECCTTIIONNN ID : ", selection.id
         form = AgentFilterForm()
         data = reverse('clients:~agent_list_json')
         # Create a list of agents associated vith the Selection Id. Returned necessary information for selection list init
@@ -93,7 +132,6 @@ def selection_add_view(request):
             'client/datatable.html',
             {'form': form, 'data': data, 'selectionid': selection.id, 'selection_agent_list': selection_agent_list},
         )
-
 
 
 @login_required
@@ -128,7 +166,7 @@ def selection_list_view(request, **kwargs):
 class SelectionListJsonView(LoginRequiredMixin, BaseDatatableView):
     model = Selection
     columns = ['pk', 'state', 'created', 'name', 'description', 'nb_agents', 'action']
-    order_columns = ['pk', 'state', 'created', 'name', 'description', 'nb_agents', 'action']
+    order_columns = ['pk', 'state', 'created', 'name', 'description', 'nb_agents']
 
     def render_column(self, row, column):
         if column == 'action':

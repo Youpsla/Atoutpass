@@ -47,8 +47,19 @@
     width:14.28%;
 }
 
+/* Define agent detail modal width */
 .modal-wide .modal-dialog {
     width: 90%; /* respsonsive width */
     margin-left:5%; /* width/2) */ 
 }
 
+/*[> Define with od dl <]*/
+/*.dl-horizontal dt {*/
+  /*float: left;*/
+  /*width: 160px;*/
+  /*clear: left;*/
+  /*text-align: right;*/
+  /*overflow: hidden;*/
+  /*text-overflow: ellipsis;*/
+  /*white-space: normal;*/
+/*}*/

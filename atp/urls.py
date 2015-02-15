@@ -50,5 +50,8 @@ urlpatterns = patterns('',
     # Django-messages-extends urls
     (r'^messages/', include('messages_extends.urls')),
 
+    # Django-plans
+    url(r'^plan/', include('plans.urls')),
+
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

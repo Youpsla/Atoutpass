@@ -56,6 +56,9 @@
                                     <span class="badge" id="selectionagentcounter">0</span>Agents selectionnes
                                 </li>
                             </ul>
+                            {% if request.user.type == 'CL' %}
+                                <a class="btn btn-danger btn-lg" href="{% url 'clients:~selection_validate' selectionid %}">Valider et télécharger</a>
+                            {% endif %}
                         </div>
 
                     </div>

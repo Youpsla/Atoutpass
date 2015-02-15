@@ -41,6 +41,26 @@ urlpatterns = patterns('',
         view=views.selection_list_view,
         name='~selection_list_view',
     ),
+    #url(
+        #regex=r'^~client/selection/validate/(?P<pk>\d+)/$',
+        #view=views.selection_validate_view,
+        #name='~selection_validate',
+    #),
+    url(
+        regex=r'^~client/selection/validate/(?P<pk>\d+)/$',
+        view=views.SelectionValidateView.as_view(),
+        name='~selection_validate',
+    ),
+    url(
+        regex=r'^~client/company/add/$',
+        view=views.CompanyAddView.as_view(),
+        name='~company_add_view',
+    ),
+    url(
+        regex=r'^~client/company/update/(?P<pk>\d+)/$',
+        view=views.CompanyUpdateView.as_view(),
+        name='~company_update_view',
+    ),
     url(
         regex=r'^~client/selection/list_json/$',
         view=views.SelectionListJsonView.as_view(),

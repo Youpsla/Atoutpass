@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from .models import Selection
+from .models import Company
 from agent.models import AreaDepartment
 from agent.models import Qualification
 from django.core.urlresolvers import reverse
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
-from crispy_forms.layout import Fieldset
 from crispy_forms.layout import Submit
 from crispy_forms.layout import Reset
 from crispy_forms.layout import Field
+from crispy_forms.layout import Fieldset
 from crispy_forms.bootstrap import FormActions
 
 
@@ -43,7 +44,7 @@ class SelectionForm(forms.ModelForm):
 
 class AgentFilterForm(forms.Form):
 
-    AREA_DEPARTMENT_CHOICES = AreaDepartment.objects.filter().values_list('id','name')
+    AREA_DEPARTMENT_CHOICES = AreaDepartment.objects.filter().values_list('id', 'name')
 
     qualifications = forms.ModelChoiceField(
         queryset=Qualification.objects.all(), required=False,
@@ -80,3 +81,45 @@ class AgentFilterForm(forms.Form):
                 ),
             )
 
+
+class CompanyForm(forms.ModelForm):
+
+    class Meta:
+        # Set this form to use the User model.
+        model = Company
+
+        exclude = ('user', 'created', 'updated')
+
+    def __init__(self, *args, **kwargs):
+        super(CompanyForm, self).__init__(*args, **kwargs)
+        self.fields['name'].required = True
+        self.fields['name'].help_text = """Raison sociale, nom de l'association ..."""
+        self.fields['phonenumber'].required = True
+        self.fields['siret'].required = True
+        self.fields['address1'].required = True
+        self.fields['zipcode'].required = True
+        self.fields['city'].required = True
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-3'
+        self.helper.field_class = 'col-lg-5'
+        self.helper.form_method = 'post'
+        self.helper.help_text_inline = True
+        self.helper.layout = Layout(
+            Fieldset("""Nom de l'entreprise""",
+                     'name'
+                     ),
+            Fieldset("""Telephone""",
+                     'phonenumber',
+                     ),
+            Fieldset("""Adresse postale""",
+                     'address1',
+                     'address2',
+                     'zipcode',
+                     'city'),
+            Fieldset("""Divers""",
+                     'siret',
+                     'ape',
+                     'vat_number'),
+            )
+        self.helper.layout.append(Submit('save', 'Valider'))

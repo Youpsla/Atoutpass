@@ -16,12 +16,12 @@ class Company(models.Model):
     phonenumber = models.CharField(
         _(u'Téléphone fixe'), max_length=10, null=True)
     faxnumber = models.CharField(
-        _(u'Téléphone fixe'), max_length=10, null=True)
+        _(u'Numéro de fax'), max_length=10, blank=True, null=True)
     ape = models.CharField(_(u'Code APE'), max_length=256, blank=True, null=True)
-    siret = models.CharField(_(u'Code APE'), max_length=256, blank=True, null=True)
-    vat_number = models.CharField(_('Numero de TVA'), validators=[RegexValidator(regex='^.{11}$', message='Exactement 11 caracteres', code='nomatch')], max_length=11, blank=True)
-    address1 = models.CharField(_('Adresse 1'), max_length=120, blank=True)
-    address2 = models.CharField(_('Adresse 2'), max_length=120, blank=True)
+    siret = models.CharField(_(u'Code SIRET'), max_length=256, blank=True, null=True)
+    vat_number = models.CharField(_('Numero de TVA'), validators=[RegexValidator(regex='^.{11}$', message='Exactement 11 caracteres', code='nomatch')], max_length=11, blank=True, null=True)
+    address1 = models.CharField(_('Adresse 1'), max_length=120)
+    address2 = models.CharField(_('Adresse 2'), max_length=120, blank=True, null=True)
     zipcode = models.CharField(_('Code Postal'), max_length=5, blank=True)
     city = models.CharField(_('Ville'), max_length=120, blank=True)
     created = models.DateTimeField(auto_now_add=True)

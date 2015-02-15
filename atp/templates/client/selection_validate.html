@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load bootstrap3 %}
+{% load url from future %}
+
+                {% block heading %}
+                <h3>
+                    <span class="fa fa-shopping-cart"></span> Confirmer ma sélection
+                </h3>
+                {% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="tab-content">
+                {{company}}<br>
+                <li><a href="{% url 'current_plan' %}">Your account</a></li>
+                <li><a href="{% url 'billing_info_create' %}">Informations de facturation</a></li>
+                {% for selection in selectionqs %}
+                <h3>Sélection : {{selection.name}} - {{selection.description}}<br><h3>
+                <h4>Nombre d'agents : {{selection.num_agents}}</h4> 
+                Cliquer sur le bouton "Valider et payer" pour télécharger les fiche PDF des agents séléctionnés.
+                Votre sélection contient {{selection.num_agents}} agents.
+                    {% for s in selection.agents.all %}
+                        {{s.id}}
+                        {{s.agentaddress.zipcode}}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

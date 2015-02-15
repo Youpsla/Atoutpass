@@ -27,6 +27,7 @@ class Common(Configuration):
         'django.contrib.sites',
         'django.contrib.messages',
         'django.contrib.staticfiles',
+        # 'modeltranslation',
 
         # Useful template tags:
         # 'django.contrib.humanize',
@@ -49,8 +50,14 @@ class Common(Configuration):
         'django_fsm',
         'fsm_admin',
         'django_fsm_log',
+        # 'plans_i18n',
         'phantom_pdf',
-        'datatableview'
+        'django_datatables_view',
+        'datatableview',
+        'debug_panel',
+        'plans',
+        'ordered_model',
+        'bootstrap3',
     )
 
     # Apps specific for this project go here.
@@ -81,7 +88,7 @@ class Common(Configuration):
 
     # MIGRATIONS CONFIGURATION
     MIGRATION_MODULES = {
-        'sites': 'contrib.sites.migrations'
+        # 'sites': 'contrib.sites.migrations'
     }
     # END MIGRATIONS CONFIGURATION
 
@@ -167,6 +174,12 @@ class Common(Configuration):
     USE_TZ =False
     # END GENERAL CONFIGURATION
 
+    from django.conf import global_settings
+
+    TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
+        'plans.context_processors.account_status',
+        )
+
     # TEMPLATE CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-context-processors
     TEMPLATE_CONTEXT_PROCESSORS = (
@@ -251,9 +264,14 @@ class Common(Configuration):
     # Custom user app defaults
     # Select the correct user model
     AUTH_USER_MODEL = "users.User"
-    CLIENT_USER_MODEL = "users.User"
     LOGIN_REDIRECT_URL = "users:redirect"
     LOGIN_URL = "account_login"
+    #ACCOUNT_FORMS = {
+        ## "login": "users.forms.CustomLoginForm"
+        #"signup": "users.forms.UserForm"
+    #}
+    ACCOUNT_SIGNUP_FORM_CLASS = 'users.forms.UserForm'
+
     # END Custom user app defaults
 
     # SLUGLIFIER
@@ -272,6 +290,32 @@ class Common(Configuration):
         'CONFIRM_UNSAVED_CHANGES': True,
         'MENU_OPEN_FIRST_CHILD': True
         }
+
+    # DJANGO-PLANS settings
+    #LANGUAGES = (
+        #('fr', 'French'),
+        #)
+    PLANS_TAX_COUNTRY = 'FR'
+    CURRENCY = 'EUR'
+    DEFAULT_FROM_EMAIL = 'youpsla@gmail.com'
+    INVOICE_COUNTER_RESET = 'yearly'
+    PLANS_INVOICE_ISSUER = {
+        "issuer_name": "Atout Pass",
+        "issuer_street": "152 rue notre dame de Nazareth",
+        "issuer_zipcode": "75003",
+        "issuer_city": "Paris",
+        "issuer_country": "FR",
+        "issuer_tax_number": "1222233334444555",
+    }
+    # PLAN_EXPIRATION_REMIND = [1, 3 , 7]
+    # from decimal import Decimal
+    # TAX = Decimal(20.0)
+    PLANS_TAXATION_POLICY = 'plans.taxation.eu.EUTaxationPolicy'
+    # TAX_COUNTRY = 'FR'
+    PLANS_CURRENCY = 'EUR'
+
+
+
 
     # LOGGING CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
