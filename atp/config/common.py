@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 import os
 from os.path import join, dirname
 from configurations import Configuration, values
+from urlparse import urljoin
 
 BASE_DIR = dirname(dirname(__file__))
 
@@ -78,6 +79,7 @@ class Common(Configuration):
         # Make sure djangosecure.middleware.SecurityMiddleware is listed first
         'djangosecure.middleware.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.locale.LocaleMiddleware',
         'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -159,7 +161,7 @@ class Common(Configuration):
     TIME_ZONE = 'Europe/Paris'
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-    LANGUAGE_CODE = 'fr-fr'
+    LANGUAGE_CODE = 'fr-FR'
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
     SITE_ID = 1
@@ -313,6 +315,8 @@ class Common(Configuration):
     PLANS_TAXATION_POLICY = 'plans.taxation.eu.EUTaxationPolicy'
     # TAX_COUNTRY = 'FR'
     PLANS_CURRENCY = 'EUR'
+    PLANS_INVOICE_TEMPLATE = 'plans/invoices/FR.html'
+    PLANS_INVOICE_LOGO_URL = urljoin(STATIC_URL, 'images/logo.gif')
 
 
 

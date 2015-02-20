@@ -3,32 +3,25 @@
 from django.core.urlresolvers import reverse
 
 # view imports
-from django.views.generic import DetailView
-from django.views.generic import RedirectView
 from django.views.generic import UpdateView
-from django.views.generic import ListView
 
 # Only authenticated users can access views using this.
 from braces.views import LoginRequiredMixin
 
 # Import the form from users/forms.py
-from .forms import UserForm
+from .forms import UserFormUpdate
 
 # Import the customized User model
 from .models import User
-
-# Import necessary for integrating first_name and last_name forn in Agent
-from agent.models import Agent
 
 # import messages
 from django.contrib import messages
 
 from django.http import HttpResponseRedirect
 
-from agent.views import agent_form_redirect 
-
 from django.dispatch import receiver
 from allauth.account.signals import user_signed_up
+from config.common import Common
 
 # Decorator for setting the user type : agent or client
 @receiver(user_signed_up)
@@ -41,77 +34,33 @@ def set_type(sender, **kwargs):
         user.type = 'client'
     user.save()
 
-from allauth.account.views import SignupView
-class LocalSignupView(SignupView):
+#from allauth.account.views import SignupView
+#class LocalSignupView(SignupView):
 
-    def form_valid(self, form):
-
-        url = self.request.path
-        print "UUURRRLLL : ", url
-        # form = form.save(commit=False)
-        # form.type = self.request
-        form.save()
-        return HttpResponseRedirect(self.get_success_url())
-
-
-class UserDetailView(LoginRequiredMixin, DetailView):
-    model = User
-    # These next two lines tell the view to index lookups by username
-    slug_field = "username"
-    slug_url_kwarg = "username"
-
-
-class UserRedirectView(LoginRequiredMixin, RedirectView):
-    permanent = False
-
-    def get_redirect_url(self):
-        return reverse("users:detail",
-                       kwargs={"username": self.request.user.username})
+    #def form_valid(self, form):
+        #url = self.request.path
+        #print "UUURRRLLL : ", url
+        #form = form.save(commit=False)
+        #form.type = self.request
+        #form.save()
+        #return HttpResponseRedirect(self.get_success_url())
 
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
 
-    form_class = UserForm
-    template_name = 'agent/profile.html'
+    model = Common.AUTH_USER_MODEL
+    form_class = UserFormUpdate
+    template_name = 'users/user_form.html'
 
-    # we already imported User in the view code above, remember?
-    model = User
+    # Define the redirect URL depending on user.type.
+    def get_success_url(self):
+        if self.request.user.type == 'CL':
+            return reverse("clients:client_home",)
+        else:
+            return reverse("agent:~agent_home",
+                           kwargs={"pk": self.request.user})
 
     def get_object(self):
-        # Only get the User record for the user making the request
-        Agent.objects.get_or_create(user=self.request.user)
-        return User.objects.get(username=self.request.user.username)
-
-    def form_valid(self, form):
-        form.save()
-        return HttpResponseRedirect(self.get_success_url())
-
-
-    # send the user back to their own page after a successful update
-    def get_success_url(self):
-        # Retrieve form_state from DB
-        form_state = Agent.objects.get(user=self.request.user).form_state
-
-        # Set redirect_url by passing form_state to agent_form_redirect
-        redirect_url = agent_form_redirect(form_state)
-        
-        # Check if agent form is complete
-        if 0 in form_state.values():
-            print 'Le formulaire est INCOMPLET'
-            messages.add_message(self.request, messages.ERROR, u'Votre Profil est incomplet. Veuillez renseigner les formulaires des onglets encore en rouge.')
-        else:
-            print 'Le formulaire est COMPLET'
-            messages.add_message(self.request, messages.SUCCESS, u'Merci. Votre profil va maintenant etre communiqué a un conseiller. Vous serez contacté dans les plus brefs délais')
-
-        # Update messages
-        messages.add_message(self.request, messages.INFO, u'Informations sauvegardées avec succès.')
-        return reverse(redirect_url)
-
-
-class UserListView(LoginRequiredMixin, ListView):
-    model = User
-    # These next two lines tell the view to index lookups by username
-    slug_field = "username"
-    slug_url_kwarg = "username"
+        return User.objects.get(pk=self.request.user.id)
 
 

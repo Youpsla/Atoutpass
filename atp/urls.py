@@ -5,8 +5,6 @@ from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
-from users.views import LocalSignupView
-
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
@@ -51,7 +49,7 @@ urlpatterns = patterns('',
     (r'^messages/', include('messages_extends.urls')),
 
     # Django-plans
-    url(r'^plan/', include('plans.urls')),
+    url(r'^plan/', include('plans.urls',)),
 
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

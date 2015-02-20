@@ -64,15 +64,31 @@
                 <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mon compte<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
-                    {% if company == None %}
-                    <li><a href="{% url 'clients:~company_add_view' %}">Coordonnées</a></li>
-                    {% else %}
-                    <li><a href="{% url 'clients:~company_update_view' company.id %}">Coordonnées</a></li>
-                    {% endif %}
+                    <li><a href="{% url 'billing_info' %}">Coordonnées de facturation</a></li>
+                    <li><a href="{% url 'users:update' %}">Informations personnelles</a></li>
                     <li><a href="{% url 'account_email' %}">E-Mail</a></li>
                     <li><a href="{% url 'account_change_password' %}">Mot de passe</a></li>
                 </ul>
                 </li>
+
+
+
+                <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Commandes<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="{% url 'order_list' %}">Liste</a></li>
+                </ul>
+                </li>
+
+
+                <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Plans<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="{% url 'current_plan' %}">Plan actuel</a></li>
+                    <li><a href="{% url 'upgrade_plan' %}">Mettre à jour mon plan</a></li>
+                </ul>
+                </li>
+
 
                 <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mes sélections d'agents<span class="caret"></span></a>
@@ -81,13 +97,14 @@
                     <li><a href="{% url 'clients:~add_selection' %}">Créer</a></li>
                 </ul>
                 </li>
+                <li><a href="{% url 'pricing' %}">Tarifs</a></li>
             {% else %}
                 <li><a href="{% url 'account_signup' %}">Inscription</a></li>
                 <li><a href="{% url 'account_login' %}">Connexion</a></li>
             {% endif %}
         </ul>
         {% if request.user.is_authenticated %}
-            <p class="navbar-text navbar-right"><b>{{ current_agent.firstname }} {{ current_agent.lastname }}</b></p>
+            <p class="navbar-text navbar-right"><b>{{ user.first_name }} {{ user.last_name }}</b></p>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="{% url 'account_logout' %}">Déconnexion</a></li>
             </ul>

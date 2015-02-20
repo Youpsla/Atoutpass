@@ -17,6 +17,7 @@
                 {{company}}<br>
                 <li><a href="{% url 'current_plan' %}">Your account</a></li>
                 <li><a href="{% url 'billing_info_create' %}">Informations de facturation</a></li>
+                <li><a href="{% url 'pricing' %}">Prix des forfaits</a></li>
                 {% for selection in selectionqs %}
                 <h3>Sélection : {{selection.name}} - {{selection.description}}<br><h3>
                 <h4>Nombre d'agents : {{selection.num_agents}}</h4> 

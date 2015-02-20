@@ -56,3 +56,26 @@ class UserForm(forms.ModelForm):
     def signup(self, request, user):
         print "PASS DANS SIGNUP"
         user.save()
+
+
+class UserFormUpdate(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name")
+
+    def __init__(self, *args, **kwargs):
+        super(UserFormUpdate, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-12'
+        self.helper.field_class = 'col-lg-3'
+        self.helper.form_method = 'post'
+        self.helper.form_action = reverse('users:update')
+
+    def signup(self, request, user):
+        print "PASS DANS SIGNUP"
+        user.save()
